@@ -1,0 +1,12 @@
+# ignore bytecode files
+*.class
+
+# ignore the contens of the binary directory
+# but keep the empty directory
+bin/*
+!bin/empty
+
+# ignore the contens of the doc directory
+# but keep the empty directory
+doc/*
+!doc/empty

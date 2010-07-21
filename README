@@ -1,0 +1,144 @@
+/======================================================================\
+|                    GdI Samegame Project SS 2010                      |
+\======================================================================/
+
+/======================================================================\
+| German Game Description:                                             |
+| Im Spiel SameGame geht es darum, ein Spielfeld gefüllt mit           |
+| Spielsteinen unterschiedlicher Farbe leerzuräumen. Dazu können       |
+| schrittweise zusammenhängende Felder aus Steinen gleicher Farbe      |
+| entfernt werden. Üblicherweise müssen mindestens zwei Steine         |
+| gleicher Farbe ein Feld bilden—es kann aber auch eine andere Anzahl  |
+| eingestellt werden. Damit Steine als zusammenhängend gelten, müssen  |
+| sie sich an einer Seite berühren, also horizontal oder vertikal      |
+| benachbart sind. Das Berühren von Ecken reicht nicht. Nachdem ein    |
+| Feld von Steinen entfernt wurde, werden die entstandenen Lücken      |
+| durch andere Steine aufgefüllt, indem die über einem entfernten      |
+| Spielstein liegenden Spielsteine um ein Feld nach unten fallen. Beim |
+| Entfernen mehrerer übereinander liegender Spielsteine fallen die     |
+| darüber liegenden Steine entsprechend um die gleiche Anzahl Felder   |
+| herab. Ist eine komplette Spalte leergeräumt, rücken die Steine von  |
+| rechts nach links nach.                                              |
+|                                                                      |
+| Ein Spiel ist beendet, wenn das komplette Spielfeld leer ist oder    |
+| kein Zug möglich ist, weil es keine zusammenhängenden Felder von     |
+| gleichfarbigen Steinen mehr gibt.                                    |
+|                                                                      |
+| Das Ziel des Spiels ist es, eine möglichst hohe Punktzahl zu         |
+| erreichen. Für jedes Level gibt es eine Zeitvorgabe. Man kann das    |
+| Spiel auch nach Ablauf der Zeit weiterspielen. Jedoch erhält man     |
+| dann weniger Punkte. Analog erhält man für frühzeitiges Beenden      |
+| Zusatzpunkte.                                                        |
+\======================================================================/
+
+/======================================================================\
+| Road-Map:                                                            |
+| This Project is developped with 6 Milestones:                        |
+| Minimum-Release: a bare minimum of functionality to run the          |
+| application                                                          |
+| Extension-Step-1-Release: based on the Minimum-Release with some     |
+| extra functionallity like the parsing of extra level information or  |
+| gamestate saving                                                     |
+| Extension-Step-2-Release: based on the Extension-Step-1-Release with |
+| additional features like a highscore list and gamestate undo/redo    |
+| functionallity                                                       |
+| Extension-Step-3-Release: based on the Extension-Step-2-Release with |
+| additional features like a keybord controlls, and a level Generator  |
+| function                                                             |
+| Bonus-Extension-Step-Release: a step based on Extension-Step-3-Rel.  |
+| with bonus features like Sound and I18N                              |
+| Final-Release: a Release with all functionallity and features of the |
+| previous Releases. This Release must be testet from outstanding      |
+| People before the project can be estimate by the tutor               |
+|                                                                      |
+| All the mile stones are tagged in the git version history in the     |
+| main branch. There is no time plan for the releases                  |
+\======================================================================/
+
+/======================================================================\
+| Project Directory Strucure:                                          |
+|       Directorys:                                                    |
+|         bin/  ->   place where all the java binarys are compiled     |
+|                    to                                                |
+|         doc/  ->   place where the java-doc is compiled to           |
+|         lib/  ->   place where the reference librarys could be       |
+|                    found(eg. JUnit[version].jar, etc.)               |
+|         src/  ->   place where the sourcecode of the project is      |
+|                    located (for package-structur see the generated   |
+|                    java-doc in doc/)                                 |
+|        .git/  ->   git repository directory                          |
+|         uml/  ->   place where the generated uml diagramms are found |
+|                                                                      |
+|       Top-Level Control-Files:                                       |
+|   .classpath  ->   .classpath file needed from eclipse to            |
+|                    locate external jar's etc.                        |
+|     .project  ->   Eclipse Project informations                      |
+|   .gitignore  ->   File which contains the informations              |
+|                    over the from git ignored files                   |
+|    build.xml  ->   Ant-Build-File with various targets               |
+|       README  ->   this file                                         |
+\======================================================================/
+
+/======================================================================\
+| Git-Repository Politics:                                             |
+| to keep a clean version a generateable content is ignored, like all  |
+| java-bytecode, all java-doc-files, generateable umldiagramms and so  |
+| on. This project is based on a an eclipse project and contains that  |
+| configuration files. If you use your own IDE wich haves its own      |
+| configuration files, please be sure to don't commit it. You can put  |
+| the name of those files in a exclude file (.git/info/exclude) in     |
+| your local repos.                                                    |
+|                                                                      |
+| Each new Release should be developped in it's own branch and then    |
+| merged into the main branch, so that this branch just contains the   |
+| last stable release.                                                 |
+\======================================================================/
+
+/======================================================================\
+| .gitignore-File:                                                     |
+| keep *.class-files and the whole content of the bin and doc dir      |
+| out of the version history                                           |
+\======================================================================/
+
+/======================================================================\
+| Ant-Build-File:                                                      |
+|      Build Targets:                                                  |
+|      compile  ->   compile the whole java sourcode from the          |
+|                    directory src tho bin                             |
+|          doc  ->   generate javadoc to the doc directory             |
+|        clean  ->   clean the bin and src directory                   |
+|                                                                      |
+|      Usage:                                                          |
+|      in Top-Level dir.: ant compile                                  |
+\======================================================================/
+
+/======================================================================\
+| Used 3rd-partys librarys:                                            |
+|  junit-4.8.2  ->   A Javacode Testing-Framework                      |
+|                    http://www.junit.org/                             |
+|                    it is distributed under Common Public License:    |
+|                    http://junit.sourceforge.net/cpl-v10.html         |
+|                                                                      |
+| UmlGraph-5.3  ->   UMLGraph allows the declarative specification     |
+|                    and drawing of UML class and sequence diagrams.   |
+|                    it is distributed under the BSD license           |
+|         http://www.opensource.org/licenses/bsd-license.html          |
+\======================================================================/
+
+/======================================================================\
+| Code-Style-Conventions:                                              |
+| Please keep your code clean and pretty.                              |
+| - For readabillty don't let  your code lines be longer than 72       |
+|   characters.                                                        |
+| - please formate very big functions like this:                       |
+|                                                                      |
+|   @Override                                                          |
+|   public static int foo(bar a,                                       |
+|                         bar b,                                       |
+|                         bar c)                                       |
+|        throws FooBarException {                                      |
+|        // a free line                                                |
+|        // contents ....                                              |
+|   }                                                                  |
+|                                                                      |
+\======================================================================/

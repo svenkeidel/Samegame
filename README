@@ -106,10 +106,17 @@
 |      compile  ->   compile the whole java sourcode from the          |
 |                    directory src tho bin                             |
 |          doc  ->   generate javadoc to the doc directory             |
+|  doc-private  ->   generate javadoc also for private classes         |
 |        clean  ->   clean the bin and src directory                   |
 |                                                                      |
-|      Usage:                                                          |
-|      in Top-Level dir.: ant compile                                  |
+|      Command-line-Usage:                                             |
+|      in Top-Level dir.: ant [target]                                 |
+|                                                                      |
+|      Eclipse-Usage:                                                  |
+|           - Right-Click on the build.xml file                        |
+|           - Run-As                                                   |
+|           - 2 Ant Build ...                                          |
+|           - select targets and click on run                          |
 \======================================================================/
 
 /======================================================================\

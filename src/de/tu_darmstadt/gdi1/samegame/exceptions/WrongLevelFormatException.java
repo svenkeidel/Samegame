@@ -1,4 +1,4 @@
-package de.tu_darmstadt.gdi.samegame.exceptions;
+package de.tu_darmstadt.gdi1.samegame.exceptions;
 
 public class WrongLevelFormatException extends Exception{
 

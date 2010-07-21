@@ -17,13 +17,29 @@
 		<touch file="${build}/empty"/>
 	</target>
 
+	<target name="doc-private"
+		description="generate the javadoc" >
+		<javadoc 
+			sourcepath="${src}"
+			destdir="${doc}"
+			classpath="${src}:${lib}/junit-4.8.2.jar"
+			private="true"
+			author="false"
+			windowtitle="GdI-Projekt SS2010 - Same Game">
+				<link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+		</javadoc>
+	</target>
+
 	<target name="doc"
 		description="generate the javadoc" >
 		<javadoc 
 			sourcepath="${src}"
 			destdir="${doc}"
-			author="true"
-			windowtitle="Java Sourcecode - Informatik Studium Tu-Darmstadt"/>
+			classpath="${src}:${lib}/junit-4.8.2.jar"
+			author="false"
+			windowtitle="GdI-Projekt SS2010 - Same Game">
+				<link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+		</javadoc>
 	</target>
 
 	<target 

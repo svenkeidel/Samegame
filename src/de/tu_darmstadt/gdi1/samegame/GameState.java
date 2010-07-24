@@ -4,7 +4,7 @@ import javax.swing.undo.AbstractUndoableEdit;
 
 class GameState extends AbstractUndoableEdit implements Cloneable{
 
-	private byte[][] fieldState;
+	private Byte[][] fieldState;
 	private int points; 
 
 	/**
@@ -13,10 +13,10 @@ class GameState extends AbstractUndoableEdit implements Cloneable{
 	 * @param fieldState the current field state 
 	 * @param points the reached points for the current state
 	 */
-	public GameState(byte[][] fieldState, int points){
-		this.fieldState = new byte[fieldState.length][fieldState[0].length];
+	public GameState(Byte[][] fieldState, int points){
+		this.fieldState = new Byte[fieldState.length][fieldState[0].length];
 		for(int i=0; i<fieldState.length; i++)
-			System.arraycopy(fieldState, 0, this.fieldState, 0, fieldState[i].length);
+			System.arraycopy(fieldState[i], 0, this.fieldState[i], 0, fieldState[i].length);
 		this.points = points;
 	}
 
@@ -25,10 +25,10 @@ class GameState extends AbstractUndoableEdit implements Cloneable{
 	 *
 	 * @return The field state.
 	 */
-	public byte[][] getFieldState(){
-		byte[][] fieldCopy = new byte[fieldState.length][fieldState[0].length];
+	public Byte[][] getFieldState(){
+		Byte[][] fieldCopy = new Byte[fieldState.length][fieldState[0].length];
 		for(int i=0; i<fieldState.length; i++)
-			System.arraycopy(fieldState, 0, fieldCopy, 0, fieldState[i].length);
+			System.arraycopy(fieldState[i], 0, fieldCopy[i], 0, fieldState[i].length);
 		return fieldCopy;
 	}
 
@@ -37,7 +37,7 @@ class GameState extends AbstractUndoableEdit implements Cloneable{
 	 *
 	 * @param fieldState The fieldState.
 	 */
-	public void setFieldState(byte[][] fieldState){
+	public void setFieldState(Byte[][] fieldState){
 		this.fieldState = fieldState;
 	}
 
@@ -62,4 +62,15 @@ class GameState extends AbstractUndoableEdit implements Cloneable{
 	public Object clone() throws CloneNotSupportedException {
 		return super.clone();
 	}
+	
+	public String toString(){
+		StringBuffer out = new StringBuffer();
+		for(int i = 0; i<fieldState.length; i++){
+			for(int j = 0; j<fieldState[i].length; j++)
+				out.append(fieldState[i][j]);
+			out.append("\n");
+		}
+		return out.toString();
+	}
+	
 }

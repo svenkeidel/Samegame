@@ -5,6 +5,7 @@ import de.tu_darmstadt.gdi1.samegame.tests.students.testcases.TestGenerator;
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import junit.textui.TestRunner;
 
 public class SameGameTestsuiteExtended3 {
 
@@ -19,4 +20,7 @@ public class SameGameTestsuiteExtended3 {
 		return suite;
 	}
 
+	public static void main(String[] args){
+		TestRunner.runAndWait(suite());
+	}
 }

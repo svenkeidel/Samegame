@@ -89,7 +89,7 @@ class HighscoreEntry implements Comparable<HighscoreEntry>{
 		return "###name:"+name+"|points:"+points+"|date:"+df.format(date)+"|rem_time:12";
 	}
 
-	private void parseHighscoreEntry(LineNumberReader line, Scanner s, File f)
+	private void parseHighscoreEntry(LineNumberReader line, Scanner s)
 		throws WrongLevelFormatException{
 
 		s.next("^###");
@@ -113,8 +113,8 @@ class HighscoreEntry implements Comparable<HighscoreEntry>{
 			for(int j=i+1; j<5; j++)
 				if(infos[i].equals(infos[j]))
 					throw new WrongLevelFormatException(
-							"wrong level format while parsing HighscoreList in File " 
-							+f.toString()+" at line "+line.getLineNumber()+": dublicated "
+							"wrong level format while parsing HighscoreList " 
+							+"from string at line "+line.getLineNumber()+": dublicated "
 							+"level informations");
 		
 		for(int i=0; i<5; i++){

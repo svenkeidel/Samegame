@@ -6,6 +6,7 @@ import de.tu_darmstadt.gdi1.samegame.tests.students.testcases.RemoveStoneTest;
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import junit.textui.TestRunner;
 
 public class SameGameTestsuiteMinimal {
 
@@ -19,4 +20,7 @@ public class SameGameTestsuiteMinimal {
 		return suite;
 	}
 
+	public static void main(String[] args){
+		TestRunner.runAndWait(suite());
+	}
 }

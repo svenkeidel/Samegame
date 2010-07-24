@@ -2,6 +2,7 @@ package de.tu_darmstadt.gdi1.samegame.tests.students.suites;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import junit.textui.TestRunner;
 
 public class SameGameTestSuiteAll {
 	
@@ -17,6 +18,10 @@ public class SameGameTestSuiteAll {
 		suite.addTest(de.tu_darmstadt.gdi1.samegame.tests.students.suites.SameGameTestsuiteExtended3.suite());
 		//$JUnit-END$
 		return suite;
+	}
+	
+	public static void main(String[] args){
+		TestRunner.runAndWait(suite());
 	}
 
 }

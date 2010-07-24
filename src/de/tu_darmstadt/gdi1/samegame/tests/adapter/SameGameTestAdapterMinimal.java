@@ -2,6 +2,7 @@ package de.tu_darmstadt.gdi1.samegame.tests.adapter;
 
 import de.tu_darmstadt.gdi1.samegame.Level;
 import de.tu_darmstadt.gdi1.samegame.SameGameViewer;
+import de.tu_darmstadt.gdi1.samegame.exceptions.WrongLevelFormatException;
 
 import javax.swing.event.ChangeListener;
 
@@ -39,7 +40,6 @@ public class SameGameTestAdapterMinimal {
 	 */
 	public SameGameTestAdapterMinimal() {
 		viewer = new SameGameViewer();
-		level = new Level(viewer);
 	}
 	
 	
@@ -55,7 +55,11 @@ public class SameGameTestAdapterMinimal {
 	 * @see #isCorrectLevel()
 	 */
 	public void loadLevelFromString(String levelstring) {
-		//TODO fill stub.
+		try{
+			level = new Level(levelstring);
+		}catch (WrongLevelFormatException e){
+			
+		}
 	}
 	
 	/** 
@@ -77,8 +81,7 @@ public class SameGameTestAdapterMinimal {
 	 * @see #isCorrectLevel()
 	 */
 	public String getLevelAsStringWithoutExtraInfo() {
-		//TODO fill stub.
-		return null;
+		return level.toString();
 	}
 	
 	/** 
@@ -94,8 +97,7 @@ public class SameGameTestAdapterMinimal {
 	 * @see #getLevelAsStringWithoutExtraInfo()
 	 */
 	public boolean isCorrectLevel() {
-		//TODO fill stub.
-		return false;
+		return level.validateLevel(level.getFieldState());
 	}
 	
 	/**
@@ -104,8 +106,7 @@ public class SameGameTestAdapterMinimal {
 	 * @return true, if in the current level no further move can be done
 	 */
 	public boolean isFinished() {
-		//TODO fill stub.
-		return false;
+		return level.isFinished();
 	}
 	
 	/**
@@ -136,7 +137,6 @@ public class SameGameTestAdapterMinimal {
 	 *         valid point; etc)
 	 */
 	public boolean cellSelected(int x, int y) {
-		//TODO fill stub.
-		return false;
+		return level.removeable(level.getFieldState(), y, x);
 	}
 }

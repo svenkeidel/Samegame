@@ -8,6 +8,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.LineNumberReader;
 import java.io.BufferedReader;
+import java.io.StringReader;
+import java.io.IOException;
 
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -66,6 +68,24 @@ public class Level {
 	 * to the level file after it is updated
 	 */
 	private Highscore highscore;
+
+
+
+	// Pattern for additional level information
+	private static final Pattern ADITTIONAL_LEVEL_INF = 
+		Pattern.compile("^###(target_time:\\d*|min_stones:\\d*)"
+				+"(\\|(target_time:\\d*|min_stones:\\d*))?$", Pattern.MULTILINE);
+
+	// Pattern for highscore entrys
+	private static final Pattern HIGHSCORE_ENTRY =
+		Pattern.compile(
+				// a "###" at the beginning of the line with one of the highscore
+				// informations like (name|points|date|remaining time)
+				"^###(name:(\\w|\\s)*|points:\\d*|date:\\d\\d\\.\\d\\d\\.\\d{4} \\d\\d;\\d\\d;\\d\\d|rem_time:\\d*)"
+				// With a following "|" and another highscore information
+				+"(\\|(name:(\\w|\\s)*|points:\\d*|date:\\d\\d\\.\\d\\d\\.\\d{4} \\d\\d;\\d\\d;\\d\\d|rem_time:\\d*)){3}$", 
+				Pattern.MULTILINE);
+
 	////////////////////END/Class/Attributes//////////////////////////
 
 	
@@ -87,9 +107,9 @@ public class Level {
 	 * @param changeListener the listener from the view
 	 */
 	public Level(File f, ChangeListener changeListener)
-		throws FileNotFoundException, WrongLevelFormatException{
+		throws FileNotFoundException, WrongLevelFormatException, IOException{
 
-		parseLevel(f);
+		storeLevel(f);
 
 		init(changeListener);
 	}
@@ -105,7 +125,7 @@ public class Level {
 	 */
 	public Level(int targetTime, 
 				 int minStones,
-				 byte[][] field, 
+				 Byte[][] field, 
 				 ChangeListener changeListener){
 
 		this.targetTime = targetTime;
@@ -114,6 +134,16 @@ public class Level {
 		currentGameState = new GameState(field, 0);
 
 		init(changeListener);
+	}
+
+	/**
+	 * Construct a level from a String. The function parses the string.
+	 * if the level isn't valide, it throws a WrongLevelFormatException
+	 * @param levelstring the string to be load
+	 * @throws WrongLevelFormatException
+	 */
+	public Level(String levelstring) throws WrongLevelFormatException{
+		loadLevelFromString(levelstring);
 	}
 
 	/**
@@ -148,7 +178,7 @@ public class Level {
 	 * gets a copy of the current field state
 	 * @return a copy of the current field state
 	 */
-	public byte[][] getFieldState(){
+	public Byte[][] getFieldState(){
 		return currentGameState.getFieldState();
 	}
 
@@ -246,7 +276,7 @@ public class Level {
 		int rows = 6 + r.nextInt(25);
 		int cols = 5 + r.nextInt(16);
 
-		byte[][] level = new byte[rows][cols];
+		Byte[][] level = new Byte[rows][cols];
 
 		int numOfColors = 2 + r.nextInt(4);
 		this.minStones = 2 + r.nextInt(4);
@@ -254,47 +284,62 @@ public class Level {
 		do{
 			for(int i = 0; i<rows; i++)
 				for(int j=0; j<cols; j++)
-					level[i][j] = (byte) (1 + r.nextInt(numOfColors+1));
-		}while(!validateLevelSemantical(level, numOfColors));
+					level[i][j] = new Byte((byte) (1 + r.nextInt(numOfColors+1)));
+		}while(!validateLevel(level));
 
 		this.targetTime = rows * cols;
 
 		currentGameState = new GameState(level, 0);
 	}
 	
+	public boolean validateLevelSyntactical(Byte[][] level){
+		for(int i = 0; i<rows; i++)
+			for(int j=0; j<cols; j++)
+				if(level[i][j] < 1 || level[j][])
+
+		return true;
+	}
+
 	/**
 	 * check a level for semantical correctness, that means that it
 	 * returns false if there are not enough stones of each color or 
 	 * none removable stonegroup
 	 * @return true if it is a semantical correct level
 	 */
-	private boolean validateLevelSemantical(byte[][] level, int numOfCol){
-		int[] colorSpread = new int[numOfCol];
-
+	public boolean validateLevelSemantical(Byte[][] level){
 		int rows = level.length;
 		int cols = level[0].length;
 
+		int[] colorSpread = new int[5];
+		// check if the level just contains values in range [1, 5]
+		for(int i = 0; i<rows; i++)
+			for(int j=0; j<cols; j++)
+				colorSpread[level[i][j]-1]++;
+		
+		for(int i = 0; i<colorSpread.length; i++)
+			if(colorSpread[i] < minStones && colorSpread[i] != 0)
+				return false;
+
+		// check if the level contains minimum one removable element
 		boolean removableExists = false;
 		for(int i = 0; i<rows; i++)
-			for(int j=0; j<cols; j++){
-				colorSpread[level[i][j]-1]++;
-				if(!removableExists && removeable(i, j))
+			for(int j=0; j<cols; j++)
+				if(!removableExists && removeable(level, i, j))
 					removableExists = true;
-			}
 
 		if(!removableExists)
 			return false;
 
 		for(int i = 0; i<colorSpread.length; i++)
-			if(colorSpread[i] < minStones)
+			if(colorSpread[i] < minStones && colorSpread[i] != 0)
 				return false;
 
 		return true;
 	}
 
 	/**
-	 * function wich parses a level from a file.
-	 * the File !!!must!!! have the following format:<br>
+	 * function wich parses a level from a String.
+	 * the string !!!must!!! have the following format:<br>
 	 * a matrix with [6,30] columns and [5,20] rows:<br>
 	 * 4232342322123<br>
 	 * 6433456532345<br>
@@ -306,96 +351,82 @@ public class Level {
 	 * and finally maximal 10 highscore entrys in the form:<br>
 	 * ###name:xyz|points:88888|date:23.05.2010 23;59;12|rem_time:123
 	 * @param f the file wich should be parsed
-	 * @throws FileNotFoundException if the given file don't exists
 	 * @throws WrongLevelFormatException if the level is not in the
 	 * described format
 	 */
-	private void parseLevel(File f) 
-		throws FileNotFoundException, WrongLevelFormatException{
-		Scanner s;
-		try{
-			LineNumberReader line = 
-				new LineNumberReader(
-						new BufferedReader(
-							new FileReader(f)));
-
-			s = new Scanner(line);
-			
-			Vector<Byte[]> parsedLevel = new Vector<Byte[]>();
-
-			int cols;
-			
-			// check the first line if it is the right format
-			String parsedLine = parseLine("^\\d{6,30}$", line, s, f);
-			cols = parsedLine.length();
-			parsedLevel.add(parseByteDigits(parsedLine));
-
-			// there must be a minimum of 5 lines
-			while(line.getLineNumber() < 5){
-				parsedLine = parseLine("^\\d{"+cols+"}$", line, s, f);
-				parsedLevel.add(parseByteDigits(parsedLine));
-			}
-
-			// the field may have maximal 20 lines
-			while(line.getLineNumber() < 20 && s.hasNext("^\\d{"+cols+"}$")){
-				parsedLine = s.nextLine();
-				parsedLevel.add(parseByteDigits(parsedLine));
-			}
-			
-			byte[][] field = new byte[line.getLineNumber()][cols];
-			parsedLevel.toArray(field);
-			
-			this.currentGameState = new GameState(field, 0);
-
-			// sets the additional level information to default values which are
-			// overwritten if there were scanned others
-			this.targetTime = line.getLineNumber()*cols;
-			this.minStones = 2;
-
-			// if there are additional level information or highscore entrys
-			if(s.hasNextLine()){
-				parsedLine = s.nextLine();
-
-				// if there are additional level information
-				if(s.hasNext("^###(target_time:\\d*|min_stones:\\d*)"
-						   +"(\\|(target_time:\\d*|min_stones:\\d*))?$")){
-					parseAdditionalLevelInf(line, s, f);
-				}
-
-				// if there are highscore entrys
-				else if(s.hasNext(
-						"^###(name:(\\w|\\s)*|points:\\d*|date:\\d\\d\\.\\d\\d\\.\\d{4} \\d\\d;\\d\\d;\\d\\d|rem_time:\\d*)"
-						+"(\\|(name:(\\w|\\s)*|points:\\d*|date:\\d\\d\\.\\d\\d\\.\\d{4} \\d\\d;\\d\\d;\\d\\d|rem_time:\\d*)){3}$")){ 
-					this.highscore = new Highscore(line, s, f);
-				}
-				else
-					throw new WrongLevelFormatException(
-							"wrong level format while parsing " +f.toString()+" in line "
-							+line.getLineNumber()+": "+parsedLine);
-
-			}
-
-			s.close();
-		}catch(FileNotFoundException e){
-			throw e;
-		}
-	}
-
-	private String parseLine(String pattern, LineNumberReader line, Scanner s, File f) 
+	public void loadLevelFromString(String levelString) 
 		throws WrongLevelFormatException{
-		if(!s.hasNextLine())
-			throw new WrongLevelFormatException(
-					"wrong level format while parsing "+f.toString()+" at line " 
-					+line.getLineNumber()+": missing Level informations");
-		String parsedLine = s.nextLine();
-		if(!Pattern.matches(pattern, parsedLine))
-			throw new WrongLevelFormatException(
-					"wrong level format while parsing "+f.toString()+" at line "
-					+line.getLineNumber()+": "+ parsedLine);
-		return parsedLine;
+		Scanner s;
+		LineNumberReader line = 
+			new LineNumberReader(
+					new StringReader(levelString));
+
+		s = new Scanner(line);
+		
+		Vector<Byte[]> parsedLevel = new Vector<Byte[]>();
+		int cols;
+		
+		final Pattern FIRST_LINE = Pattern.compile("^\\d+$", Pattern.MULTILINE);
+
+		// check the first line if it is the right format
+		String parsedLine = parseLine(FIRST_LINE, "Level Informations needed", line, s);
+		cols = parsedLine.length();
+		parsedLevel.add(parseByteDigits(parsedLine));
+
+		// the following level line must have the length of the first line
+		final Pattern LEVEL_LINE = Pattern.compile("^\\d"+cols+"$", Pattern.MULTILINE);
+
+		// get all other level lines
+		while(s.hasNext(LEVEL_LINE)){
+			parsedLine = 
+				parseLine(LEVEL_LINE, 
+						  "each Level must have the same length "
+						  +"or the line is in an invalid format",
+						  line, s);
+			parsedLevel.add(parseByteDigits(parsedLine));
+		}
+
+		// sets the additional level information to default values which are
+		// overwritten if there were scanned others
+		this.targetTime = line.getLineNumber()*cols;
+		this.minStones = 2;
+
+		// if there are additional level information or highscore entrys
+		if(s.hasNextLine()){
+
+			// if there are additional level information
+			if(s.hasNext(ADITTIONAL_LEVEL_INF)){
+				parseAdditionalLevelInf(line, s);
+			}
+
+			// if there are highscore entrys
+			else if(s.hasNext(HIGHSCORE_ENTRY)){ 
+				this.highscore = new Highscore(line, s);
+			}
+			else
+				throw new WrongLevelFormatException(
+						"unexcepted characters while parsing highscoreList from string"
+						+" at line "+line.getLineNumber()+1);
+		}
+
+		// if everything goes right, set the field to the parsed one
+		Byte[][] field = new Byte[line.getLineNumber()+1][cols];
+		parsedLevel.toArray(field);
+		this.currentGameState = new GameState(field, 0);
+
+		s.close();
 	}
 
-	private void parseAdditionalLevelInf(LineNumberReader line, Scanner s, File f)
+	private String parseLine(Pattern p, String message, LineNumberReader line, Scanner s) 
+		throws WrongLevelFormatException{
+		if(!s.hasNext(p))
+			throw new WrongLevelFormatException(
+					"wrong level format while parsing from string at line "
+					+line.getLineNumber()+": "+ message);
+		return s.next();
+	}
+
+	private void parseAdditionalLevelInf(LineNumberReader line, Scanner s)
 		throws WrongLevelFormatException{
 
 		s.next("^###");
@@ -412,7 +443,7 @@ public class Level {
 			}catch(InputMismatchException e){ // if there is a wrong integer value
 				throw new WrongLevelFormatException(
 						"wrong level format while parsing additional Level informations "+ 
-						"in File "+f.toString()+" in line "+line.getLineNumber()+": " + e.getMessage());
+						"from string in line "+line.getLineNumber()+": " + e.getMessage());
 			}
 			if(s.hasNext("|"))
 				s.next("|");
@@ -423,8 +454,8 @@ public class Level {
 		// if there are duplicated informations
 		if(infos[0].equals(infos[1]))
 			throw new WrongLevelFormatException(
-					"wrong level format while parsing additional Level informations in File "
-					+f.toString()+" in line "+line.getLineNumber()+": dublicated level informations");
+					"wrong level format while parsing additional Level informations "+ 
+					"from string in line "+line.getLineNumber()+": dublicated level informations");
 		
 		// set values to class attributes
 		for(int i=0; i<2; i++){
@@ -435,28 +466,63 @@ public class Level {
 		}
 	}
 
-	private Byte[] parseByteDigits(String s){
+	private Byte[] parseByteDigits(String s) throws NumberFormatException{
 		Byte[] parsedArray = new Byte[s.length()];
 		for(int i=0; i<s.length(); i++)
 			parsedArray[i] = Byte.parseByte(""+s.charAt(i));
 		return parsedArray;
 	}
 
-	public boolean storeLevel(File f){
-		// TODO Write method stub
-		return false;
-	}
-	public boolean restoreLevel(File f){
-		// TODO Write method stub
-		return false;
-	}
-	private boolean validateLevel(){
-		// TODO Write method stub
+	public boolean storeLevel(File f) 
+		throws FileNotFoundException, WrongLevelFormatException, IOException{
 		return false;
 	}
 
-	public boolean removeable(int row, int col){
+	public boolean restoreLevel(File f)
+		throws FileNotFoundException, WrongLevelFormatException, IOException{
+		BufferedReader r = new BufferedReader(new FileReader(f));
+
+		char[] levelString = new char[(int)f.length()];
+		r.read(levelString, 0, (int)f.length());
+		loadLevelFromString(new String(levelString.toString()));
 		return false;
+	}
+
+	public boolean removeable(Byte[][] state, int row, int col){
+		Byte[][] stateCopy = new Byte[state.length][state[0].length];
+		for(int i=0; i<state.length; i++)
+			System.arraycopy(state[i], 0, stateCopy[i], 0, state[i].length);
+		
+		int rows = state.length;
+		int cols = state[0].length;
+		byte color = state[row][col];
+		if(row >= 0 && col >= 0 && row < rows && col < cols){
+			stateCopy[row][col] = 0;
+			floodFill(stateCopy, row -1, col, color);
+			floodFill(stateCopy, row +1, col, color);
+			floodFill(stateCopy, row, col -1, color);
+			floodFill(stateCopy, row, col +1, color);
+		}
+
+		int stonesToRemove = 0;
+		for(int i=0; i<rows; i++)
+			for(int j=0; j<cols; j++)
+				if(stateCopy[i][j] == 0)
+					stonesToRemove++;
+		return stonesToRemove >= minStones;
+	}
+
+	private void floodFill(Byte[][] state, int row, int col, int color){
+
+		int rows = state.length;
+		int cols = state[0].length;
+		if(row >= 0 && col >= 0 && row < rows && col < cols && state[row][col] == color){
+			state[row][col] = 0;
+			floodFill(state, row -1, col, color);
+			floodFill(state, row +1, col, color);
+			floodFill(state, row, col -1, color);
+			floodFill(state, row, col +1, color);
+		}
 	}
 
 	public boolean removeStone(int row, int col){
@@ -476,7 +542,12 @@ public class Level {
 
 	@Override
 	public String toString(){
-		// TODO Write method stub
+		StringBuffer output = new StringBuffer();
+		for(int i=0; i<currentGameState.getFieldState().length; i++){
+			for(int j=0; j<currentGameState.getFieldState()[i].length; j++)
+				output.append(currentGameState.getFieldState()[i][j]);
+			output.append("\n");
+		}
 		return "";
 	}
 }

@@ -14,9 +14,11 @@ class GameState extends AbstractUndoableEdit implements Cloneable{
 	 * @param points the reached points for the current state
 	 */
 	public GameState(Byte[][] fieldState, int points){
+		if(fieldState != null){
 		this.fieldState = new Byte[fieldState.length][fieldState[0].length];
 		for(int i=0; i<fieldState.length; i++)
 			System.arraycopy(fieldState[i], 0, this.fieldState[i], 0, fieldState[i].length);
+		}
 		this.points = points;
 	}
 
@@ -26,10 +28,14 @@ class GameState extends AbstractUndoableEdit implements Cloneable{
 	 * @return The field state.
 	 */
 	public Byte[][] getFieldState(){
-		Byte[][] fieldCopy = new Byte[fieldState.length][fieldState[0].length];
-		for(int i=0; i<fieldState.length; i++)
-			System.arraycopy(fieldState[i], 0, fieldCopy[i], 0, fieldState[i].length);
-		return fieldCopy;
+		if(fieldState == null)
+			return null;
+		else{
+			Byte[][] fieldCopy = new Byte[fieldState.length][fieldState[0].length];
+			for(int i=0; i<fieldState.length; i++)
+				System.arraycopy(fieldState[i], 0, fieldCopy[i], 0, fieldState[i].length);
+			return fieldCopy;
+		}
 	}
 
 	/**
@@ -64,6 +70,9 @@ class GameState extends AbstractUndoableEdit implements Cloneable{
 	}
 	
 	public String toString(){
+		if(fieldState == null)
+			return null;
+
 		StringBuffer out = new StringBuffer();
 		for(int i = 0; i<fieldState.length; i++){
 			for(int j = 0; j<fieldState[i].length; j++)

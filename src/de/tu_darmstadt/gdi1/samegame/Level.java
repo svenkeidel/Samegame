@@ -3,6 +3,7 @@ package de.tu_darmstadt.gdi1.samegame;
 import de.tu_darmstadt.gdi1.samegame.exceptions.WrongLevelFormatException;
 import de.tu_darmstadt.gdi1.samegame.highscore.Highscore;
 import static de.tu_darmstadt.gdi1.samegame.highscore.Highscore.HIGHSCORE_ENTRY;
+import de.tu_darmstadt.gdi1.samegame.exceptions.ParameterOutOfRangeException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,14 +15,12 @@ import java.io.IOException;
 
 import java.util.Scanner;
 import java.util.regex.Pattern;
-import java.util.NoSuchElementException;
 import java.util.Vector;
 import java.util.Random;
 
-import java.util.InputMismatchException;
-
 import javax.swing.undo.CompoundEdit;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
 
 
 /**
@@ -86,7 +85,8 @@ public class Level {
 	/**
 	 * Pattern for the first line of a levelstring
 	 */
-	private static final Pattern FIRST_LINE = Pattern.compile("^[1-5]+$", Pattern.MULTILINE);
+	private static final Pattern FIRST_LINE = 
+		Pattern.compile("^[1-5]+$", Pattern.MULTILINE);
 
 
 	/**
@@ -100,11 +100,11 @@ public class Level {
 	
 	////////////////////////Class/Constructors////////////////////////
 	/**
-	 * Class constructor to instanciate a level and generate a new field
+	 * Class constructor to instanciate a level without a field state
 	 * @param changeListener the listener from the view
 	 */
 	public Level(ChangeListener changeListener){
-		generateLevel();
+		currentGameState = new GameState(null, 0);
 
 		init(changeListener);
 	}
@@ -117,7 +117,8 @@ public class Level {
 	 * @param changeListener the listener from the view
 	 */
 	public Level(File f, ChangeListener changeListener)
-		throws FileNotFoundException, WrongLevelFormatException, IOException{
+		throws FileNotFoundException, WrongLevelFormatException, 
+			   IOException{
 
 		storeLevel(f);
 
@@ -154,8 +155,10 @@ public class Level {
 	 * @param levelstring the string to be load
 	 * @throws WrongLevelFormatException
 	 */
-	public Level(String levelstring) throws WrongLevelFormatException{
+	public Level(String levelstring, ChangeListener changeListener) throws WrongLevelFormatException{
 		loadLevelFromString(levelstring);
+		
+		init(changeListener);
 	}
 
 
@@ -217,7 +220,10 @@ public class Level {
 	 * @param remainingTime the time remaining
 	 * @param name the name of the player
 	 */
-	public void insertHighscore(int points, int remainingTime, String name){
+	public void insertHighscore(int points, 
+								int remainingTime, 
+								String name){
+
 		highscore.insertHighscore(points, remainingTime, name);
 	}
 
@@ -308,8 +314,9 @@ public class Level {
 		do{
 			for(int i = 0; i<rows; i++)
 				for(int j=0; j<cols; j++)
-					level[i][j] = new Byte((byte) (1 + r.nextInt(numOfColors+1)));
-		}while(!validateSemantical(level));
+					level[i][j] = 
+						new Byte((byte) (1 + r.nextInt(numOfColors)));
+		}while(!validateSemantical(level, numOfColors, minStones));
 
 		this.targetTime = rows * cols;
 
@@ -323,26 +330,26 @@ public class Level {
 	 * none removable stonegroup
 	 * @return true if it is a semantical correct level
 	 */
-	private boolean validateSemantical(Byte[][] level){
+	private static boolean validateSemantical(Byte[][] level, 
+											  int numOfCol, 
+											  int minStones){
+
 		int rows = level.length;
 		int cols = level[0].length;
 
-		int[] colorSpread = new int[5];
+		int[] colorSpread = new int[numOfCol];
 		// check if the level just contains values in range [1, 5]
 		for(int i = 0; i<rows; i++)
 			for(int j=0; j<cols; j++)
 				colorSpread[level[i][j]-1]++;
 		
 		for(int i = 0; i<colorSpread.length; i++)
-			if(colorSpread[i] < minStones && colorSpread[i] != 0)
+			if(colorSpread[i] < minStones)
 				return false;
 
 		// check if the level contains minimum one removable element
-		isFinished(level);
-
-		for(int i = 0; i<colorSpread.length; i++)
-			if(colorSpread[i] < minStones && colorSpread[i] != 0)
-				return false;
+		if(isFinished(level, minStones))
+			return false;
 
 		return true;
 	}
@@ -350,31 +357,11 @@ public class Level {
 
 	/**
 	 * validates if a level string is syntactical correct.
-	 * the string !!!must!!! have the following format:<br>
-	 * the level field must be a square and must consist of values 
-	 * between 1 and 5.<br>
-	 *
-	 * Example:<br>
-	 * 4232342322123<br>
-	 * 5433455532345<br>
-	 * 3453421253522<br>
-	 * 1423412534142<br>
-	 * 1523542431233<br>
-	 *
-	 * The addtional level information must have the following format:<br>
-	 * a "###" at the beginning of the line, then one or two of the 
-	 * following informations: target_time:888 AND/OR min_stones:2,
-	 * seperated with a "|".<br>
-	 * Example: ###target_time:888|min_stones:4<br>
-	 *
-	 * The highscore entrys must have the following format:<br>
-	 * a "###" at the beginning of the line, then each of the following
-	 * informations:<br>
-	 * name:xyz AND points:888 AND date:23.05.2010 23;59;12 AND rem_time:123<br>
-	 * seperated with a "|".<br>
-	 * Example: ###name:xyz|points:888|date:23.05.2010 23;59;12|rem_time:123<br>
+	 * @see #loadLevelFromString(String) for the explenation of the 
+	 * level format
 	 * @param levelString
-	 * @throws WrongLevelFormatException if the level is not in the described format
+	 * @throws WrongLevelFormatException if the level is not in the 
+	 * described format
 	 */
 	public static void validateSyntactical(String levelString)
 			throws WrongLevelFormatException{
@@ -400,7 +387,8 @@ public class Level {
 				"Wrong level format while parsing level from "
 				+"string: no level informations available");
 
-		// the following level line must have the length of the first line
+		// the following level line must have the length of the 
+		// first line
 		final String LEVEL_LINE = "^[0-5]{"+cols+"}";
 
 		// check level lines
@@ -412,7 +400,8 @@ public class Level {
 			if(!Pattern.matches(LEVEL_LINE, parsedLine))
 				throw new WrongLevelFormatException(
 						"Wrong level format while parsing level from "
-						+"string in line "+line.getLineNumber()+": "+parsedLine);
+						+"string in line "+line.getLineNumber()+": "
+						+parsedLine);
 			
 			if(s.hasNextLine())
 				parsedLine = s.nextLine();
@@ -429,7 +418,8 @@ public class Level {
 		else if(!Pattern.matches(LEVEL_LINE, parsedLine)){
 			throw new WrongLevelFormatException(
 					"Wrong level format while parsing level from "
-					+"string: unexcepted characters in line "+line.getLineNumber());
+					+"string: unexcepted characters in line "
+					+line.getLineNumber());
 		}
 
 		s.close();
@@ -437,7 +427,8 @@ public class Level {
 
 
 	/**
-	 * parses a level from a String and stores the informations in the object.
+	 * parses a level from a String and stores the informations in the 
+	 * object.
 	 *
 	 * the string !!!must!!! have the following format:<br>
 	 * the level field must be a square and must consist of values 
@@ -459,11 +450,15 @@ public class Level {
 	 * The highscore entrys must have the following format:<br>
 	 * a "###" at the beginning of the line, then each of the following
 	 * informations:<br>
-	 * name:xyz AND points:888 AND date:23.05.2010 23;59;12 AND rem_time:123<br>
+	 * name:xyz AND points:888 AND date:23.05.2010 23;59;12 AND 
+	 * rem_time:123<br>
 	 * seperated with a "|".<br>
-	 * Example: ###name:xyz|points:888|date:23.05.2010 23;59;12|rem_time:123<br>
+	 * Example: ###name:xyz|points:888|date:23.05.2010 23;59;12|
+	 * rem_time:123<br>
+	 *
 	 * @param levelString
-	 * @throws WrongLevelFormatException if the level is not in the described format
+	 * @throws WrongLevelFormatException if the level is not in the 
+	 * described format
 	 */
 	public void loadLevelFromString(String levelString) 
 		throws WrongLevelFormatException{
@@ -492,19 +487,8 @@ public class Level {
 			parsedLevel.add(parseByteDigits(parsedLine));
 		}
 
-		// write the parsed vector to the class attribute
-		Byte[][] field = new Byte[parsedLevel.size()][cols];
-		parsedLevel.toArray(field);
-		
-		if(isFinished(field))
-			throw new WrongLevelFormatException(
-					"Wrong level format while parsing level from "
-					+"string: level is already finished");
-		
-		this.currentGameState = new GameState(field, 0);
-
-		// sets the additional level information to default values which are
-		// overwritten if there were scanned others
+		// sets the additional level information to default values 
+		// which are overwritten if there were scanned others
 		this.targetTime = parsedLevel.size() *cols;
 		this.minStones = 2;
 
@@ -522,6 +506,28 @@ public class Level {
 			}
 		}
 
+		// write the parsed vector to the class attribute
+		Byte[][] field = new Byte[parsedLevel.size()][cols];
+		parsedLevel.toArray(field);
+		
+		boolean emptyLevel = true;
+		for(int i=0; i<field.length; i++)
+			for(int j=0; j<field[i].length; j++)
+				if(field[i][j] != 0){
+					emptyLevel = false;
+					break;
+				}
+		
+		if(emptyLevel)
+			throw new WrongLevelFormatException(
+					"Wrong level format while parsing level from "
+					+"string: empty level");
+			
+		// let the field collaps
+		moveUp(field);
+		
+		this.currentGameState = new GameState(field, 0);
+
 		s.close();
 	}
 
@@ -533,7 +539,9 @@ public class Level {
 	 * in the array
 	 * @throws NumberFormatException if a char isn't parseable
 	 */
-	private Byte[] parseByteDigits(String s) throws NumberFormatException{
+	private Byte[] parseByteDigits(String s) 
+		throws NumberFormatException{
+
 		Byte[] parsedArray = new Byte[s.length()];
 		for(int i=0; i<s.length(); i++)
 			parsedArray[i] = Byte.parseByte(""+s.charAt(i));
@@ -544,9 +552,10 @@ public class Level {
 	/**
 	 * check if the additional level information have the right format
 	 * and if there are no dublicates.
-	 * @param addLevelInf the line with the additional level informations
-	 * @throws WrongLevelFormatException if the addtional level informations
-	 * are not in the excepted format
+	 * @param addLevelInf the line with the additional level 
+	 * informations
+	 * @throws WrongLevelFormatException if the addtional level 
+	 * informations are not in the excepted format
 	 */
 	public static void validateAdditionalLevelInf(String addLevelInf)
 		throws WrongLevelFormatException{
@@ -566,8 +575,9 @@ public class Level {
 				values[i] = Integer.parseInt(s.findInLine("\\d*"));
 			}catch(NumberFormatException e){
 				throw new WrongLevelFormatException(
-						"wrong level format while parsing additional Level informations "+ 
-						"from string :"+ e.getMessage());
+						"wrong level format while parsing additional "
+						+"Level informations from string :"
+						+ e.getMessage());
 			}
 			if(s.hasNext("|"))
 				s.skip("|");
@@ -578,8 +588,9 @@ public class Level {
 		// if there are duplicated informations
 		if(infos[1] != null && infos[0].equals(infos[1]))
 			throw new WrongLevelFormatException(
-					"wrong level format while parsing additional Level informations "+ 
-					"from string: dublicated level informations");
+					"wrong level format while parsing additional Level"
+				    +" informations from string: dublicated level "
+					+"informations");
 	}
 	
 
@@ -616,14 +627,19 @@ public class Level {
 	}
 
 
-
 	public boolean storeLevel(File f) 
-		throws FileNotFoundException, WrongLevelFormatException, IOException{
+		throws FileNotFoundException, 
+			   WrongLevelFormatException, 
+			   IOException{
+
 		return false;
 	}
 
 	public boolean restoreLevel(File f)
-		throws FileNotFoundException, WrongLevelFormatException, IOException{
+		throws FileNotFoundException, 
+			   WrongLevelFormatException, 
+			   IOException{
+
 		BufferedReader r = new BufferedReader(new FileReader(f));
 
 		char[] levelString = new char[(int)f.length()];
@@ -632,67 +648,186 @@ public class Level {
 		return false;
 	}
 
-	public boolean removeable(Byte[][] state, int row, int col){
+
+	public static boolean removeable(Byte[][] state, 
+									 int minStones, 
+									 int row, 
+									 int col) {
+
 		Byte[][] stateCopy = new Byte[state.length][state[0].length];
-		for(int i=0; i<state.length; i++)
+		for (int i = 0; i < state.length; i++)
 			System.arraycopy(state[i], 0, stateCopy[i], 0, state[i].length);
-		
+
 		int rows = state.length;
 		int cols = state[0].length;
 		byte color = state[row][col];
-		if(row >= 0 && col >= 0 && row < rows && col < cols){
-			stateCopy[row][col] = 0;
-			floodFill(stateCopy, row -1, col, color);
-			floodFill(stateCopy, row +1, col, color);
-			floodFill(stateCopy, row, col -1, color);
-			floodFill(stateCopy, row, col +1, color);
+
+		if (row >= 0 && col >= 0 && row < rows && col < cols 
+			&& color != 0) {
+
+			stateCopy[row][col] = 100;
+			countableFloodFill(stateCopy, row - 1, col, color, (byte) 100);
+			countableFloodFill(stateCopy, row + 1, col, color, (byte) 100);
+			countableFloodFill(stateCopy, row, col - 1, color, (byte) 100);
+			countableFloodFill(stateCopy, row, col + 1, color, (byte) 100);
 		}
 
 		int stonesToRemove = 0;
-		for(int i=0; i<rows; i++)
-			for(int j=0; j<cols; j++)
-				if(stateCopy[i][j] == 0)
+		for (int i = 0; i < rows; i++)
+			for (int j = 0; j < cols; j++)
+				if (stateCopy[i][j] == 100)
 					stonesToRemove++;
 		return stonesToRemove >= minStones;
+
 	}
 
-	private void floodFill(Byte[][] state, int row, int col, int color){
+	public boolean removeable(int row, int col) {
+
+		Byte[][] field = currentGameState.getFieldState();
+		return removeable(field, minStones, row, col);
+	}
+
+	private static void countableFloodFill(Byte[][] state, 
+								  int row, 
+								  int col, 
+								  byte color,
+								  byte newCol){
 
 		int rows = state.length;
 		int cols = state[0].length;
-		if(row >= 0 && col >= 0 && row < rows && col < cols && state[row][col] == color){
-			state[row][col] = 0;
-			floodFill(state, row -1, col, color);
-			floodFill(state, row +1, col, color);
-			floodFill(state, row, col -1, color);
-			floodFill(state, row, col +1, color);
+		if (row >= 0 && col >= 0 && row < rows && col < cols
+			&& state[row][col] == color && state[row][col] != 0) {
+
+			state[row][col] = newCol;
+			countableFloodFill(state, row - 1, col, color, newCol);
+			countableFloodFill(state, row + 1, col, color, newCol);
+			countableFloodFill(state, row, col - 1, color, newCol);
+			countableFloodFill(state, row, col + 1, color, newCol);
 		}
 	}
 
-	public boolean removeStone(int row, int col){
-		// TODO Write method stub
+	private static void removeFloodFill(Byte[][] state, 
+								  int row, 
+								  int col, 
+								  byte color,
+								  Integer stonesRemoved){
+
+		int rows = state.length;
+		int cols = state[0].length;
+		if (row >= 0 && col >= 0 && row < rows && col < cols
+			&& state[row][col] == color && state[row][col] != 0) {
+
+			state[row][col] = 0;
+			stonesRemoved++;
+			removeFloodFill(state, row - 1, col, color, stonesRemoved);
+			removeFloodFill(state, row + 1, col, color, stonesRemoved);
+			removeFloodFill(state, row, col - 1, color, stonesRemoved);
+			removeFloodFill(state, row, col + 1, color, stonesRemoved);
+		}
+	}
+
+	public boolean removeStone(int row, int col) 
+		throws ParameterOutOfRangeException{
+
+		Byte[][] state = getFieldState();
+		int rows = state.length;
+		int cols = state[0].length;
+
+		if (row < 0 || row >= rows)
+			throw new ParameterOutOfRangeException(
+					"the \"row\" parameter is out of possible range"
+					+"[0,"+rows+"]: "+row);
+
+		if (col < 0 || col >= cols)
+			throw new ParameterOutOfRangeException(
+					"the \"col\" parameter is out of possible range"
+					+"[0,"+cols+"]: "+col);
+
+		if (state[row][col] == 0)
+			return false;
+
+		byte color = state[row][col];
+
+		if (removeable(state, minStones, row, col)) {
+			Integer pointsMade = 0;
+
+			removeFloodFill(state, row, col, color, pointsMade);
+			moveUp(state);
+			
+			updateState(state, pointsMade);
+
+			return true;
+		}
 		return false;
 	}
-	private void moveUp(){
-		// TODO Write method stub
+
+
+	public static void moveUp(Byte[][] state) {
+
+		int rows = state.length;
+		int cols = state[0].length;
+		int count = rows;
+
+		while (count > 0) {
+			for (int i = rows - 2; i >= 0; i--) {
+				for (int j = cols - 1; j >= 0; j--) {
+					if (state[i + 1][j] == 0 && state[i][j] != 0) {
+						state[i + 1][j] = state[i][j];
+						state[i][j] = 0;
+					}
+				}
+			}
+			count--;
+		}
+
+		for (int i = 0; i <= cols - 2; i++) {
+			if (state[rows - 1][i] == 0) {
+				for (int j = 0; j < rows; j++) {
+					state[j][i] = state[j][i + 1];
+					state[j][i + 1] = 0;
+				}
+			}
+		}
+	}
+
+
+	public static boolean isFinished(Byte[][] state, int minStones) {
+		int rows = state.length;
+		int cols = state[0].length;
+
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++) {
+				if (state[i][j] != 0) {
+					if (removeable(state, minStones, i, j))
+						return false;
+				}
+			}
+		}
+		return true;
 	}
 	
-	public boolean isFinished(Byte[][] level){
-		int rows = level.length;
-		int cols = level[0].length;
-		
-		boolean removableExists = false;
-		for(int i = 0; i<rows; i++)
-			for(int j=0; j<cols; j++)
-				if(!removableExists && removeable(level, i, j))
-					removableExists = true;
 
-		if(removableExists)
-			return false;
-		else return true;
+	public boolean isFinished() {
+		if(currentGameState.getFieldState() == null)
+			return true;
+		else{
+			Byte[][] state = currentGameState.getFieldState();
+			return isFinished(state, minStones);
+		}
 	}
-	private void updatePoints(int stonesRemoved){
-		// TODO Write method stub
+
+
+	void updateState(Byte[][] state, int pointsMade){
+
+		int pointsAllready = currentGameState.getPoints();
+
+		currentGameState = 
+			new GameState(state, pointsAllready + pointsMade);
+
+		gameStateHistory.addEdit(currentGameState);
+
+		// notify the viewer that the level state has changed
+		changeListener.stateChanged(new ChangeEvent(this));
 	}
 
 	@Override

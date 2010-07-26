@@ -150,13 +150,13 @@ class HighscoreEntry implements Comparable<HighscoreEntry>{
 				}
 			}catch(NumberFormatException e){
 				throw new WrongLevelFormatException(
-						"wrong level format while parsing HighscoreList from string"
-						+f.toString()+" at line "+line.getLineNumber()+": " 
+						"wrong level format while parsing HighscoreList from string "
+						+"at line "+line.getLineNumber()+": " 
 						+ e.getMessage());
 			}catch(ParseException e){
 				throw new WrongLevelFormatException(
-						"wrong level format while parsing HighscoreList in File "
-						+f.toString()+" at line "+line.getLineNumber()+": " 
+						"wrong level format while parsing HighscoreList from string "
+						+"at line "+line.getLineNumber()+": " 
 						+ e.getMessage());
 			}
 		}

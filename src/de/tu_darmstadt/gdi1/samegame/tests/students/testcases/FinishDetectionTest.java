@@ -18,7 +18,6 @@ import static org.junit.Assert.*;
  */
 public class FinishDetectionTest {
 	
-	
 	String level_initial = "123\n" + "312";
 	
 	String level_trivial = "1111\n" + "3232";

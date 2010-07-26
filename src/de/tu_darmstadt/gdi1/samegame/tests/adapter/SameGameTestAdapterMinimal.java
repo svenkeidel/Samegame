@@ -3,7 +3,9 @@ package de.tu_darmstadt.gdi1.samegame.tests.adapter;
 import de.tu_darmstadt.gdi1.samegame.Level;
 import de.tu_darmstadt.gdi1.samegame.SameGameViewer;
 import de.tu_darmstadt.gdi1.samegame.exceptions.WrongLevelFormatException;
+import de.tu_darmstadt.gdi1.samegame.exceptions.ParameterOutOfRangeException;
 
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 /**
@@ -42,6 +44,7 @@ public class SameGameTestAdapterMinimal {
 	public SameGameTestAdapterMinimal() {
 		viewer = new SameGameViewer();
 		correctLevel = false;
+		level = new Level(viewer);
 	}
 	
 	
@@ -58,7 +61,7 @@ public class SameGameTestAdapterMinimal {
 	 */
 	public void loadLevelFromString(String levelstring) {
 		try{
-			level = new Level(levelstring);
+			level = new Level(levelstring, viewer);
 			correctLevel = true;
 		}catch (WrongLevelFormatException e){
 			correctLevel = false;
@@ -140,6 +143,10 @@ public class SameGameTestAdapterMinimal {
 	 *         valid point; etc)
 	 */
 	public boolean cellSelected(int x, int y) {
-		return level.removeable(level.getFieldState(), y, x);
+		try{
+			return level.removeStone(y, x);
+		}catch(ParameterOutOfRangeException e){
+			return false;
+		}
 	}
 }

@@ -70,6 +70,7 @@ class GameState extends AbstractUndoableEdit implements Cloneable{
 				out.append(fieldState[i][j]);
 			out.append("\n");
 		}
+		out.deleteCharAt(out.length()-1);
 		return out.toString();
 	}
 	

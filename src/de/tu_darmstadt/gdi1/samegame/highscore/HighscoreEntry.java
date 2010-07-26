@@ -4,9 +4,9 @@ import de.tu_darmstadt.gdi1.samegame.exceptions.WrongLevelFormatException;
 
 import java.util.Scanner;
 import java.util.Date;
+import java.util.regex.Pattern;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
-import java.io.File;
 import java.io.LineNumberReader;
 
 class HighscoreEntry implements Comparable<HighscoreEntry>{
@@ -15,6 +15,17 @@ class HighscoreEntry implements Comparable<HighscoreEntry>{
 	private Date date;
 	private String name;
 	private final static SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH;mm;ss");
+
+	// Pattern for highscore entrys
+	public static final Pattern HIGHSCORE_ENTRY =
+		Pattern.compile(
+				// a "###" at the beginning of the line with one of the highscore
+				// informations like (name|points|date|remaining time)
+				"^###(name:(\\w|\\s)*|points:\\d*|date:\\d\\d\\.\\d\\d\\.\\d{4} \\d\\d;\\d\\d;\\d\\d|rem_time:\\d*)"
+				// With a following "|" and another highscore information
+				+"(\\|(name:(\\w|\\s)*|points:\\d*|date:\\d\\d\\.\\d\\d\\.\\d{4} \\d\\d;\\d\\d;\\d\\d|rem_time:\\d*)){3}$", 
+				Pattern.MULTILINE);
+	
 	HighscoreEntry(int points, int remaingTime, Date date, String name){
 		this.points = points;
 		this.remaingTime = remaingTime;
@@ -22,13 +33,13 @@ class HighscoreEntry implements Comparable<HighscoreEntry>{
 		this.name = name;
 	}
 
-	HighscoreEntry(LineNumberReader line, Scanner s, File f)
+	HighscoreEntry(LineNumberReader line, Scanner s)
 		throws WrongLevelFormatException{
 		this.points = 0;
 		this.remaingTime = 0;
 		this.date = new Date();
 		this.name = "";
-		parseHighscoreEntry(line, s, f);
+		parseHighscoreEntry(line, s);
 	}
 
 
@@ -89,6 +100,15 @@ class HighscoreEntry implements Comparable<HighscoreEntry>{
 		return "###name:"+name+"|points:"+points+"|date:"+df.format(date)+"|rem_time:12";
 	}
 
+	public static void validate(String highscoreEntry)
+		throws WrongLevelFormatException{
+		if(HIGHSCORE_ENTRY.matcher(highscoreEntry).matches())
+			throw new WrongLevelFormatException(
+					"wrong level format while parsing HighscoreList "+ 
+					"from String");
+	}
+
+
 	private void parseHighscoreEntry(LineNumberReader line, Scanner s)
 		throws WrongLevelFormatException{
 
@@ -130,7 +150,7 @@ class HighscoreEntry implements Comparable<HighscoreEntry>{
 				}
 			}catch(NumberFormatException e){
 				throw new WrongLevelFormatException(
-						"wrong level format while parsing HighscoreList in File "
+						"wrong level format while parsing HighscoreList from string"
 						+f.toString()+" at line "+line.getLineNumber()+": " 
 						+ e.getMessage());
 			}catch(ParseException e){

@@ -68,7 +68,7 @@ public class LoadLevelFromStringTest {
 	public final void testLoadLevelFromString() {
 		for (String level : correctLevels) {
 			adapter.loadLevelFromString(level);
-			assertTrue("A correct level is wrongly detected as incorrect. Levelstring: " + level, adapter.isCorrectLevel());
+			assertTrue("A correct level is wrongly detected as incorrect. Levelstring: \n" + level, adapter.isCorrectLevel());
 		}
 		for (String level : correctLevelsButOutputCouldDiffer) {
 			adapter.loadLevelFromString(level);

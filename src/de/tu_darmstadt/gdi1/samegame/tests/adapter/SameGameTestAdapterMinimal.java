@@ -34,12 +34,14 @@ public class SameGameTestAdapterMinimal {
 	
 	private Level level;
 	private SameGameViewer viewer;
+	private boolean correctLevel;
 
 	/**
 	 * Use this constructor to initialize everything you need.
 	 */
 	public SameGameTestAdapterMinimal() {
 		viewer = new SameGameViewer();
+		correctLevel = false;
 	}
 	
 	
@@ -57,8 +59,9 @@ public class SameGameTestAdapterMinimal {
 	public void loadLevelFromString(String levelstring) {
 		try{
 			level = new Level(levelstring);
+			correctLevel = true;
 		}catch (WrongLevelFormatException e){
-			
+			correctLevel = false;
 		}
 	}
 	
@@ -97,7 +100,7 @@ public class SameGameTestAdapterMinimal {
 	 * @see #getLevelAsStringWithoutExtraInfo()
 	 */
 	public boolean isCorrectLevel() {
-		return level.validateLevel(level.getFieldState());
+		return correctLevel;
 	}
 	
 	/**

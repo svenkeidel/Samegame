@@ -2,6 +2,7 @@ package de.tu_darmstadt.gdi1.samegame;
 
 import de.tu_darmstadt.gdi1.samegame.exceptions.WrongLevelFormatException;
 import de.tu_darmstadt.gdi1.samegame.highscore.Highscore;
+import static de.tu_darmstadt.gdi1.samegame.highscore.Highscore.HIGHSCORE_ENTRY;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,6 +14,7 @@ import java.io.IOException;
 
 import java.util.Scanner;
 import java.util.regex.Pattern;
+import java.util.NoSuchElementException;
 import java.util.Vector;
 import java.util.Random;
 
@@ -20,6 +22,7 @@ import java.util.InputMismatchException;
 
 import javax.swing.undo.CompoundEdit;
 import javax.swing.event.ChangeListener;
+
 
 /**
  * The Model of the MVC Design pattern. It contains the level data and
@@ -31,17 +34,24 @@ import javax.swing.event.ChangeListener;
 public class Level {
 
 	////////////////////////Class/Attributes//////////////////////////
-	// the time to finish the level
+	/**
+	 * the time to finish the level
+	 */
 	private int targetTime;
 
-	// minimal number of Stones wich can be deleted
+
+	/**
+	 * minimal number of Stones wich can be deleted
+	 */
 	private int minStones;
+
 
 	/**
 	 * the original game state, in order to reset the current state 
 	 * to it
 	 */
 	private GameState ORIGINAL_LEVEL_STATE;
+
 
 	/**
 	 * the current game state. It contains the field state and the
@@ -50,17 +60,20 @@ public class Level {
 	 */
 	private GameState currentGameState;
 
+
 	/**
 	 * a class to manage undo and redo operations on the game state
 	 * @see javax.swing.undo.CompoundEdit
 	 */
 	private CompoundEdit gameStateHistory;
 
+
 	/**
 	 * the listener from the view, wich is used to tell the view to
 	 * update
 	 */
 	private ChangeListener changeListener;
+
 
 	/**
 	 * The Highscore of the Level. It is read from the level file,
@@ -70,22 +83,18 @@ public class Level {
 	private Highscore highscore;
 
 
+	/**
+	 * Pattern for the first line of a levelstring
+	 */
+	private static final Pattern FIRST_LINE = Pattern.compile("^[1-5]+$", Pattern.MULTILINE);
 
-	// Pattern for additional level information
-	private static final Pattern ADITTIONAL_LEVEL_INF = 
-		Pattern.compile("^###(target_time:\\d*|min_stones:\\d*)"
-				+"(\\|(target_time:\\d*|min_stones:\\d*))?$", Pattern.MULTILINE);
 
-	// Pattern for highscore entrys
-	private static final Pattern HIGHSCORE_ENTRY =
-		Pattern.compile(
-				// a "###" at the beginning of the line with one of the highscore
-				// informations like (name|points|date|remaining time)
-				"^###(name:(\\w|\\s)*|points:\\d*|date:\\d\\d\\.\\d\\d\\.\\d{4} \\d\\d;\\d\\d;\\d\\d|rem_time:\\d*)"
-				// With a following "|" and another highscore information
-				+"(\\|(name:(\\w|\\s)*|points:\\d*|date:\\d\\d\\.\\d\\d\\.\\d{4} \\d\\d;\\d\\d;\\d\\d|rem_time:\\d*)){3}$", 
-				Pattern.MULTILINE);
-
+	/**
+	 * Pattern for additional level information
+	 */
+	private static final String ADDITIONAL_LEVEL_INF = 
+		"^###(target_time:\\d*|min_stones:\\d*)"
+	   +"(\\|(target_time:\\d*|min_stones:\\d*))?";
 	////////////////////END/Class/Attributes//////////////////////////
 
 	
@@ -100,6 +109,7 @@ public class Level {
 		init(changeListener);
 	}
 
+
 	/**
 	 * Class constructor to instanciate a level and read the level date
 	 * from a file on the disc
@@ -113,6 +123,7 @@ public class Level {
 
 		init(changeListener);
 	}
+
 
 	/**
 	 * Class constructor to instanciate a level and set specific
@@ -136,6 +147,7 @@ public class Level {
 		init(changeListener);
 	}
 
+
 	/**
 	 * Construct a level from a String. The function parses the string.
 	 * if the level isn't valide, it throws a WrongLevelFormatException
@@ -146,8 +158,10 @@ public class Level {
 		loadLevelFromString(levelstring);
 	}
 
+
 	/**
 	 * helping function to initialize a few class attributes
+	 * @param changeListener the listener from the viewer class
 	 */
 	private void init(ChangeListener changeListener){
 		try{
@@ -174,6 +188,7 @@ public class Level {
 		return currentGameState.getPoints();
 	}
 
+
 	/**
 	 * gets a copy of the current field state
 	 * @return a copy of the current field state
@@ -181,6 +196,7 @@ public class Level {
 	public Byte[][] getFieldState(){
 		return currentGameState.getFieldState();
 	}
+
 
 	/**
 	 * Get a highscore list in form of a two dimensional String array.
@@ -194,6 +210,7 @@ public class Level {
 		return highscore.getHighscoreEntrys();
 	}
 
+
 	/**
 	 * insert a new highscore into the highscore-list of the level
 	 * @param points the points the player has reached
@@ -204,6 +221,7 @@ public class Level {
 		highscore.insertHighscore(points, remainingTime, name);
 	}
 
+
 	/**
 	 * sets the target time in wich the player has to finish the level
 	 * @param targetTime the time the player has to finish the level
@@ -211,6 +229,7 @@ public class Level {
 	void setTargetTime(int targetTime){
 		this.targetTime = targetTime;
 	}
+
 
 	/**
 	 * sets the minimal number of Stones needed to cause remove 
@@ -222,6 +241,8 @@ public class Level {
 	}
 	///////////////////End//Getters//&//Setters///////////////////////
 
+
+	////////////////////////Class/Operations//////////////////////////
 	/**
 	 * Resets the current level state and delete the undo/redo history
 	 */
@@ -237,6 +258,7 @@ public class Level {
 		gameStateHistory.addEdit(currentGameState);
 	}
 
+
 	/**
 	 * undo to the last game state
 	 * @return return true if an undo is possible
@@ -250,6 +272,7 @@ public class Level {
 		}
 	}
 
+
 	/**
 	 * redo to the previous undone action
 	 * @return return true if a redo was possible
@@ -262,6 +285,7 @@ public class Level {
 			return false;
 		}
 	}
+
 
 	/**
 	 * generates a random level.
@@ -285,20 +309,13 @@ public class Level {
 			for(int i = 0; i<rows; i++)
 				for(int j=0; j<cols; j++)
 					level[i][j] = new Byte((byte) (1 + r.nextInt(numOfColors+1)));
-		}while(!validateLevel(level));
+		}while(!validateSemantical(level));
 
 		this.targetTime = rows * cols;
 
 		currentGameState = new GameState(level, 0);
 	}
 	
-	public boolean validateLevelSyntactical(Byte[][] level){
-		for(int i = 0; i<rows; i++)
-			for(int j=0; j<cols; j++)
-				if(level[i][j] < 1 || level[j][])
-
-		return true;
-	}
 
 	/**
 	 * check a level for semantical correctness, that means that it
@@ -306,7 +323,7 @@ public class Level {
 	 * none removable stonegroup
 	 * @return true if it is a semantical correct level
 	 */
-	public boolean validateLevelSemantical(Byte[][] level){
+	private boolean validateSemantical(Byte[][] level){
 		int rows = level.length;
 		int cols = level[0].length;
 
@@ -321,14 +338,7 @@ public class Level {
 				return false;
 
 		// check if the level contains minimum one removable element
-		boolean removableExists = false;
-		for(int i = 0; i<rows; i++)
-			for(int j=0; j<cols; j++)
-				if(!removableExists && removeable(level, i, j))
-					removableExists = true;
-
-		if(!removableExists)
-			return false;
+		isFinished(level);
 
 		for(int i = 0; i<colorSpread.length; i++)
 			if(colorSpread[i] < minStones && colorSpread[i] != 0)
@@ -337,99 +347,251 @@ public class Level {
 		return true;
 	}
 
+
 	/**
-	 * function wich parses a level from a String.
+	 * validates if a level string is syntactical correct.
 	 * the string !!!must!!! have the following format:<br>
-	 * a matrix with [6,30] columns and [5,20] rows:<br>
+	 * the level field must be a square and must consist of values 
+	 * between 1 and 5.<br>
+	 *
+	 * Example:<br>
 	 * 4232342322123<br>
-	 * 6433456532345<br>
-	 * 3453461253526<br>
+	 * 5433455532345<br>
+	 * 3453421253522<br>
 	 * 1423412534142<br>
 	 * 1523542431233<br>
-	 * then a optional line with additional level informations:<br>
-	 * ###target_time:120|min_stones:2<br>
-	 * and finally maximal 10 highscore entrys in the form:<br>
-	 * ###name:xyz|points:88888|date:23.05.2010 23;59;12|rem_time:123
-	 * @param f the file wich should be parsed
-	 * @throws WrongLevelFormatException if the level is not in the
-	 * described format
+	 *
+	 * The addtional level information must have the following format:<br>
+	 * a "###" at the beginning of the line, then one or two of the 
+	 * following informations: target_time:888 AND/OR min_stones:2,
+	 * seperated with a "|".<br>
+	 * Example: ###target_time:888|min_stones:4<br>
+	 *
+	 * The highscore entrys must have the following format:<br>
+	 * a "###" at the beginning of the line, then each of the following
+	 * informations:<br>
+	 * name:xyz AND points:888 AND date:23.05.2010 23;59;12 AND rem_time:123<br>
+	 * seperated with a "|".<br>
+	 * Example: ###name:xyz|points:888|date:23.05.2010 23;59;12|rem_time:123<br>
+	 * @param levelString
+	 * @throws WrongLevelFormatException if the level is not in the described format
 	 */
-	public void loadLevelFromString(String levelString) 
-		throws WrongLevelFormatException{
+	public static void validateSyntactical(String levelString)
+			throws WrongLevelFormatException{
 		Scanner s;
 		LineNumberReader line = 
 			new LineNumberReader(
 					new StringReader(levelString));
 
 		s = new Scanner(line);
-		
-		Vector<Byte[]> parsedLevel = new Vector<Byte[]>();
-		int cols;
-		
-		final Pattern FIRST_LINE = Pattern.compile("^\\d+$", Pattern.MULTILINE);
 
-		// check the first line if it is the right format
-		String parsedLine = parseLine(FIRST_LINE, "Level Informations needed", line, s);
-		cols = parsedLine.length();
-		parsedLevel.add(parseByteDigits(parsedLine));
+		// get the length of the first line
+		if(!s.hasNextLine())			
+			throw new WrongLevelFormatException(
+				"Wrong level format while parsing level from "
+				+"string: no level informations available");
+			
+			
+		String parsedLine = s.nextLine();
+		int cols = parsedLine.length();
+		
+		if(cols == 0)			
+			throw new WrongLevelFormatException(
+				"Wrong level format while parsing level from "
+				+"string: no level informations available");
 
 		// the following level line must have the length of the first line
-		final Pattern LEVEL_LINE = Pattern.compile("^\\d"+cols+"$", Pattern.MULTILINE);
+		final String LEVEL_LINE = "^[0-5]{"+cols+"}";
+
+		// check level lines
+		while(true){
+			
+			if(Pattern.matches("^###.*", parsedLine))
+				break;
+			
+			if(!Pattern.matches(LEVEL_LINE, parsedLine))
+				throw new WrongLevelFormatException(
+						"Wrong level format while parsing level from "
+						+"string in line "+line.getLineNumber()+": "+parsedLine);
+			
+			if(s.hasNextLine())
+				parsedLine = s.nextLine();
+			else break;
+		}
+
+		if(Pattern.matches(ADDITIONAL_LEVEL_INF, parsedLine)){
+			validateAdditionalLevelInf(parsedLine);
+
+			if(s.hasNextLine())
+				Highscore.validate(s.next(".*"));
+		}else if(HIGHSCORE_ENTRY.matcher(parsedLine).matches())
+			Highscore.validate(parsedLine+"\n"+s.next(".*"));
+		else if(!Pattern.matches(LEVEL_LINE, parsedLine)){
+			throw new WrongLevelFormatException(
+					"Wrong level format while parsing level from "
+					+"string: unexcepted characters in line "+line.getLineNumber());
+		}
+
+		s.close();
+	}
+
+
+	/**
+	 * parses a level from a String and stores the informations in the object.
+	 *
+	 * the string !!!must!!! have the following format:<br>
+	 * the level field must be a square and must consist of values 
+	 * between 1 and 5.<br>
+	 *
+	 * Example:<br>
+	 * 4232342322123<br>
+	 * 5433455532345<br>
+	 * 3453421253522<br>
+	 * 1423412534142<br>
+	 * 1523542431233<br>
+	 *
+	 * The addtional level information must have the following format:<br>
+	 * a "###" at the beginning of the line, then one or two of the 
+	 * following informations: target_time:888 AND/OR min_stones:2,
+	 * seperated with a "|".<br>
+	 * Example: ###target_time:888|min_stones:4<br>
+	 *
+	 * The highscore entrys must have the following format:<br>
+	 * a "###" at the beginning of the line, then each of the following
+	 * informations:<br>
+	 * name:xyz AND points:888 AND date:23.05.2010 23;59;12 AND rem_time:123<br>
+	 * seperated with a "|".<br>
+	 * Example: ###name:xyz|points:888|date:23.05.2010 23;59;12|rem_time:123<br>
+	 * @param levelString
+	 * @throws WrongLevelFormatException if the level is not in the described format
+	 */
+	public void loadLevelFromString(String levelString) 
+		throws WrongLevelFormatException{
+
+		// return with an exception if it is an syntactical incorrect
+		// Level	
+		validateSyntactical(levelString);
+
+		Scanner s;
+		LineNumberReader line = 
+			new LineNumberReader(
+					new StringReader(levelString));
+
+		s = new Scanner(line);
+		Vector<Byte[]> parsedLevel = new Vector<Byte[]>();
+
+
+		// get the length of the first line
+		String parsedLine = s.nextLine();
+		int cols = parsedLine.length();
+		parsedLevel.add(parseByteDigits(parsedLine));
 
 		// get all other level lines
-		while(s.hasNext(LEVEL_LINE)){
-			parsedLine = 
-				parseLine(LEVEL_LINE, 
-						  "each Level must have the same length "
-						  +"or the line is in an invalid format",
-						  line, s);
+ 		while(s.hasNextLine() && s.hasNext("\\d*")){
+			parsedLine = s.nextLine();
 			parsedLevel.add(parseByteDigits(parsedLine));
 		}
 
+		// write the parsed vector to the class attribute
+		Byte[][] field = new Byte[parsedLevel.size()][cols];
+		parsedLevel.toArray(field);
+		
+		if(isFinished(field))
+			throw new WrongLevelFormatException(
+					"Wrong level format while parsing level from "
+					+"string: level is already finished");
+		
+		this.currentGameState = new GameState(field, 0);
+
 		// sets the additional level information to default values which are
 		// overwritten if there were scanned others
-		this.targetTime = line.getLineNumber()*cols;
+		this.targetTime = parsedLevel.size() *cols;
 		this.minStones = 2;
 
 		// if there are additional level information or highscore entrys
 		if(s.hasNextLine()){
 
 			// if there are additional level information
-			if(s.hasNext(ADITTIONAL_LEVEL_INF)){
+			if(s.hasNext(ADDITIONAL_LEVEL_INF+".*")){
 				parseAdditionalLevelInf(line, s);
 			}
 
 			// if there are highscore entrys
-			else if(s.hasNext(HIGHSCORE_ENTRY)){ 
+			 if(s.hasNext(HIGHSCORE_ENTRY)){ 
 				this.highscore = new Highscore(line, s);
 			}
-			else
-				throw new WrongLevelFormatException(
-						"unexcepted characters while parsing highscoreList from string"
-						+" at line "+line.getLineNumber()+1);
 		}
-
-		// if everything goes right, set the field to the parsed one
-		Byte[][] field = new Byte[line.getLineNumber()+1][cols];
-		parsedLevel.toArray(field);
-		this.currentGameState = new GameState(field, 0);
 
 		s.close();
 	}
 
-	private String parseLine(Pattern p, String message, LineNumberReader line, Scanner s) 
-		throws WrongLevelFormatException{
-		if(!s.hasNext(p))
-			throw new WrongLevelFormatException(
-					"wrong level format while parsing from string at line "
-					+line.getLineNumber()+": "+ message);
-		return s.next();
+
+	/**
+	 * parses a Level line.
+	 * @param s a line in the level field
+	 * @return an byte array with each char of the string at a position
+	 * in the array
+	 * @throws NumberFormatException if a char isn't parseable
+	 */
+	private Byte[] parseByteDigits(String s) throws NumberFormatException{
+		Byte[] parsedArray = new Byte[s.length()];
+		for(int i=0; i<s.length(); i++)
+			parsedArray[i] = Byte.parseByte(""+s.charAt(i));
+		return parsedArray;
 	}
 
-	private void parseAdditionalLevelInf(LineNumberReader line, Scanner s)
+
+	/**
+	 * check if the additional level information have the right format
+	 * and if there are no dublicates.
+	 * @param addLevelInf the line with the additional level informations
+	 * @throws WrongLevelFormatException if the addtional level informations
+	 * are not in the excepted format
+	 */
+	public static void validateAdditionalLevelInf(String addLevelInf)
 		throws WrongLevelFormatException{
 
-		s.next("^###");
+		Scanner s = new Scanner(addLevelInf);
+
+		s.skip("###");
+
+		String[] infos = new String[2];
+		int[] values = new int[2];
+		
+		// scanning informations
+		for(int i=0; i<2; i++){
+			infos[i] = s.findInLine("(\\w|_)*");
+			s.skip(":");
+			try{
+				values[i] = Integer.parseInt(s.findInLine("\\d*"));
+			}catch(NumberFormatException e){
+				throw new WrongLevelFormatException(
+						"wrong level format while parsing additional Level informations "+ 
+						"from string :"+ e.getMessage());
+			}
+			if(s.hasNext("|"))
+				s.skip("|");
+			else
+				break;
+		}
+		
+		// if there are duplicated informations
+		if(infos[1] != null && infos[0].equals(infos[1]))
+			throw new WrongLevelFormatException(
+					"wrong level format while parsing additional Level informations "+ 
+					"from string: dublicated level informations");
+	}
+	
+
+	/**
+	 * 
+	 */
+	private void parseAdditionalLevelInf(LineNumberReader line, Scanner s) 
+		throws WrongLevelFormatException{
+
+		String parsedLine = s.nextLine();
+
+		validateAdditionalLevelInf(parsedLine);
 
 		String[] infos = new String[2];
 		int[] values = new int[2];
@@ -438,26 +600,13 @@ public class Level {
 		for(int i=0; i<2; i++){
 			infos[i] = s.next("(\\w|_)*");
 			s.next(":");
-			try{
-				values[i] = s.nextInt();
-			}catch(InputMismatchException e){ // if there is a wrong integer value
-				throw new WrongLevelFormatException(
-						"wrong level format while parsing additional Level informations "+ 
-						"from string in line "+line.getLineNumber()+": " + e.getMessage());
-			}
+			values[i] = s.nextInt();
 			if(s.hasNext("|"))
 				s.next("|");
 			else
 				break;
 		}
 		
-		// if there are duplicated informations
-		if(infos[0].equals(infos[1]))
-			throw new WrongLevelFormatException(
-					"wrong level format while parsing additional Level informations "+ 
-					"from string in line "+line.getLineNumber()+": dublicated level informations");
-		
-		// set values to class attributes
 		for(int i=0; i<2; i++){
 			if(infos[i].equals("target_time"))
 				this.targetTime = values[i];
@@ -466,12 +615,7 @@ public class Level {
 		}
 	}
 
-	private Byte[] parseByteDigits(String s) throws NumberFormatException{
-		Byte[] parsedArray = new Byte[s.length()];
-		for(int i=0; i<s.length(); i++)
-			parsedArray[i] = Byte.parseByte(""+s.charAt(i));
-		return parsedArray;
-	}
+
 
 	public boolean storeLevel(File f) 
 		throws FileNotFoundException, WrongLevelFormatException, IOException{
@@ -532,9 +676,20 @@ public class Level {
 	private void moveUp(){
 		// TODO Write method stub
 	}
-	public boolean isFinished(){
-		// TODO Write method stub
-		return false;
+	
+	public boolean isFinished(Byte[][] level){
+		int rows = level.length;
+		int cols = level[0].length;
+		
+		boolean removableExists = false;
+		for(int i = 0; i<rows; i++)
+			for(int j=0; j<cols; j++)
+				if(!removableExists && removeable(level, i, j))
+					removableExists = true;
+
+		if(removableExists)
+			return false;
+		else return true;
 	}
 	private void updatePoints(int stonesRemoved){
 		// TODO Write method stub
@@ -542,12 +697,7 @@ public class Level {
 
 	@Override
 	public String toString(){
-		StringBuffer output = new StringBuffer();
-		for(int i=0; i<currentGameState.getFieldState().length; i++){
-			for(int j=0; j<currentGameState.getFieldState()[i].length; j++)
-				output.append(currentGameState.getFieldState()[i][j]);
-			output.append("\n");
-		}
-		return "";
+		return currentGameState.toString();
 	}
+	///////////////////End//Class/Operations//////////////////////////
 }

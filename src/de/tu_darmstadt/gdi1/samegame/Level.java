@@ -15,6 +15,7 @@ import java.io.IOException;
 
 import java.util.Scanner;
 import java.util.regex.Pattern;
+import java.util.NoSuchElementException;
 import java.util.Vector;
 import java.util.Random;
 
@@ -93,7 +94,7 @@ public class Level {
 	 * Pattern for additional level information
 	 */
 	private static final String ADDITIONAL_LEVEL_INF = 
-		"^###(target_time:\\d*|min_stones:\\d*)"
+		"###(target_time:\\d*|min_stones:\\d*)"
 	   +"(\\|(target_time:\\d*|min_stones:\\d*))?";
 	////////////////////END/Class/Attributes//////////////////////////
 
@@ -238,12 +239,31 @@ public class Level {
 
 
 	/**
+	 * gets the target time in wich the player has to finish the level
+	 * @return the time the player has to finish the level
+	 */
+	public int getTargetTime(){
+		return this.targetTime;
+	}
+
+
+	/**
 	 * sets the minimal number of Stones needed to cause remove 
 	 * operation
 	 * @param minStones the minimal number of Stones for a Remove
 	 */
 	void setMinStones(int minStones){
 		this.minStones = minStones;
+	}
+
+
+	/**
+	 * gets the minimal number of Stones needed to cause remove 
+	 * operation
+	 * @return the minimal number of Stones for a Remove
+	 */
+	public int getMinStones(){
+		return this.minStones;
 	}
 	///////////////////End//Getters//&//Setters///////////////////////
 
@@ -482,7 +502,7 @@ public class Level {
 		parsedLevel.add(parseByteDigits(parsedLine));
 
 		// get all other level lines
- 		while(s.hasNextLine() && s.hasNext("\\d*")){
+		while(s.hasNextLine() && s.hasNext("\\d*")){
 			parsedLine = s.nextLine();
 			parsedLevel.add(parseByteDigits(parsedLine));
 		}
@@ -496,8 +516,8 @@ public class Level {
 		if(s.hasNextLine()){
 
 			// if there are additional level information
-			if(s.hasNext(ADDITIONAL_LEVEL_INF+".*")){
-				parseAdditionalLevelInf(line, s);
+			if(s.hasNext(ADDITIONAL_LEVEL_INF)){
+				parseAdditionalLevelInf(line, s.nextLine());
 			}
 
 			// if there are highscore entrys
@@ -569,18 +589,23 @@ public class Level {
 		
 		// scanning informations
 		for(int i=0; i<2; i++){
-			infos[i] = s.findInLine("(\\w|_)*");
-			s.skip(":");
 			try{
+				infos[i] = s.findInLine("(\\w|_)*");
+				s.skip(":");
 				values[i] = Integer.parseInt(s.findInLine("\\d*"));
+			}catch(NoSuchElementException e){
+				throw new WrongLevelFormatException(
+						"wrong level format while parsing additional "
+						+"Level informations from string :"
+						+ e.getMessage());
 			}catch(NumberFormatException e){
 				throw new WrongLevelFormatException(
 						"wrong level format while parsing additional "
 						+"Level informations from string :"
 						+ e.getMessage());
 			}
-			if(s.hasNext("|"))
-				s.skip("|");
+			if(s.hasNext("\\|.*"))
+				s.skip("\\|");
 			else
 				break;
 		}
@@ -589,7 +614,7 @@ public class Level {
 		if(infos[1] != null && infos[0].equals(infos[1]))
 			throw new WrongLevelFormatException(
 					"wrong level format while parsing additional Level"
-				    +" informations from string: dublicated level "
+					+" informations from string: dublicated level "
 					+"informations");
 	}
 	
@@ -597,32 +622,36 @@ public class Level {
 	/**
 	 * 
 	 */
-	private void parseAdditionalLevelInf(LineNumberReader line, Scanner s) 
+	private void parseAdditionalLevelInf(LineNumberReader line, String additionalLevelInf) 
 		throws WrongLevelFormatException{
 
-		String parsedLine = s.nextLine();
-
-		validateAdditionalLevelInf(parsedLine);
+		validateAdditionalLevelInf(additionalLevelInf);
 
 		String[] infos = new String[2];
 		int[] values = new int[2];
 		
+		Scanner s = new Scanner(additionalLevelInf);
+		
+		s.skip("###");
+		
 		// scanning informations
 		for(int i=0; i<2; i++){
-			infos[i] = s.next("(\\w|_)*");
-			s.next(":");
-			values[i] = s.nextInt();
-			if(s.hasNext("|"))
-				s.next("|");
+			infos[i] = s.findInLine("(\\w|_)*");
+			s.skip(":");
+			values[i] = Integer.parseInt(s.findInLine("\\d*"));
+			if(s.hasNext("\\|.*"))
+				s.skip("\\|");
 			else
 				break;
 		}
 		
 		for(int i=0; i<2; i++){
-			if(infos[i].equals("target_time"))
-				this.targetTime = values[i];
-			else if(infos[i].equals("min_stones"))
-				this.minStones = values[i];
+			if(infos[i] != null){
+				if(infos[i].equals("target_time"))
+					this.targetTime = values[i];
+				else if(infos[i].equals("min_stones"))
+					this.minStones = values[i];
+			}
 		}
 	}
 
@@ -749,10 +778,13 @@ public class Level {
 		byte color = state[row][col];
 
 		if (removeable(state, minStones, row, col)) {
-			Integer pointsMade = 0;
+			Integer elementsRemoved = 0;
 
-			removeFloodFill(state, row, col, color, pointsMade);
+			removeFloodFill(state, row, col, color, elementsRemoved);
 			moveUp(state);
+
+			//TODO right method call
+			int pointsMade = calculatePoints(elementsRemoved, false);
 			
 			updateState(state, pointsMade);
 
@@ -817,6 +849,36 @@ public class Level {
 	}
 
 
+	public static int calculatePoints(int removedElements,
+									  boolean afterTargetTime){
+
+		if(!afterTargetTime)
+			return (int) Math.pow(removedElements, 2);
+		else
+			return (int) (Math.pow(removedElements, 2) / 2.0);
+	}
+
+
+	public static int calculatePointsFinished(int elementsLeft,
+											  int timeLeft,
+											  int initialElements){
+		
+		int additionalPoints = 0;
+
+		if(timeLeft >= 0)
+			additionalPoints += timeLeft;
+		else
+			additionalPoints -= timeLeft;
+		
+		if(elementsLeft > 0)
+			additionalPoints -= elementsLeft;
+		else
+			additionalPoints += initialElements;
+
+		return additionalPoints;
+	}
+
+
 	void updateState(Byte[][] state, int pointsMade){
 
 		int pointsAllready = currentGameState.getPoints();
@@ -829,6 +891,15 @@ public class Level {
 		// notify the viewer that the level state has changed
 		changeListener.stateChanged(new ChangeEvent(this));
 	}
+
+
+	public String additionalLevelInfToString(){
+		StringBuffer out = new StringBuffer();
+		out.append("###target_time:").append(targetTime);
+		out.append("|min_stones:").append(minStones);
+		return out.toString();
+	}
+
 
 	@Override
 	public String toString(){

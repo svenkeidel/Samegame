@@ -34,9 +34,9 @@ import javax.swing.event.ChangeListener;
  */
 public class SameGameTestAdapterMinimal {
 	
-	private Level level;
-	private SameGameViewer viewer;
-	private boolean correctLevel;
+	protected Level level;
+	protected SameGameViewer viewer;
+	protected boolean correctLevel;
 
 	/**
 	 * Use this constructor to initialize everything you need.

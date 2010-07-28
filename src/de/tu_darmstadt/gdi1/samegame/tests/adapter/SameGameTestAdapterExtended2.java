@@ -1,7 +1,10 @@
 package de.tu_darmstadt.gdi1.samegame.tests.adapter;
 
+import de.tu_darmstadt.gdi1.samegame.highscore.*;
+
 import java.text.DateFormat;
 import java.util.Date;
+
 
 
 /**
@@ -18,11 +21,14 @@ import java.util.Date;
  */
 public class SameGameTestAdapterExtended2 extends SameGameTestAdapterExtended1 {
 	
+	Highscore highscore;
+
 	/**
 	 * Use this constructor to initialize everything you need.
 	 */
 	public SameGameTestAdapterExtended2() {
 		super();
+		highscore = new Highscore();
 	}
 
 	/**
@@ -32,7 +38,7 @@ public class SameGameTestAdapterExtended2 extends SameGameTestAdapterExtended1 {
 	 * Do nothing if there is no action to undo in the current level.
 	 */
 	public void undo() {
-		//TODO fill stub.
+		level.undo();
 	}
 
 	/**
@@ -40,7 +46,7 @@ public class SameGameTestAdapterExtended2 extends SameGameTestAdapterExtended1 {
 	 * no action to redo.
 	 */
 	public void redo() {
-		//TODO fill stub.
+		level.redo();
 	}
 
 	
@@ -59,8 +65,8 @@ public class SameGameTestAdapterExtended2 extends SameGameTestAdapterExtended1 {
 	 * 
 	 * @see #getDateAtHighscorePosition(int)
 	 */
-	public void addHighscoreEntry(String playername, double rem_time, Date creation_date, double points ) {
-		//TODO fill stub.
+	public void addHighscoreEntry(String playername, double rem_time, Date creation_date, double points) {
+		highscore.insertHighscore(playername, rem_time, rem_time, creation_date, points);
 	}
 	
 	/** 
@@ -69,15 +75,14 @@ public class SameGameTestAdapterExtended2 extends SameGameTestAdapterExtended1 {
 	 * @return the number of highscore entries
 	 */
 	public int getHighscoreCount() {
-		//TODO fill stub.
-		return 0;
+		return level.getHighscore().length;
 	}
 	
 	/** 
 	 * Clear the highscore store and delete all entries.
 	 */
 	public void resetHighscore() {
-		//TODO fill stub.
+		level.resetHighscore();
 	}
 	
 	/** 
@@ -92,8 +97,7 @@ public class SameGameTestAdapterExtended2 extends SameGameTestAdapterExtended1 {
 	 * or null if the position is invalid 
 	 */
 	public String getPlayernameAtHighscorePosition(int position) {
-		//TODO fill stub.
-		return null;
+		return level.getHighscore()[position][3];
 	}
 	
 	/** 
@@ -108,8 +112,7 @@ public class SameGameTestAdapterExtended2 extends SameGameTestAdapterExtended1 {
 	 * or -1 if the position is invalid 
 	 */
 	public double getTimeAtHighscorePosition(int position) {
-		//TODO fill stub.
-		return 0;
+		return (double) Integer.parseInt(level.getHighscore()[position][1]);
 	}
 
 	/**
@@ -124,8 +127,7 @@ public class SameGameTestAdapterExtended2 extends SameGameTestAdapterExtended1 {
 	 * or -1 if the position is invalid 
 	 */
 	public double getPointsAtHighscorePosition(int position) {
-		//TODO fill stub.
-		return 0;
+		return (double) Integer.parseInt(level.getHighscore()[position][0]);
 	}
 
 	/**

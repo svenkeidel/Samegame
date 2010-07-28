@@ -18,10 +18,13 @@ import java.util.regex.Pattern;
 import java.util.NoSuchElementException;
 import java.util.Vector;
 import java.util.Random;
+import java.util.Date;
 
 import javax.swing.undo.CompoundEdit;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
+
+import org.apache.commons.lang.time.StopWatch;
 
 
 /**
@@ -48,7 +51,7 @@ public class Level {
 
 	/**
 	 * the original game state, in order to reset the current state 
-	 * to it
+	 * to it.
 	 */
 	private GameState ORIGINAL_LEVEL_STATE;
 
@@ -62,7 +65,7 @@ public class Level {
 
 
 	/**
-	 * a class to manage undo and redo operations on the game state
+	 * a class to manage undo and redo operations on the game state.
 	 * @see javax.swing.undo.CompoundEdit
 	 */
 	private CompoundEdit gameStateHistory;
@@ -70,7 +73,7 @@ public class Level {
 
 	/**
 	 * the listener from the view, wich is used to tell the view to
-	 * update
+	 * update.
 	 */
 	private ChangeListener changeListener;
 
@@ -84,27 +87,27 @@ public class Level {
 
 
 	/**
-	 * Pattern for the first line of a levelstring
-	 */
-	private static final Pattern FIRST_LINE = 
-		Pattern.compile("^[1-5]+$", Pattern.MULTILINE);
-
-
-	/**
-	 * Pattern for additional level information
+	 * Pattern for additional level information.
 	 */
 	private static final String ADDITIONAL_LEVEL_INF = 
 		"###(target_time:\\d*|min_stones:\\d*)"
 	   +"(\\|(target_time:\\d*|min_stones:\\d*))?";
-	////////////////////END/Class/Attributes//////////////////////////
 
 	
+	/**
+	 * Stop watch from apache common to get the time a user needed to
+	 * finish a level. It's also used to pause if the user want's to
+	 * break
+	 */
+	private StopWatch watch;
+
 	////////////////////////Class/Constructors////////////////////////
 	/**
 	 * Class constructor to instanciate a level without a field state
+	 *
 	 * @param changeListener the listener from the view
 	 */
-	public Level(ChangeListener changeListener){
+	public Level(final ChangeListener changeListener){
 		currentGameState = new GameState(null, 0);
 
 		init(changeListener);
@@ -114,14 +117,21 @@ public class Level {
 	/**
 	 * Class constructor to instanciate a level and read the level date
 	 * from a file on the disc
+	 *
 	 * @param f the file wich contains the level date
 	 * @param changeListener the listener from the view
+	 *
+	 * @throws FileNotFoundException if the file could not been found
+	 * @throws WrongLevelFormatException if the file contains a invalid
+	 * level
+	 * @throws IOException if a IO-exception accures during the reading
+	 * the file
 	 */
-	public Level(File f, ChangeListener changeListener)
+	public Level(final File f, final ChangeListener changeListener)
 		throws FileNotFoundException, WrongLevelFormatException, 
 			   IOException{
 
-		storeLevel(f);
+		restoreLevel(f);
 
 		init(changeListener);
 	}
@@ -130,16 +140,18 @@ public class Level {
 	/**
 	 * Class constructor to instanciate a level and set specific
 	 * attributes given as params
+	 *
 	 * @param targetTime the time in which the player should finish the
 	 * level
 	 * @param minStones the number of stones needed to apply an delete
 	 * operation
+	 * @param field the field wich is assigned to the level state
 	 * @param changeListener the listener from the view
 	 */
-	public Level(int targetTime, 
-				 int minStones,
-				 Byte[][] field, 
-				 ChangeListener changeListener){
+	public Level(final int targetTime, 
+				 final int minStones,
+				 final Byte[][] field, 
+				 final ChangeListener changeListener){
 
 		this.targetTime = targetTime;
 		this.minStones = minStones;
@@ -153,10 +165,15 @@ public class Level {
 	/**
 	 * Construct a level from a String. The function parses the string.
 	 * if the level isn't valide, it throws a WrongLevelFormatException
+	 *
 	 * @param levelstring the string to be load
+	 *
 	 * @throws WrongLevelFormatException
 	 */
-	public Level(String levelstring, ChangeListener changeListener) throws WrongLevelFormatException{
+	public Level(final String levelstring, 
+				 final ChangeListener changeListener) 
+		throws WrongLevelFormatException{
+
 		loadLevelFromString(levelstring);
 		
 		init(changeListener);
@@ -165,9 +182,13 @@ public class Level {
 
 	/**
 	 * helping function to initialize a few class attributes
+	 *
 	 * @param changeListener the listener from the viewer class
 	 */
-	private void init(ChangeListener changeListener){
+	private void init(final ChangeListener changeListener){
+		
+		watch = new StopWatch();
+
 		try{
 			ORIGINAL_LEVEL_STATE = (GameState) currentGameState.clone();
 		}catch(CloneNotSupportedException e){
@@ -180,12 +201,13 @@ public class Level {
 		gameStateHistory = new CompoundEdit();
 		gameStateHistory.addEdit(currentGameState);
 	}
-	////////////////////END/Class/Constructors////////////////////////
+
 
 
 	////////////////////////Getters//&//Setters///////////////////////
 	/**
 	 * get the points the player reached at the moment
+	 *
 	 * @return the points the player reached at the moment
 	 */
 	public int getPoints(){
@@ -195,6 +217,7 @@ public class Level {
 
 	/**
 	 * gets a copy of the current field state
+	 *
 	 * @return a copy of the current field state
 	 */
 	public Byte[][] getFieldState(){
@@ -204,10 +227,13 @@ public class Level {
 
 	/**
 	 * Get a highscore list in form of a two dimensional String array.
-	 * 1. Column: points<br>
-	 * 2. Column: remaining time<br>
-	 * 3. Column: date<br>
-	 * 4. Column: player's name
+	 * <ol>
+	 * 	<li>Column: points</li>
+	 * 	<li>Column: remaining time</li>
+	 * 	<li>Column: date</li>
+	 * 	<li>Column: player's name</li>
+	 * </ol>
+	 *
 	 * @return a String representation in the above described form
 	 */
 	public String[][] getHighscore(){
@@ -217,29 +243,42 @@ public class Level {
 
 	/**
 	 * insert a new highscore into the highscore-list of the level
-	 * @param points the points the player has reached
-	 * @param remainingTime the time remaining
-	 * @param name the name of the player
+	 *
+	 * @param playername the name which shall appear in the highscore
+	 * @param remTime remaining time in seconds until target time 
+	 * is reached (which can be negative)
+	 * @param creationDate timestamp of when the game was finished
+	 * @param points the score which was achieved
 	 */
-	public void insertHighscore(int points, 
-								int remainingTime, 
-								String name){
+	public void insertHighscore(final String playername, 
+								final int remTime, 
+								final Date creationDate, 
+								final int points){
 
-		highscore.insertHighscore(points, remainingTime, name);
+		highscore.insertHighscore(playername,
+								  remTime,
+								  creationDate,
+								  points);
 	}
 
 
+	public void resetHighscore(){
+		highscore.resetHighscore();
+	}
+
 	/**
 	 * sets the target time in wich the player has to finish the level
+	 *
 	 * @param targetTime the time the player has to finish the level
 	 */
-	void setTargetTime(int targetTime){
+	void setTargetTime(final int targetTime){
 		this.targetTime = targetTime;
 	}
 
 
 	/**
 	 * gets the target time in wich the player has to finish the level
+	 *
 	 * @return the time the player has to finish the level
 	 */
 	public int getTargetTime(){
@@ -250,9 +289,10 @@ public class Level {
 	/**
 	 * sets the minimal number of Stones needed to cause remove 
 	 * operation
+	 *
 	 * @param minStones the minimal number of Stones for a Remove
 	 */
-	void setMinStones(int minStones){
+	void setMinStones(final int minStones){
 		this.minStones = minStones;
 	}
 
@@ -260,12 +300,13 @@ public class Level {
 	/**
 	 * gets the minimal number of Stones needed to cause remove 
 	 * operation
+	 *
 	 * @return the minimal number of Stones for a Remove
 	 */
 	public int getMinStones(){
 		return this.minStones;
 	}
-	///////////////////End//Getters//&//Setters///////////////////////
+
 
 
 	////////////////////////Class/Operations//////////////////////////
@@ -287,6 +328,7 @@ public class Level {
 
 	/**
 	 * undo to the last game state
+	 *
 	 * @return return true if an undo is possible
 	 */
 	public boolean undo(){
@@ -301,6 +343,7 @@ public class Level {
 
 	/**
 	 * redo to the previous undone action
+	 *
 	 * @return return true if a redo was possible
 	 */
 	public boolean redo(){
@@ -315,11 +358,14 @@ public class Level {
 
 	/**
 	 * generates a random level.
-	 * The random values are:<br>
-	 * level-width [6, 30]<br>
-	 * level-height [5, 20]<br>
-	 * number of Colors [2, 5]<br>
-	 * minimum number of Stones to remove [2, 5]
+	 *
+	 * The random values are:
+	 * <ul>
+	 * 	<li>level-width [6, 30]</li>
+	 * 	<li>level-height [5, 20]</li>
+	 * 	<li>number of Colors [2, 5]</li>
+	 * 	<li>minimum number of Stones to remove [2, 5]</li>
+	 * </ul>
 	 */
 	public void generateLevel(){
 		Random r = new Random();
@@ -347,12 +393,13 @@ public class Level {
 	/**
 	 * check a level for semantical correctness, that means that it
 	 * returns false if there are not enough stones of each color or 
-	 * none removable stonegroup
+	 * none removable stonegroup.
+	 *
 	 * @return true if it is a semantical correct level
 	 */
-	private static boolean validateSemantical(Byte[][] level, 
-											  int numOfCol, 
-											  int minStones){
+	private static boolean validateSemantical(final Byte[][] level, 
+											  final int numOfCol, 
+											  final int minStones){
 
 		int rows = level.length;
 		int cols = level[0].length;
@@ -377,13 +424,16 @@ public class Level {
 
 	/**
 	 * validates if a level string is syntactical correct.
+	 *
 	 * @see #loadLevelFromString(String) for the explenation of the 
 	 * level format
+	 *
 	 * @param levelString
+	 *
 	 * @throws WrongLevelFormatException if the level is not in the 
 	 * described format
 	 */
-	public static void validateSyntactical(String levelString)
+	public static void validateSyntactical(final String levelString)
 			throws WrongLevelFormatException{
 		Scanner s;
 		LineNumberReader line = 
@@ -451,36 +501,48 @@ public class Level {
 	 * object.
 	 *
 	 * the string !!!must!!! have the following format:<br>
-	 * the level field must be a square and must consist of values 
-	 * between 1 and 5.<br>
+	 * <ol>
+	 * 	<li>
+	 * 		the level field must be a square and must consist of values 
+	 * 		between 1 and 5.<br>
+	 * 		Example: <br>
+	 * 		<code>
+	 * 			423234232212<br>
+	 * 			543345553234<br>
+	 * 			345342125352<br>
+	 * 			142341253414<br>
+	 * 			152354243123
+	 * 		</code>
+	 * 	</li>
 	 *
-	 * Example:<br>
-	 * 4232342322123<br>
-	 * 5433455532345<br>
-	 * 3453421253522<br>
-	 * 1423412534142<br>
-	 * 1523542431233<br>
+	 * 	<li>
+	 * 		The addtional level information must have the following format:<br>
 	 *
-	 * The addtional level information must have the following format:<br>
-	 * a "###" at the beginning of the line, then one or two of the 
-	 * following informations: target_time:888 AND/OR min_stones:2,
-	 * seperated with a "|".<br>
-	 * Example: ###target_time:888|min_stones:4<br>
+	 * 		a "###" at the beginning of the line, then one or two of the 
+	 * 		following informations: target_time:[number] AND/OR 
+	 * 		min_stones:[number], seperated with a "|".<br>
 	 *
-	 * The highscore entrys must have the following format:<br>
-	 * a "###" at the beginning of the line, then each of the following
-	 * informations:<br>
-	 * name:xyz AND points:888 AND date:23.05.2010 23;59;12 AND 
-	 * rem_time:123<br>
-	 * seperated with a "|".<br>
-	 * Example: ###name:xyz|points:888|date:23.05.2010 23;59;12|
-	 * rem_time:123<br>
+	 * 		Example: <code>###target_time:888|min_stones:4</code>
+	 * 	</li>
 	 *
-	 * @param levelString
+	 * 	<li>
+	 *		The highscore entrys must have the following format:<br>
+	 *		a "###" at the beginning of the line, then each of the following
+	 *		informations:<br>
+	 *		name:[string] AND points:[number] AND date:dd.mm.yy HH;MM;SS AND 
+	 *		rem_time:[number]<br>
+	 *		seperated with a "|".<br>
+	 *		Example: 
+	 *		<code>###name:xyz|points:888|date:23.05.2010 23;59;12|rem_time:123</code>
+	 *	</li>	
+	 * </ol>
+	 *
+	 * @param levelString the string wich contains the whole level
+	 *
 	 * @throws WrongLevelFormatException if the level is not in the 
 	 * described format
 	 */
-	public void loadLevelFromString(String levelString) 
+	public void loadLevelFromString(final String levelString) 
 		throws WrongLevelFormatException{
 
 		// return with an exception if it is an syntactical incorrect
@@ -493,8 +555,8 @@ public class Level {
 					new StringReader(levelString));
 
 		s = new Scanner(line);
+		
 		Vector<Byte[]> parsedLevel = new Vector<Byte[]>();
-
 
 		// get the length of the first line
 		String parsedLine = s.nextLine();
@@ -517,7 +579,7 @@ public class Level {
 
 			// if there are additional level information
 			if(s.hasNext(ADDITIONAL_LEVEL_INF)){
-				parseAdditionalLevelInf(line, s.nextLine());
+				parseAdditionalLevelInf(s.nextLine());
 			}
 
 			// if there are highscore entrys
@@ -554,12 +616,15 @@ public class Level {
 
 	/**
 	 * parses a Level line.
+	 *
 	 * @param s a line in the level field
+	 *
+	 * @throws NumberFormatException if a char isn't parseable
+	 *
 	 * @return an byte array with each char of the string at a position
 	 * in the array
-	 * @throws NumberFormatException if a char isn't parseable
 	 */
-	private Byte[] parseByteDigits(String s) 
+	private Byte[] parseByteDigits(final String s) 
 		throws NumberFormatException{
 
 		Byte[] parsedArray = new Byte[s.length()];
@@ -572,12 +637,15 @@ public class Level {
 	/**
 	 * check if the additional level information have the right format
 	 * and if there are no dublicates.
+	 *
 	 * @param addLevelInf the line with the additional level 
 	 * informations
+	 *
 	 * @throws WrongLevelFormatException if the addtional level 
 	 * informations are not in the excepted format
 	 */
-	public static void validateAdditionalLevelInf(String addLevelInf)
+	public static void validateAdditionalLevelInf(
+			final String addLevelInf)
 		throws WrongLevelFormatException{
 
 		Scanner s = new Scanner(addLevelInf);
@@ -609,7 +677,20 @@ public class Level {
 			else
 				break;
 		}
+
+		// test if min_stone have a value between[2,2^32]
+		if(infos[0].equals("min_stones") && values[0] < 2)
+			throw new WrongLevelFormatException(
+					"wrong level format while parsing additional Level"
+					+" informations from string: min_stone must be have"
+					+" a value of [2,2^32]:"+ values[0]);
 		
+		if(infos[1] != null && infos[1].equals("min_stones") && values[1] < 2)
+			throw new WrongLevelFormatException(
+					"wrong level format while parsing additional Level"
+					+" informations from string: min_stone must be have"
+					+" a value of [2,2^32]:"+ values[1]);
+
 		// if there are duplicated informations
 		if(infos[1] != null && infos[0].equals(infos[1]))
 			throw new WrongLevelFormatException(
@@ -620,9 +701,16 @@ public class Level {
 	
 
 	/**
-	 * 
+	 * parses additional level information like the target time or the
+	 * minimal number of stones wich can be removed.
+	 *
+	 * @param additionalLevelInf the string wich contains the extra 
+	 * level informations
+	 *
+	 * @throws WrongLevelFormatException if the level is not in the
+	 * right format
 	 */
-	private void parseAdditionalLevelInf(LineNumberReader line, String additionalLevelInf) 
+	private void parseAdditionalLevelInf(final String additionalLevelInf) 
 		throws WrongLevelFormatException{
 
 		validateAdditionalLevelInf(additionalLevelInf);
@@ -656,33 +744,24 @@ public class Level {
 	}
 
 
-	public boolean storeLevel(File f) 
-		throws FileNotFoundException, 
-			   WrongLevelFormatException, 
-			   IOException{
+	/**
+	 * check if the stone group at the position is bigger equal the
+	 * the minimal number of stones to remove.
+	 * Static version of the function.
+	 *
+	 * @param state the field wich contains the level informations
+	 * @param minStones the minimal number of stones wich can be removed
+	 * @param row the row in wich a member of the stone group is located
+	 * @param col the col in wich a member of the stone group is located
+	 *
+	 * @return true if the stone group is removeable
+	 */
+	public static boolean removeable(final Byte[][] state, 
+									 final int minStones, 
+									 final int row, 
+									 final int col) {
 
-		return false;
-	}
-
-	public boolean restoreLevel(File f)
-		throws FileNotFoundException, 
-			   WrongLevelFormatException, 
-			   IOException{
-
-		BufferedReader r = new BufferedReader(new FileReader(f));
-
-		char[] levelString = new char[(int)f.length()];
-		r.read(levelString, 0, (int)f.length());
-		loadLevelFromString(new String(levelString.toString()));
-		return false;
-	}
-
-
-	public static boolean removeable(Byte[][] state, 
-									 int minStones, 
-									 int row, 
-									 int col) {
-
+		// make a copy of the field to don't change the current field state
 		Byte[][] stateCopy = new Byte[state.length][state[0].length];
 		for (int i = 0; i < state.length; i++)
 			System.arraycopy(state[i], 0, stateCopy[i], 0, state[i].length);
@@ -691,6 +770,7 @@ public class Level {
 		int cols = state[0].length;
 		byte color = state[row][col];
 
+		// check if the position is in the field and not allready removed
 		if (row >= 0 && col >= 0 && row < rows && col < cols 
 			&& color != 0) {
 
@@ -700,7 +780,10 @@ public class Level {
 			countableFloodFill(stateCopy, row, col - 1, color, (byte) 100);
 			countableFloodFill(stateCopy, row, col + 1, color, (byte) 100);
 		}
+		else
+			return false;
 
+		// count the number of stones wich may be removed
 		int stonesToRemove = 0;
 		for (int i = 0; i < rows; i++)
 			for (int j = 0; j < cols; j++)
@@ -710,17 +793,41 @@ public class Level {
 
 	}
 
-	public boolean removeable(int row, int col) {
+
+	/**
+	 * check if the stone group at the position is bigger equal the
+	 * the minimal number of stones to remove.
+	 * Non-Static version of the function with uses object attributes to
+	 * calculate
+	 *
+	 * @param row the row in wich a member of the stone group is located
+	 * @param col the col in wich a member of the stone group is located
+	 *
+	 * @return true if the stone group is removeable
+	 */
+	public boolean removeable(final int row, final int col) {
 
 		Byte[][] field = currentGameState.getFieldState();
 		return removeable(field, minStones, row, col);
 	}
 
+	
+	/**
+	 * a floodfill algorithm wich fill a group of stones in the field.
+	 * It changes the color of the selected stone group to the new 
+	 * color, so the new color can be count etc.
+	 *
+	 * @param state the field to operate on, <b>changes during operation!!!</b>
+	 * @param row the row in wich a member of the stone group is located
+	 * @param col the col in wich a member of the stone group is located
+	 * @param color the color of the stonegroup
+	 * @param newCol the new color to color the stone group with
+	 */
 	private static void countableFloodFill(Byte[][] state, 
-								  int row, 
-								  int col, 
-								  byte color,
-								  byte newCol){
+										   final int row, 
+										   final int col, 
+										   final byte color,
+										   final byte newCol){
 
 		int rows = state.length;
 		int cols = state[0].length;
@@ -735,11 +842,24 @@ public class Level {
 		}
 	}
 
+
+	/**
+	 * a floodfill algorithm wich fill a group of stones in the field.
+	 * It fills the selected stone group with 0's and count the stones
+	 * wich are removed
+	 *
+	 * @param state the field to operate on, <b>changes during operation!!!</b>
+	 * @param row the row in wich a member of the stone group is located
+	 * @param col the col in wich a member of the stone group is located
+	 * @param color the color of the stonegroup
+	 * @param stonesRemoved the number of stones wich are removed.
+	 * The object contains the number after the operation
+	 */
 	private static void removeFloodFill(Byte[][] state, 
-								  int row, 
-								  int col, 
-								  byte color,
-								  Integer stonesRemoved){
+										final int row, 
+										final int col, 
+										final byte color,
+										Integer stonesRemoved){
 
 		int rows = state.length;
 		int cols = state[0].length;
@@ -755,36 +875,75 @@ public class Level {
 		}
 	}
 
-	public boolean removeStone(int row, int col) 
+
+	/**
+	 * function to remove stones in the level field. The function also
+	 * performs a move up of the stones that means that the stones 
+	 * first fall down and than empty columns are deleted. At the end
+	 * of a succsesfull remove the current level state is updated 
+	 * ({@link #updateState(Byte[][], int) updateState(...)})
+	 * and points for the operation are calculated
+	 *
+	 * <br>
+	 * Example remove operation:<br>
+	 * <code>
+	 * &ensp;v 	<br>
+	 *      121		<br>
+	 *      222&lt;	<br>
+	 *      121  	<br>
+	 *      <br>
+	 *      000		<br>
+	 *      110      <br>
+	 *      110      <br>
+	 * </code>
+	 *
+	 * @param row the row in wich a member of the stone group is 
+	 * located, wich is be removed.
+	 * @param col the col in wich a member of the stone group is
+	 * located, wich is be removed.
+	 *
+	 * @throws ParameterOutOfRangeException if the row and the col
+	 * parameter are not inside the field
+	 *
+	 * @return true if the remove operation could be performed
+	 */
+	public boolean removeStone(final int row, final int col) 
 		throws ParameterOutOfRangeException{
 
 		Byte[][] state = getFieldState();
 		int rows = state.length;
 		int cols = state[0].length;
 
+		// check if the position is inside the field
 		if (row < 0 || row >= rows)
 			throw new ParameterOutOfRangeException(
 					"the \"row\" parameter is out of possible range"
 					+"[0,"+rows+"]: "+row);
 
+		// check if the position is inside the field
 		if (col < 0 || col >= cols)
 			throw new ParameterOutOfRangeException(
 					"the \"col\" parameter is out of possible range"
 					+"[0,"+cols+"]: "+col);
 
+		// if the position is allready removed
 		if (state[row][col] == 0)
 			return false;
 
 		byte color = state[row][col];
 
+
 		if (removeable(state, minStones, row, col)) {
+			
 			Integer elementsRemoved = 0;
 
 			removeFloodFill(state, row, col, color, elementsRemoved);
+			
+			// perform the fall down and empty column deletion
 			moveUp(state);
 
-			//TODO right method call
-			int pointsMade = calculatePoints(elementsRemoved, false);
+			boolean overTime = targetTime - watch.getTime() < 0;
+			int pointsMade = calculatePoints(elementsRemoved, overTime);
 			
 			updateState(state, pointsMade);
 
@@ -794,13 +953,34 @@ public class Level {
 	}
 
 
+	/**
+	 * function to move up a field in wich recently a remove operration
+	 * has happend.<br>
+	 *
+	 * Example move up operation:<br>
+	 *
+	 * <code>
+	 * &ensp;v 	<br>
+	 *      121		<br>
+	 *      222&lt;	<br>
+	 *      121  	<br>
+	 *      <br>
+	 *      000		<br>
+	 *      110      <br>
+	 *      110      <br>
+	 * </code>
+	 *
+	 * @param state the field wich have to be updated
+	 */
 	public static void moveUp(Byte[][] state) {
 
 		int rows = state.length;
 		int cols = state[0].length;
-		int count = rows;
+		int walkTroughRows = rows;
+		int walkTroughCols = cols;
 
-		while (count > 0) {
+		// let the stones fall down
+		while (walkTroughRows > 0) {
 			for (int i = rows - 2; i >= 0; i--) {
 				for (int j = cols - 1; j >= 0; j--) {
 					if (state[i + 1][j] == 0 && state[i][j] != 0) {
@@ -809,20 +989,50 @@ public class Level {
 					}
 				}
 			}
-			count--;
+			walkTroughRows--;
 		}
 
-		for (int i = 0; i <= cols - 2; i++) {
-			if (state[rows - 1][i] == 0) {
-				for (int j = 0; j < rows; j++) {
-					state[j][i] = state[j][i + 1];
-					state[j][i + 1] = 0;
+		// move non-empty columns up to delete empty columns
+		while (walkTroughCols > 0) {
+			for (int i = 0; i <= cols - 2; i++) {
+				if (state[rows - 1][i] == 0) {
+					for (int j = 0; j < rows; j++) {
+						state[j][i] = state[j][i + 1];
+						state[j][i + 1] = 0;
+					}
 				}
 			}
+			walkTroughCols--;
 		}
 	}
 
 
+	/**
+	 * function to calculate if another remove operation is possible.
+	 * Non-Static version of the function works with the current level
+	 * state
+	 *
+	 * @return return true if no remove operation is possible anymore
+	 */
+	public boolean isFinished() {
+		if(currentGameState.getFieldState() == null)
+			return true;
+		else{
+			Byte[][] state = currentGameState.getFieldState();
+			return isFinished(state, minStones);
+		}
+	}
+
+
+	/**
+	 * function to calculate if another remove operation is possible.
+	 * Static version of the function.
+	 *
+	 * @param state the field to check
+	 * @param minStones the minimal number of stones wich can be removed
+	 *
+	 * @return return true if no remove operation is possible anymore
+	 */
 	public static boolean isFinished(Byte[][] state, int minStones) {
 		int rows = state.length;
 		int cols = state[0].length;
@@ -837,18 +1047,61 @@ public class Level {
 		}
 		return true;
 	}
-	
 
-	public boolean isFinished() {
-		if(currentGameState.getFieldState() == null)
-			return true;
-		else{
-			Byte[][] state = currentGameState.getFieldState();
-			return isFinished(state, minStones);
-		}
+
+	/**
+	 * updates the current level state and notyfies the viewer to update.
+	 *
+	 * @param state the new field state
+	 * @param removedElements the number of elements wich was removed
+	 */
+	void updateState(Byte[][] state, int removedElements){
+
+		int newPoints = calculatePoints(state, removedElements);
+
+		currentGameState = 
+			new GameState(state, newPoints);
+
+		gameStateHistory.addEdit(currentGameState);
+
+		// notify the viewer that the level state has changed
+		changeListener.stateChanged(new ChangeEvent(this));
 	}
 
 
+	/**
+	 * calculates the points after a remove operation.
+	 * 
+	 * @param state the new field in wich the points are counted
+	 * @param removedElements the number of elements wich was removed
+	 *
+	 * @return the new calculate Points
+	 */
+	public int calculatePoints(Byte[][] state, int removedElements){
+
+		int newPoints = currentGameState.getPoints();
+
+		boolean overTime = targetTime - watch.getTime() < 0;
+		newPoints += Level.calculatePoints(removedElements, overTime);
+
+		if(isFinished(state, minStones))
+			newPoints += calculatePointsFinished(state);
+
+		return newPoints;
+	}
+	
+
+	/**
+	 * calculate the points for a remove operation.
+	 * If the opperation was performed just in time, the new points
+	 * are (removedElements)&sup2; else (removedElements/2)&sup2;<br>
+	 *
+	 * @param removedElements the number of elements wich was removed
+	 * @param afterTargetTime if the remove operation was performed 
+	 * after ore before the target time
+	 *
+	 * @return the new calculate Points
+	 */
 	public static int calculatePoints(int removedElements,
 									  boolean afterTargetTime){
 
@@ -858,7 +1111,68 @@ public class Level {
 			return (int) (Math.pow(removedElements, 2) / 2.0);
 	}
 
+	/**
+	 * calculate pointbonus or malus if the level was finished.
+	 *
+	 * the bonus is calculated the following:<br>
+	 *
+	 * <ul>
+	 * 	<li> if the level was finished just in time, the remaining time
+	 * 		 is added to the points, else removed </li>
+	 * 	<li> the remaining stones are counted as malus</li>
+	 * 	<li> if the stones could all be removed, it's added an extra
+	 * 		 bonus: the number of stones wich was in the original 
+	 * 		 level</li>
+	 * </ul>
+	 *
+	 * @param state the new state count the points in
+	 *
+	 * @return just the point bonus or malus
+	 */
+	public int calculatePointsFinished(final Byte[][] state){
+		
+		int elementsLeft = 0;
+		for(int i=0; i<state.length; i++)
+			for(int j=0; j<state[i].length; j++)
+				if(state[i][j] != 0)
+					elementsLeft++;
 
+		int timeLeft = targetTime - (int) watch.getTime();
+
+		int initialElements = 0;
+		Byte[][] origState = ORIGINAL_LEVEL_STATE.getFieldState();
+		for(int i=0; i<origState.length; i++)
+			for(int j=0; j<origState[i].length; j++)
+				if(origState[i][j] != 0)
+					initialElements++;
+
+		return calculatePointsFinished(elementsLeft,
+									   timeLeft,
+									   initialElements);
+	}
+
+
+	/**
+	 * calculate pointbonus or malus if the level was finished.
+	 *
+	 * the bonus is calculated the following:<br>
+	 *
+	 * <ul>
+	 * 	<li> if the level was finished just in time, the remaining time
+	 * 		 is added to the points, else removed </li>
+	 * 	<li> the remaining stones are counted as malus</li>
+	 * 	<li> if the stones could all be removed, it's added an extra
+	 * 		 bonus: the number of stones wich was in the original 
+	 * 		 level</li>
+	 * </ul>
+	 *
+	 * @param elementsLeft the elements left in field
+	 * @param timeLeft the remaining time until the target time is over
+	 * @param initialElements the number of elements wich was in the
+	 * original field
+	 *
+	 * @return just the point bonus or malus
+	 */
 	public static int calculatePointsFinished(int elementsLeft,
 											  int timeLeft,
 											  int initialElements){
@@ -879,20 +1193,90 @@ public class Level {
 	}
 
 
-	void updateState(Byte[][] state, int pointsMade){
-
-		int pointsAllready = currentGameState.getPoints();
-
-		currentGameState = 
-			new GameState(state, pointsAllready + pointsMade);
-
-		gameStateHistory.addEdit(currentGameState);
-
-		// notify the viewer that the level state has changed
-		changeListener.stateChanged(new ChangeEvent(this));
+	/**
+	 * save a level state to a *.sve file.
+	 *
+	 * @param f the file to save to
+	 *
+	 * @throws FileNotFoundException if the file could not been found
+	 * @throws IOException if a IO-exception accures during the reading
+	 * the file
+	 */
+	public void storeLevelState(final File f) 
+		throws FileNotFoundException, 
+			   IOException{
+		//TODO impliment
 	}
 
 
+	/**
+	 * load a level state from a *.sve file.
+	 *
+	 * @param f the file to load from
+	 *
+	 * @throws FileNotFoundException if the file could not been found
+	 * @throws WrongLevelFormatException if the file contains a invalid
+	 * level
+	 * @throws IOException if a IO-exception accures during the reading
+	 * the file
+	 */
+	public void restoreLevelState(final File f)
+		throws FileNotFoundException, 
+			   WrongLevelFormatException, 
+			   IOException{
+		//TODO impliment
+	}
+
+
+	/**
+	 * save level information to a *.lvl file.
+	 * See {@link #loadLevelFromString(String)} for levelformat
+	 *
+	 * @param f the file to save to
+	 *
+	 * @throws FileNotFoundException if the file could not been found
+	 * @throws IOException if a IO-exception accures during the reading
+	 * the file
+	 */
+	public void storeLevel()
+		throws FileNotFoundException, 
+			   IOException{
+		//TODO impliment
+	}
+
+	/**
+	 * load a level information from a *.lvl file.
+	 * See {@link #loadLevelFromString(String)} for levelformat
+	 *
+	 * @param f the file to load from
+	 *
+	 * @throws FileNotFoundException if the file could not been found
+	 * @throws WrongLevelFormatException if the file contains a invalid
+	 * level
+	 * @throws IOException if a IO-exception accures during the reading
+	 * the file
+	 */
+	public void restoreLevel(final File f)
+		throws FileNotFoundException, 
+			   WrongLevelFormatException, 
+			   IOException{
+
+		BufferedReader r = new BufferedReader(new FileReader(f));
+
+		char[] levelString = new char[(int)f.length()];
+		r.read(levelString, 0, (int)f.length());
+		loadLevelFromString(new String(levelString.toString()));
+	}
+
+
+	/**
+	 * return a string representation of the extra level informations.
+	 * It's in the form:<br>
+	 *
+	 * <code>###target_time:[number]|min_stones:[number]</code>
+	 * 
+	 * @return the string with the additional level informations
+	 */
 	public String additionalLevelInfToString(){
 		StringBuffer out = new StringBuffer();
 		out.append("###target_time:").append(targetTime);
@@ -901,9 +1285,15 @@ public class Level {
 	}
 
 
+	/**
+	 * returns a string representation of the current level fieldstate
+	 * without extra level informations.
+	 *
+	 * @return the string wich contains a representation of the level
+	 * fieldstate
+	 */
 	@Override
 	public String toString(){
 		return currentGameState.toString();
 	}
-	///////////////////End//Class/Operations//////////////////////////
 }

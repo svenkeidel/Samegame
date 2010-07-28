@@ -10,10 +10,10 @@ import java.text.ParseException;
 import java.io.LineNumberReader;
 
 class HighscoreEntry implements Comparable<HighscoreEntry>{
-	private int points;
-	private int remaingTime;
-	private Date date;
 	private String name;
+	private double remaingTime;
+	private double points;
+	private Date date;
 	private final static SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH;mm;ss");
 
 	// Pattern for highscore entrys
@@ -21,16 +21,20 @@ class HighscoreEntry implements Comparable<HighscoreEntry>{
 		Pattern.compile(
 				// a "###" at the beginning of the line with one of the highscore
 				// informations like (name|points|date|remaining time)
-				"^###(name:(\\w|\\s)*|points:\\d*|date:\\d\\d\\.\\d\\d\\.\\d{4} \\d\\d;\\d\\d;\\d\\d|rem_time:\\d*)"
+				"###(name:(\\w|\\s)*|points:\\d*|date:\\d\\d\\.\\d\\d\\.\\d{4} \\d\\d;\\d\\d;\\d\\d|rem_time:\\d*)"
 				// With a following "|" and another highscore information
 				+"(\\|(name:(\\w|\\s)*|points:\\d*|date:\\d\\d\\.\\d\\d\\.\\d{4} \\d\\d;\\d\\d;\\d\\d|rem_time:\\d*)){3}$", 
 				Pattern.MULTILINE);
 	
-	HighscoreEntry(int points, int remaingTime, Date date, String name){
+	HighscoreEntry(final String playername, 
+				   final double rem_time,
+				   final Date creation_date, 
+				   final double points){
+
+		this.name = playername;
+		this.remaingTime = rem_time;
+		this.date = creation_date;
 		this.points = points;
-		this.remaingTime = remaingTime;
-		this.date = date;
-		this.name = name;
 	}
 
 	HighscoreEntry(LineNumberReader line, Scanner s)
@@ -47,7 +51,7 @@ class HighscoreEntry implements Comparable<HighscoreEntry>{
 	 * Gets the points for this instance.
 	 * @return The points.
 	 */
-	public int getPoints(){
+	public double getPoints(){
 		return this.points;
 	}
 
@@ -55,7 +59,7 @@ class HighscoreEntry implements Comparable<HighscoreEntry>{
 	 * Gets the remaingTime for this instance.
 	 * @return The remaingTime.
 	 */
-	public int getRemaingTime(){
+	public double getRemaingTime(){
 		return this.remaingTime;
 	}
 
@@ -71,15 +75,15 @@ class HighscoreEntry implements Comparable<HighscoreEntry>{
 	 * Gets the name for this instance.
 	 * @return The name.
 	 */
-	public String getName(){
+	public String getPlayername(){
 		return this.name;
 	}
 	
 	public int compareTo(HighscoreEntry another){
 		if(this.points != another.points)
-			return this.points - another.points;
+			return (int) (this.points - another.points);
 		else if(this.remaingTime != another.remaingTime)
-			return this.remaingTime - another.remaingTime;
+			return (int) (this.remaingTime - another.remaingTime);
 		else if(!this.date.equals(another.date))
 			return this.date.compareTo(another.date);
 		else
@@ -102,30 +106,44 @@ class HighscoreEntry implements Comparable<HighscoreEntry>{
 
 	public static void validate(String highscoreEntry)
 		throws WrongLevelFormatException{
-		if(HIGHSCORE_ENTRY.matcher(highscoreEntry).matches())
-			throw new WrongLevelFormatException(
-					"wrong level format while parsing HighscoreList "+ 
-					"from String");
-	}
 
+		Scanner s = new Scanner(highscoreEntry);
 
-	private void parseHighscoreEntry(LineNumberReader line, Scanner s)
-		throws WrongLevelFormatException{
-
-		s.next("^###");
+		s.skip("###");
 		
 		String[] infos = new String[5];
 		String[] values = new String[5];
 		
 		// scanning informations
 		for(int i=0; i<5; i++){
-			infos[i] = s.next("(\\w|_)*");
-			s.next(":");
+			infos[i] = s.findInLine("(\\w|_)*");
+			s.skip(":");
 
-			values[i] = s.next("[^\\|]*");
+			values[i] = s.findInLine("[^\\|]*");
 
-			if(s.hasNext("|"))
-				s.next("|");
+			if(s.hasNext("\\|"))
+				s.skip("\\|");
+		}
+	}
+
+
+	private void parseHighscoreEntry(LineNumberReader line, Scanner s)
+		throws WrongLevelFormatException{
+
+		s.skip("###");
+		
+		String[] infos = new String[5];
+		String[] values = new String[5];
+		
+		// scanning informations
+		for(int i=0; i<5; i++){
+			infos[i] = s.findInLine("(\\w|_)*");
+			s.skip(":");
+
+			values[i] = s.findInLine("[^\\|]*");
+
+			if(s.hasNext("\\|"))
+				s.skip("\\|");
 		}
 		
 		// if there are duplicated informations
@@ -142,11 +160,11 @@ class HighscoreEntry implements Comparable<HighscoreEntry>{
 				if(infos[i].equals("name")){
 					name = values[i];
 				}else if(infos[i].equals("points")){
-					points = Integer.parseInt(values[i]);
+					points = Double.parseDouble(values[i]);
 				}else if(infos[i].equals("date")){
 					date = df.parse(values[i]);
 				}else if(infos[i].equals("rem_time")){
-					remaingTime = Integer.parseInt(values[i]);
+					remaingTime = Double.parseDouble(values[i]);
 				}
 			}catch(NumberFormatException e){
 				throw new WrongLevelFormatException(

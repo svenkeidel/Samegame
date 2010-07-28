@@ -7,12 +7,19 @@
 	<property name="lib" location="lib"/>
 	<property name="build" location="bin"/>
 	<property name="doc"  location="doc"/>
-	<property name="classpath"  location="lib/acm.jar:lib/junit-4.8.2.jar"/>
+	<property name="classpath"  location="lib/junit-4.8.2.jar:lib/commons-lang-2.5.jar"/>
+	<property name="javadoc-classpath"  location="${src}:${lib}/junit-4.8.2.jar:${lib}/commons-lang-2.5.jar"/>
 
 	<target 
 		name="compile"
 		description="compile the source " >
-		<!-- Compile the java code from ${src} into ${build} -->
+		<javac srcdir="${src}" classpath="${classpath}" destdir="${build}" debug="off"/>
+		<touch file="${build}/empty"/>
+	</target>
+
+	<target 
+		name="debug"
+		description="compile the source " >
 		<javac srcdir="${src}" classpath="${classpath}" destdir="${build}" debug="on"/>
 		<touch file="${build}/empty"/>
 	</target>
@@ -22,7 +29,7 @@
 		<javadoc 
 			sourcepath="${src}"
 			destdir="${doc}"
-			classpath="${src}:${lib}/junit-4.8.2.jar"
+			classpath="${javadoc-classpath}"
 			private="true"
 			author="false"
 			windowtitle="GdI-Projekt SS2010 - Same Game">
@@ -35,7 +42,7 @@
 		<javadoc 
 			sourcepath="${src}"
 			destdir="${doc}"
-			classpath="${src}:${lib}/junit-4.8.2.jar"
+			classpath="${javadoc-classpath}"
 			author="false"
 			windowtitle="GdI-Projekt SS2010 - Same Game">
 				<link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>

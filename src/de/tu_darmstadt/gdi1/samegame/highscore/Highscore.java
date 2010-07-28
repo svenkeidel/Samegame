@@ -23,13 +23,18 @@ public class Highscore{
 	 * a pattern wich matches a valide highscore entry
 	 */
 	public final static Pattern HIGHSCORE_ENTRY = HighscoreEntry.HIGHSCORE_ENTRY;
-	////////////////////END/Class/Attributes//////////////////////////
+
 
 
 	////////////////////////Class/Constructors////////////////////////
 	/**
 	 *
 	 */
+
+	public Highscore(){
+		this.highscoreEntrys = new Vector<HighscoreEntry>();
+	}
+
 	public Highscore(Vector<HighscoreEntry> highscoreEntrys){
 		sort(highscoreEntrys);
 		this.highscoreEntrys = highscoreEntrys;
@@ -41,8 +46,8 @@ public class Highscore{
 		highscoreEntrys = new Vector<HighscoreEntry>();
 		parseHighscoreEntrys(line, s);
 	}
-	////////////////////END/Class/Constructors////////////////////////
 	
+
 	
 	////////////////////////Getters//&//Setters///////////////////////
 	public String[][] getHighscoreEntrys(){
@@ -51,17 +56,24 @@ public class Highscore{
 			entrys[i] = highscoreEntrys.get(i).toStringArray();
 		return highscoreEntrys.toArray(entrys);
 	}
-	///////////////////End//Getters//&//Setters///////////////////////
+
 
 
 	////////////////////////Class/Operations//////////////////////////
-	public void insertHighscore(int points, int remainingTime, String name){
+	public void insertHighscore(final String playername, 
+								final double remTime, 
+								final Date creationDate, 
+								final double points){
 		 highscoreEntrys.add(
-				 new HighscoreEntry(points, 
-									remainingTime, 
-									new Date(),
-									name));
+				 new HighscoreEntry(playername,
+									remTime, 
+									creationDate,
+									points));
 		sort(highscoreEntrys);
+	}
+
+	public void resetHighscore(){
+		highscoreEntrys.clear();
 	}
 
 	public static void validate(String highscoreList)
@@ -70,6 +82,7 @@ public class Highscore{
 		Scanner s = new Scanner(highscoreList);
 
 		String highscoreEntry;
+
 		while(s.hasNextLine()){
 			highscoreEntry = s.nextLine();
 			HighscoreEntry.validate(highscoreEntry);
@@ -96,5 +109,4 @@ public class Highscore{
 		}
 		return out.toString();
 	}
-	///////////////////End//Class/Operations//////////////////////////
 }

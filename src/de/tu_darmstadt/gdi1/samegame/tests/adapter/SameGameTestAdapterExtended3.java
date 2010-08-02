@@ -1,7 +1,10 @@
 package de.tu_darmstadt.gdi1.samegame.tests.adapter;
 
-import de.tu_darmstadt.gdi1.samegame.ui.GameWindow;
+import java.awt.Component;
 
+import java.awt.event.KeyEvent;
+
+import de.tu_darmstadt.gdi1.samegame.ui.GameWindow;
 
 /**
  * This is the test adapter for the third extended stage of completion.
@@ -46,8 +49,8 @@ public class SameGameTestAdapterExtended3 extends SameGameTestAdapterExtended2 {
 	 *             {@link IllegalArgumentException}, something inheriting from it or an exception-class of your own could be a good choice.
 	 */
 	public String generateLevel(int width, int height, int numberOfColors, int minStones) throws Exception {
-		//TODO fill stub.
-		return null;
+		level.generateLevel(width, height, numberOfColors, minStones);
+		return level.toString();
 	}
 	
 	/**
@@ -57,34 +60,59 @@ public class SameGameTestAdapterExtended3 extends SameGameTestAdapterExtended2 {
 	 * @see SameGameTestAdapterExtended2#handleKeyPressedNew()
 	 */
 	public void handleKeyPressedSpace() {
-		//TODO fill stub.
+		contr.keyPressed(new KeyEvent(new Component(){},
+									  KeyEvent.KEY_PRESSED,
+									  System.currentTimeMillis(),
+									  0,
+									  KeyEvent.VK_SPACE,
+									  ' '));
 	}
 	
 	/**
 	 * Like {@link GameWindow#keyUpPressed()}.
 	 */
 	public void handleKeyPressedUp() {
-		//TODO fill stub.
+		contr.keyPressed(new KeyEvent(new Component(){},
+									  KeyEvent.KEY_PRESSED,
+									  System.currentTimeMillis(),
+									  0,
+									  KeyEvent.VK_UP,
+									  ' '));
 	}
 	
 	/**
 	 * Like {@link GameWindow#keyDownPressed()}.
 	 */
 	public void handleKeyPressedDown() {
-		//TODO fill stub.
+		contr.keyPressed(new KeyEvent(new Component(){},
+									  KeyEvent.KEY_PRESSED,
+									  System.currentTimeMillis(),
+									  0,
+									  KeyEvent.VK_DOWN,
+									  ' '));
 	}
 	
 	/**
 	 * Like {@link GameWindow#keyLeftPressed()}.
 	 */
 	public void handleKeyPressedLeft() {
-		//TODO fill stub.
+		contr.keyPressed(new KeyEvent(new Component(){},
+									  KeyEvent.KEY_PRESSED,
+									  System.currentTimeMillis(),
+									  0,
+									  KeyEvent.VK_LEFT,
+									  ' '));
 	}
 	
 	/**
 	 * Like {@link GameWindow#keyRightPressed()}.
 	 */
 	public void handleKeyPressedRight() {
-		//TODO fill stub.
+		contr.keyPressed(new KeyEvent(new Component(){},
+									  KeyEvent.KEY_PRESSED,
+									  System.currentTimeMillis(),
+									  0,
+									  KeyEvent.VK_RIGHT,
+									  ' '));
 	}
 }

@@ -1,5 +1,6 @@
 package de.tu_darmstadt.gdi1.samegame.tests.adapter;
 
+import de.tu_darmstadt.gdi1.samegame.GameController;
 import de.tu_darmstadt.gdi1.samegame.Level;
 import de.tu_darmstadt.gdi1.samegame.SameGameViewer;
 import de.tu_darmstadt.gdi1.samegame.exceptions.WrongLevelFormatException;
@@ -36,6 +37,7 @@ public class SameGameTestAdapterMinimal {
 	
 	protected Level level;
 	protected SameGameViewer viewer;
+	protected GameController contr;
 	protected boolean correctLevel;
 
 	/**
@@ -45,6 +47,7 @@ public class SameGameTestAdapterMinimal {
 		viewer = new SameGameViewer();
 		correctLevel = false;
 		level = new Level(viewer);
+		contr  = new GameController(level);
 	}
 	
 	
@@ -62,6 +65,7 @@ public class SameGameTestAdapterMinimal {
 	public void loadLevelFromString(String levelstring) {
 		try{
 			level = new Level(levelstring, viewer);
+			contr.setLevel(level);
 			correctLevel = true;
 		}catch (WrongLevelFormatException e){
 			correctLevel = false;

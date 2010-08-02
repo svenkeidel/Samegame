@@ -19,14 +19,13 @@ import java.awt.event.KeyEvent;
  */
 public class SameGameTestAdapterExtended1 extends SameGameTestAdapterMinimal {
 
-	private GameController contr;
+	
 
 	/**
 	 * Use this constructor to initialize everything you need.
 	 */
 	public SameGameTestAdapterExtended1() {
 		super();
-		contr  = new GameController();
 	}
 	
 	

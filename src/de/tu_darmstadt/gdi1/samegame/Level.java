@@ -407,7 +407,7 @@ public class Level extends UndoManager{
 			currentGameState = new GameState(null, 0);
 		}
 
-		this.discardAllEdits();		
+		this.discardAllEdits();
 		this.addEdit(currentGameState);
 	}
 
@@ -448,6 +448,37 @@ public class Level extends UndoManager{
 	}
 
 
+	public void generateLevel(final int width, 
+							  final int height, 
+							  final int numberOfColors, 
+							  final int minStones) 
+		throws IllegalArgumentException{
+
+		if(		width < 6 		  || width > 30 
+			|| height < 5		  || height > 20
+			|| numberOfColors < 2 || numberOfColors > 5
+			|| minStones < 2	  || minStones > 5)
+
+			throw new IllegalArgumentException("One of the given parameter is out of range");
+
+		else{
+
+			Random r = new Random();
+			Byte[][] level = new Byte[height-1][width-1];
+
+			do{
+				for(int i = 0; i<height; i++)
+					for(int j=0; j<width; j++)
+						level[i][j] = 
+							new Byte((byte) (1 + r.nextInt(numberOfColors)));
+			}while(!validateSemantical(level, numberOfColors, minStones));
+
+			this.targetTime = width * height;
+
+			currentGameState = new GameState(level, 0);
+		}
+	}
+
 	/**
 	 * generates a random level.
 	 *
@@ -461,24 +492,15 @@ public class Level extends UndoManager{
 	 */
 	public void generateLevel(){
 		Random r = new Random();
-		int rows = 6 + r.nextInt(25);
-		int cols = 5 + r.nextInt(16);
-
-		Byte[][] level = new Byte[rows][cols];
+		int height = 5 + r.nextInt(16);
+		int width = 6 + r.nextInt(25);
 
 		int numOfColors = 2 + r.nextInt(4);
 		this.minStones = 2 + r.nextInt(4);
 
-		do{
-			for(int i = 0; i<rows; i++)
-				for(int j=0; j<cols; j++)
-					level[i][j] = 
-						new Byte((byte) (1 + r.nextInt(numOfColors)));
-		}while(!validateSemantical(level, numOfColors, minStones));
-
-		this.targetTime = rows * cols;
-
-		currentGameState = new GameState(level, 0);
+		this.targetTime = height * width;
+		
+		generateLevel(width, height, numOfColors, minStones);
 	}
 	
 

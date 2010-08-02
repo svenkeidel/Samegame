@@ -5,7 +5,7 @@ import javax.swing.undo.AbstractUndoableEdit;
 class GameState extends AbstractUndoableEdit implements Cloneable{
 
 	private Byte[][] fieldState;
-	private int points; 
+	private double points; 
 
 	/**
 	 * class constructor, sets the field-state attribute 
@@ -13,7 +13,7 @@ class GameState extends AbstractUndoableEdit implements Cloneable{
 	 * @param fieldState the current field state 
 	 * @param points the reached points for the current state
 	 */
-	public GameState(Byte[][] fieldState, int points){
+	public GameState(Byte[][] fieldState, double points){
 		if(fieldState != null){
 		this.fieldState = new Byte[fieldState.length][fieldState[0].length];
 		for(int i=0; i<fieldState.length; i++)
@@ -52,7 +52,7 @@ class GameState extends AbstractUndoableEdit implements Cloneable{
 	 *
 	 * @return The points.
 	 */
-	public int getPoints(){
+	public double getPoints(){
 		return this.points;
 	}
 
@@ -61,14 +61,16 @@ class GameState extends AbstractUndoableEdit implements Cloneable{
 	 *
 	 * @param points The points.
 	 */
-	public void setPoints(int points){
+	public void setPoints(double points){
 		this.points = points;
 	}
-
+	
+	@Override
 	public Object clone() throws CloneNotSupportedException {
 		return super.clone();
-	}
+	}	
 	
+	@Override
 	public String toString(){
 		if(fieldState == null)
 			return null;
@@ -81,6 +83,5 @@ class GameState extends AbstractUndoableEdit implements Cloneable{
 		}
 		out.deleteCharAt(out.length()-1);
 		return out.toString();
-	}
-	
+	}	
 }

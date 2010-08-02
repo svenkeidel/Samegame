@@ -1,9 +1,13 @@
 package de.tu_darmstadt.gdi1.samegame.tests.adapter;
 
 import de.tu_darmstadt.gdi1.samegame.highscore.*;
+import de.tu_darmstadt.gdi1.samegame.exceptions.ParameterOutOfRangeException;
 
 import java.text.DateFormat;
 import java.util.Date;
+
+import javax.swing.undo.CannotRedoException;
+import javax.swing.undo.CannotUndoException;
 
 
 
@@ -38,7 +42,11 @@ public class SameGameTestAdapterExtended2 extends SameGameTestAdapterExtended1 {
 	 * Do nothing if there is no action to undo in the current level.
 	 */
 	public void undo() {
-		level.undo();
+		try{
+			level.undo();
+		}catch(CannotUndoException e){
+			// do nothing
+		}
 	}
 
 	/**
@@ -46,7 +54,12 @@ public class SameGameTestAdapterExtended2 extends SameGameTestAdapterExtended1 {
 	 * no action to redo.
 	 */
 	public void redo() {
-		level.redo();
+		try{
+			level.redo();
+		}catch(CannotRedoException e){
+			// do nothing
+		}
+
 	}
 
 	
@@ -97,7 +110,11 @@ public class SameGameTestAdapterExtended2 extends SameGameTestAdapterExtended1 {
 	 * or null if the position is invalid 
 	 */
 	public String getPlayernameAtHighscorePosition(int position) {
-		return highscore.getPlayername(position);
+		try{
+			return highscore.getPlayername(position);
+		}catch(ParameterOutOfRangeException e){
+			return null;
+		}
 	}
 	
 	/** 
@@ -112,7 +129,11 @@ public class SameGameTestAdapterExtended2 extends SameGameTestAdapterExtended1 {
 	 * or -1 if the position is invalid 
 	 */
 	public double getTimeAtHighscorePosition(int position) {
-		return highscore.getRemaining(position);
+		try{
+			return highscore.getRemaining(position);
+		}catch(ParameterOutOfRangeException e){
+			return -1;
+		}
 	}
 
 	/**
@@ -127,7 +148,11 @@ public class SameGameTestAdapterExtended2 extends SameGameTestAdapterExtended1 {
 	 * or -1 if the position is invalid 
 	 */
 	public double getPointsAtHighscorePosition(int position) {
-		return highscore.getPoints(position);
+		try{
+			return highscore.getPoints(position);
+		}catch(ParameterOutOfRangeException e){
+			return -1;
+		}
 	}
 
 	/**
@@ -145,6 +170,10 @@ public class SameGameTestAdapterExtended2 extends SameGameTestAdapterExtended1 {
 	 * @return the date of the highscore entry at the specified position or null if the position is invalid
 	 */
 	public Date getDateAtHighscorePosition(int position) {
-		return highscore.getDate(position);
+		try{
+			return highscore.getDate(position);
+		}catch(ParameterOutOfRangeException e){
+			return null;
+		}
 	}
 }

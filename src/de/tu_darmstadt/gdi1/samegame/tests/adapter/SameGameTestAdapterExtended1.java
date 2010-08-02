@@ -41,8 +41,13 @@ public class SameGameTestAdapterExtended1 extends SameGameTestAdapterMinimal {
 	 * @see SameGameTestAdapterMinimal#getLevelAsStringWithoutExtraInfo()
 	 */
 	public String getLevelAsStringWithExtraInfo() {
-		return level.toString() + "\n" 
-			+ level.getAdditionalLevelInf();
+		if(level.getHighscorelist() == null)
+			return level.toString() + "\n" 
+				+ level.getAdditionalLevelInf();
+		else
+			return level.toString() + "\n" 
+				+ level.getAdditionalLevelInf() + "\n"
+				+ level.getHighscorelist();
 	}
 
 	/**
@@ -90,7 +95,7 @@ public class SameGameTestAdapterExtended1 extends SameGameTestAdapterMinimal {
 	 */
 	public int calculatePoints(final int equalElements, 
 							   final boolean afterTargetTime) {
-		return Level.calculatePoints(equalElements, afterTargetTime);
+		return (int) Level.calculatePoints(equalElements, afterTargetTime);
 	}
 
 	/**
@@ -113,7 +118,7 @@ public class SameGameTestAdapterExtended1 extends SameGameTestAdapterMinimal {
 									   final int timeLeft, 
 									   final int initialElements) {
 
-		return Level.calculatePointsFinished(elementsLeft,
+		return (int) Level.calculatePointsFinished(elementsLeft,
 											 timeLeft,
 											 initialElements);
 	}

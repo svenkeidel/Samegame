@@ -1,28 +1,31 @@
 package de.tu_darmstadt.gdi1.samegame.highscore;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
+import java.util.Date;
+import java.util.Scanner;
+
+import java.util.regex.Pattern;
+
 import de.tu_darmstadt.gdi1.samegame.exceptions.WrongLevelFormatException;
 
-import java.util.Scanner;
-import java.util.Date;
-import java.util.regex.Pattern;
-import java.text.SimpleDateFormat;
-import java.text.ParseException;
-import java.io.LineNumberReader;
 
 class HighscoreEntry implements Comparable<HighscoreEntry>{
+
 	private String name;
 	private double remainingTime;
 	private double points;
 	private Date date;
 	private final static SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH;mm;ss");
+	
+	private final static String HIGHSCORE_INFORMATION = 
+		// informations like (name|points|date|remaining time)
+		"(name:(\\w|\\s)*|points:\\d*|date:\\d\\d\\.\\d\\d\\.\\d{4} \\d\\d;\\d\\d;\\d\\d|rem_time:\\d*)";
 
 	// Pattern for highscore entrys
 	public static final String HIGHSCORE_ENTRY =
-		// a "###" at the beginning of the line with one of the highscore
-		// informations like (name|points|date|remaining time)
-		"###(name:(\\w|\\s)*|points:\\d*|date:\\d\\d\\.\\d\\d\\.\\d{4} \\d\\d;\\d\\d;\\d\\d|rem_time:\\d*)"
-		// With a following "|" and another highscore information
-		+"(\\|(name:(\\w|\\s)*|points:\\d*|date:\\d\\d\\.\\d\\d\\.\\d{4} \\d\\d;\\d\\d;\\d\\d|rem_time:\\d*)){3}$";
+		"###"+HIGHSCORE_INFORMATION+"(\\|"+HIGHSCORE_INFORMATION+"){3}";
 	
 	HighscoreEntry(final String playername, 
 				   final double rem_time,
@@ -100,30 +103,30 @@ class HighscoreEntry implements Comparable<HighscoreEntry>{
 
 		s.skip("###");
 		
-		String[] infos = new String[5];
-		String[] values = new String[5];
+		String[] infos = new String[4];
+		String[] values = new String[4];
 		
 		// scanning informations
-		for(int i=0; i<5; i++){
+		for(int i=0; i<4; i++){
 			infos[i] = s.findInLine("(\\w|_)*");
 			s.skip(":");
 
 			values[i] = s.findInLine("[^\\|]*");
 
-			if(s.hasNext("\\|"))
+			if(s.hasNext("\\|.*"))
 				s.skip("\\|");
 		}
 		
 		// if there are duplicated informations
-		for(int i=0; i<5; i++)
-			for(int j=i+1; j<5; j++)
+		for(int i=0; i<4; i++)
+			for(int j=i+1; j<4; j++)
 				if(infos[i].equals(infos[j]))
 					throw new WrongLevelFormatException(
 							"wrong level format while parsing HighscoreList " 
 							+"from string at line "+line+": dublicated "
 							+"level informations");
 
-		for(int i=0; i<5; i++){
+		for(int i=0; i<4; i++){
 			try{
 				if(infos[i].equals("points")){
 					Double.parseDouble(values[i]);
@@ -165,21 +168,21 @@ class HighscoreEntry implements Comparable<HighscoreEntry>{
 
 		s.skip("###");
 		
-		String[] infos = new String[5];
-		String[] values = new String[5];
+		String[] infos = new String[4];
+		String[] values = new String[4];
 		
 		// scanning informations
-		for(int i=0; i<5; i++){
+		for(int i=0; i<4; i++){
 			infos[i] = s.findInLine("(\\w|_)*");
 			s.skip(":");
 
 			values[i] = s.findInLine("[^\\|]*");
 
-			if(s.hasNext("\\|"))
+			if(s.hasNext("\\|.*"))
 				s.skip("\\|");
 		}
 		
-		for(int i=0; i<5; i++){
+		for(int i=0; i<4; i++){
 			try{
 				if(infos[i].equals("name")){
 					name = values[i];
@@ -212,9 +215,9 @@ class HighscoreEntry implements Comparable<HighscoreEntry>{
 	 */
 	public int compareTo(HighscoreEntry another){
 		if(this.points != another.points)
-			return (int) (this.points - another.points);
+			return (int) (another.points - this.points);
 		else if(this.remainingTime != another.remainingTime)
-			return (int) (this.remainingTime - another.remainingTime);
+			return (int) (another.remainingTime - this.remainingTime);
 		else if(!this.date.equals(another.date))
 			return this.date.compareTo(another.date);
 		else
@@ -252,6 +255,6 @@ class HighscoreEntry implements Comparable<HighscoreEntry>{
 	 */
 	@Override
 	public String toString(){
-		return "###name:"+name+"|points:"+points+"|date:"+df.format(date)+"|rem_time:"+remainingTime;
+		return "###name:"+name+"|points:"+(long)points+"|date:"+df.format(date)+"|rem_time:"+(long)remainingTime;
 	}
 }

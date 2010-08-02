@@ -1,33 +1,38 @@
 package de.tu_darmstadt.gdi1.samegame;
 
-import de.tu_darmstadt.gdi1.samegame.exceptions.WrongLevelFormatException;
-import de.tu_darmstadt.gdi1.samegame.exceptions.LevelNotLoadedFromFileException;
-import de.tu_darmstadt.gdi1.samegame.exceptions.ParameterOutOfRangeException;
-import de.tu_darmstadt.gdi1.samegame.highscore.Highscore;
-import static de.tu_darmstadt.gdi1.samegame.highscore.Highscore.HIGHSCORE_ENTRY;
-
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.LineNumberReader;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.StringReader;
 import java.io.IOException;
+import java.io.LineNumberReader;
+import java.io.StringReader;
 
-import java.util.Scanner;
-import java.util.regex.Pattern;
-import java.util.NoSuchElementException;
-import java.util.Vector;
-import java.util.Random;
 import java.util.Date;
+import java.util.NoSuchElementException;
+import java.util.Random;
+import java.util.Scanner;
+import java.util.Vector;
 
-import javax.swing.undo.CompoundEdit;
-import javax.swing.event.ChangeListener;
+import java.util.regex.Pattern;
+
 import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import javax.swing.undo.CannotRedoException;
+import javax.swing.undo.CannotUndoException;
+import javax.swing.undo.UndoManager;
 
 import org.apache.commons.lang.time.StopWatch;
+
+import de.tu_darmstadt.gdi1.samegame.exceptions.LevelNotLoadedFromFileException;
+import de.tu_darmstadt.gdi1.samegame.exceptions.ParameterOutOfRangeException;
+import de.tu_darmstadt.gdi1.samegame.exceptions.WrongLevelFormatException;
+
+import de.tu_darmstadt.gdi1.samegame.highscore.Highscore;
+import static de.tu_darmstadt.gdi1.samegame.highscore.Highscore.HIGHSCORE_ENTRY;
 
 
 /**
@@ -37,7 +42,7 @@ import org.apache.commons.lang.time.StopWatch;
  * ChangeEvent, wich is listend by the View class, so that the View
  * can update it's content
  */
-public class Level {
+public class Level extends UndoManager{
 
 	////////////////////////Class/Attributes//////////////////////////
 	/**
@@ -65,13 +70,6 @@ public class Level {
 	 * history by the CompoundEdit-Manager
 	 */
 	private GameState currentGameState;
-
-
-	/**
-	 * a class to manage undo and redo operations on the game state.
-	 * @see javax.swing.undo.CompoundEdit
-	 */
-	private CompoundEdit gameStateHistory;
 
 
 	/**
@@ -208,8 +206,7 @@ public class Level {
 
 		this.changeListener = changeListener;
 
-		gameStateHistory = new CompoundEdit();
-		gameStateHistory.addEdit(currentGameState);
+		this.addEdit(currentGameState);
 	}
 
 
@@ -220,7 +217,7 @@ public class Level {
 	 *
 	 * @return the points the player reached at the moment
 	 */
-	public int getPoints(){
+	public double getPoints(){
 		return currentGameState.getPoints();
 	}
 
@@ -261,14 +258,14 @@ public class Level {
 	 * @param points the score which was achieved
 	 */
 	public void insertHighscore(final String playername, 
-								final int remTime, 
+								final double remTime, 
 								final Date creationDate, 
-								final int points){
+								final double points){
 
-		highscore.insertHighscore(playername,
-								  remTime,
-								  creationDate,
-								  points);
+			highscore.insertHighscore(playername,
+									  remTime,
+									  creationDate,
+									  points);
 	}
 
 
@@ -361,8 +358,8 @@ public class Level {
 
 		stateInf = ORIGINAL_LEVEL_STATE.toString() + "\n"
 			+ "###loaded_level:" + this.loadedLevel.getAbsolutePath()
-			+   "|reached_points:" + currentGameState.getPoints()
-			+   "|elapsed_time:"+ watch.getTime();
+			+   "|reached_points:" + (long) currentGameState.getPoints()
+			+   "|elapsed_time:"+ (long) watch.getTime();
 		
 		return stateInf;
 	}
@@ -391,8 +388,13 @@ public class Level {
 		return currentGameState.toString();
 	}
 
-
-
+	// TODO write javadoc
+	public String getHighscorelist(){
+		if(highscore != null)
+			return highscore.toString();
+		else
+			return null;
+	}
 	////////////////////////Class/Operations//////////////////////////
 	/**
 	 * Resets the current level state and delete the undo/redo history
@@ -405,8 +407,8 @@ public class Level {
 			currentGameState = new GameState(null, 0);
 		}
 
-		gameStateHistory = new CompoundEdit();		
-		gameStateHistory.addEdit(currentGameState);
+		this.discardAllEdits();		
+		this.addEdit(currentGameState);
 	}
 
 
@@ -415,13 +417,16 @@ public class Level {
 	 *
 	 * @return return true if an undo is possible
 	 */
-	public boolean undo(){
-		if(gameStateHistory.canUndo()){
-			gameStateHistory.undo();
-			return true;
-		}else{
-			return false;
-		}
+	@Override
+	public void undo() throws CannotUndoException{
+		super.undo();
+		
+		if(this.editToBeUndone() instanceof GameState)
+			this.currentGameState = 
+			(GameState) this.editToBeUndone();
+		else
+			throw new CannotUndoException();
+		
 	}
 
 
@@ -430,13 +435,16 @@ public class Level {
 	 *
 	 * @return return true if a redo was possible
 	 */
-	public boolean redo(){
-		if(gameStateHistory.canRedo()){
-			gameStateHistory.redo();
-			return true;
-		}else{
-			return false;
-		}
+	@Override
+	public void redo() throws CannotRedoException{
+		super.redo();
+			
+		if(this.editToBeUndone() instanceof GameState)
+			this.currentGameState = 
+			(GameState) this.editToBeUndone();
+		else
+			throw new CannotRedoException();
+		
 	}
 
 
@@ -564,12 +572,21 @@ public class Level {
 
 		if(Pattern.matches(ADDITIONAL_LEVEL_INF, parsedLine)){
 			validateAdditionalLevelInf(parsedLine);
-
-			if(s.hasNextLine())
-				Highscore.validate(s.next(".*"));
-		}else if(Pattern.matches(HIGHSCORE_ENTRY, parsedLine))
-			Highscore.validate(parsedLine+"\n"+s.next(".*"));
-		else if(!Pattern.matches(LEVEL_LINE, parsedLine)){
+			
+			if(s.hasNextLine()){
+				String rest = "";
+				while(s.hasNextLine())
+					rest += s.nextLine() + "\n";
+				Highscore.validate(rest);
+			}
+			
+		}else if(Pattern.matches(HIGHSCORE_ENTRY, parsedLine)){
+			String rest = parsedLine + "\n";
+			while(s.hasNextLine())
+				rest += s.nextLine() + "\n";
+			Highscore.validate(rest);
+			
+		}else if(!Pattern.matches(LEVEL_LINE, parsedLine)){
 			throw new WrongLevelFormatException(
 					"Wrong level format while parsing level from "
 					+"string: unexcepted characters in line "
@@ -733,14 +750,21 @@ public class Level {
 		if(s.hasNextLine()){
 
 			// if there are additional level information
-			if(s.hasNext(ADDITIONAL_LEVEL_INF)){
+			if(s.hasNext(ADDITIONAL_LEVEL_INF))
 				parseAdditionalLevelInf(s.nextLine());
-			}
 
-			// if there are highscore entrys
-			 if(s.hasNext(HIGHSCORE_ENTRY)){ 
-				this.highscore = new Highscore(line, s);
+			if(s.hasNextLine() && 
+					Pattern.matches(HIGHSCORE_ENTRY, parsedLine=s.nextLine())){
+				
+				String rest = parsedLine + "\n";
+				
+				while(s.hasNext())
+					rest += s.nextLine() + "\n";
+						
+				this.highscore = new Highscore(rest);
+				
 			}
+			 
 		}
 
 		// write the parsed vector to the class attribute
@@ -1031,10 +1055,7 @@ public class Level {
 			// perform the fall down and empty column deletion
 			moveUp(state);
 
-			boolean overTime = targetTime - watch.getTime() < 0;
-			int pointsMade = calculatePoints(elementsRemoved, overTime);
-			
-			updateState(state, pointsMade);
+			updateState(state, elementsRemoved);
 
 			return true;
 		}
@@ -1146,12 +1167,12 @@ public class Level {
 	 */
 	void updateState(Byte[][] state, int removedElements){
 
-		int newPoints = calculatePoints(state, removedElements);
+		double newPoints = calculatePoints(state, removedElements);
 
 		currentGameState = 
 			new GameState(state, newPoints);
 
-		gameStateHistory.addEdit(currentGameState);
+		this.addEdit(currentGameState);
 
 		// notify the viewer that the level state has changed
 		changeListener.stateChanged(new ChangeEvent(this));
@@ -1166,9 +1187,9 @@ public class Level {
 	 *
 	 * @return the new calculate Points
 	 */
-	public int calculatePoints(Byte[][] state, int removedElements){
+	public double calculatePoints(Byte[][] state, int removedElements){
 
-		int newPoints = currentGameState.getPoints();
+		double newPoints = currentGameState.getPoints();
 
 		boolean overTime = targetTime - watch.getTime() < 0;
 		newPoints += Level.calculatePoints(removedElements, overTime);
@@ -1191,13 +1212,13 @@ public class Level {
 	 *
 	 * @return the new calculate Points
 	 */
-	public static int calculatePoints(int removedElements,
+	public static double calculatePoints(int removedElements,
 									  boolean afterTargetTime){
 
 		if(!afterTargetTime)
-			return (int) Math.pow(removedElements, 2);
+			return Math.pow(removedElements, 2);
 		else
-			return (int) (Math.pow(removedElements, 2) / 2.0);
+			return Math.pow(removedElements, 2) / 2.0;
 	}
 
 	/**
@@ -1218,7 +1239,7 @@ public class Level {
 	 *
 	 * @return just the point bonus or malus
 	 */
-	public int calculatePointsFinished(final Byte[][] state){
+	public double calculatePointsFinished(final Byte[][] state){
 		
 		int elementsLeft = 0;
 		for(int i=0; i<state.length; i++)
@@ -1262,11 +1283,11 @@ public class Level {
 	 *
 	 * @return just the point bonus or malus
 	 */
-	public static int calculatePointsFinished(int elementsLeft,
+	public static double calculatePointsFinished(int elementsLeft,
 											  int timeLeft,
 											  int initialElements){
 		
-		int additionalPoints = 0;
+		double additionalPoints = 0;
 
 		if(timeLeft >= 0)
 			additionalPoints += timeLeft;

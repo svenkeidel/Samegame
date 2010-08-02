@@ -1,14 +1,14 @@
 package de.tu_darmstadt.gdi1.samegame.highscore;
 
-import de.tu_darmstadt.gdi1.samegame.exceptions.WrongLevelFormatException;
-import de.tu_darmstadt.gdi1.samegame.exceptions.ParameterOutOfRangeException;
+import java.io.LineNumberReader;
 
 import static java.util.Collections.*;
-import java.util.Vector;
 import java.util.Date;
 import java.util.Scanner;
-import java.util.regex.Pattern;
-import java.io.LineNumberReader;
+import java.util.Vector;
+
+import de.tu_darmstadt.gdi1.samegame.exceptions.ParameterOutOfRangeException;
+import de.tu_darmstadt.gdi1.samegame.exceptions.WrongLevelFormatException;
 
 /**
  * class wich represents a highscore list.
@@ -43,10 +43,10 @@ public class Highscore{
 	}
 
 
-	public Highscore(LineNumberReader line, Scanner s) 
+	public Highscore(String entrys) 
 		throws WrongLevelFormatException{
 		highscoreEntrys = new Vector<HighscoreEntry>();
-		parseHighscoreEntrys(line, s);
+		parseHighscoreEntrys(entrys);
 	}
 	
 
@@ -100,16 +100,18 @@ public class Highscore{
 	public void insertHighscore(final String playername, 
 								final double remTime, 
 								final Date creationDate, 
-					 			final double points)
-		throws Invali{
-		if(highscoreEntrys.size() > 10)
-			throw 
+					 			final double points){
+
 		 highscoreEntrys.add(
 				 new HighscoreEntry(playername,
 									remTime, 
 									creationDate,
 									points));
+
 		sort(highscoreEntrys);
+
+		if(highscoreEntrys.size() > 10)
+			highscoreEntrys.remove(10);
 	}
 
 	public void resetHighscore(){
@@ -129,24 +131,27 @@ public class Highscore{
 		}
 	}
 
-	private void parseHighscoreEntrys(LineNumberReader line, Scanner s)
+	private void parseHighscoreEntrys(String entrys)
 		throws WrongLevelFormatException{
 
-		String highscoreList = s.next(".*");
+		Scanner s = new Scanner(entrys);
 
-		validate(highscoreList);
+		validate(entrys);
 
 		for(int i=1; s.hasNextLine(); i++){
 			highscoreEntrys.add(new HighscoreEntry(s.nextLine(), i));
 		}
+		
+		sort(highscoreEntrys);
 	}
 
 	@Override
 	public String toString(){
 		StringBuffer out = new StringBuffer();
 		for(int i=0; i<highscoreEntrys.size(); i++){
-			out.append(highscoreEntrys.toString()).append("\n");
+			out.append(highscoreEntrys.get(i).toString()).append("\n");
 		}
+		out.deleteCharAt(out.length()-1);
 		return out.toString();
 	}
 }

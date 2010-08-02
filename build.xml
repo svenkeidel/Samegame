@@ -2,27 +2,107 @@
 	<description>
 		the buildfile of the complete src in the java git repos
 	</description>
-	<!-- set global properties for this build -->
+
 	<property name="src" location="src"/>
 	<property name="lib" location="lib"/>
 	<property name="build" location="bin"/>
 	<property name="doc"  location="doc"/>
-	<property name="classpath"  location="lib/junit-4.8.2.jar:lib/commons-lang-2.5.jar"/>
-	<property name="javadoc-classpath"  location="${src}:${lib}/junit-4.8.2.jar:${lib}/commons-lang-2.5.jar"/>
+
+	<!-- path to browser. On win eg.: C:/Program Files/Mozilla Firefox/firefox.exe -->
+	<property name="browser" location="/usr/bin/firefox"/>
+
+	<property name="main.class" value="de.tu_darmstadt.gdi1.samegame.SameGameViewer"/>
+
+	<property name="classpath"  value="${bin}:${lib}/junit-4.8.2.jar:${lib}/commons-lang-2.5.jar"/>
+	<property name="javadoc-classpath" value="${src}:${lib}/junit-4.8.2.jar:${lib}/commons-lang-2.5.jar"/>
+
+	<property name="test.reports"  location="doc/reports"/>
+	<property name="tests" value="de.tu_darmstadt.gdi1.samegame.tests.students.suites"/>	
+	<path id="test.classpath">
+		<pathelement location="${build}"/>
+		<fileset dir="${lib}">
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
+
 
 	<target 
 		name="compile"
-		description="compile the source " >
-		<javac srcdir="${src}" classpath="${classpath}" destdir="${build}" debug="off"/>
+		description="compile the source" >
+		<javac 
+			srcdir="${src}" 
+			destdir="${build}" 
+			classpath="${classpath}" 
+			debug="off"/>
 		<touch file="${build}/empty"/>
 	</target>
 
+
 	<target 
 		name="debug"
-		description="compile the source " >
-		<javac srcdir="${src}" classpath="${classpath}" destdir="${build}" debug="on"/>
+		description="compile the source with debugging symbols" >
+		<javac 
+			srcdir="${src}" 
+			destdir="${build}" 
+			classpath="${classpath}" 
+			debug="on"/>
 		<touch file="${build}/empty"/>
 	</target>
+
+
+	<target name="jar">
+		<jar destfile="${lib}/samegame.jar" basedir="${build}/">
+            <manifest>
+				<attribute name="Main-Class" value="${main.class}"/>
+            </manifest>
+        </jar>
+    </target>
+
+
+	<target 
+		name="test-report" 
+		depends="compile"
+		description="test with all junit-tests" >
+		<mkdir dir="${test.reports}"/>
+		<junit fork="yes" printsummary="no" haltonfailure="no">
+
+			<batchtest fork="yes" 
+					   todir="${test.reports}">
+				<fileset dir="${build}">
+					<include name="de/tu_darmstadt/gdi1/samegame/tests/students/suites/SameGameTestsuite*.class" />
+				</fileset>
+			</batchtest>
+
+			<formatter type="xml" />
+
+			<classpath refid="test.classpath" />
+		</junit>
+
+		<junitreport todir="${test.reports}">
+			<fileset dir="${test.reports}">
+				<include name="TEST-*.xml" />
+			</fileset>
+				<report todir="${test.reports}" />
+		</junitreport>
+
+		<exec executable="${browser}" spawn="yes">
+			<arg line="${test.reports}/overview-summary.html" />
+		</exec>
+	</target>
+
+
+	<target name="doc"
+		description="generate the javadoc" >
+		<javadoc 
+			sourcepath="${src}"
+			destdir="${doc}"
+			classpath="${javadoc-classpath}"
+			author="false"
+			windowtitle="GdI-Projekt SS2010 - Same Game">
+				<link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+		</javadoc>
+	</target>
+
 
 	<target name="doc-private"
 		description="generate the javadoc" >
@@ -37,17 +117,13 @@
 		</javadoc>
 	</target>
 
-	<target name="doc"
-		description="generate the javadoc" >
-		<javadoc 
-			sourcepath="${src}"
-			destdir="${doc}"
-			classpath="${javadoc-classpath}"
-			author="false"
-			windowtitle="GdI-Projekt SS2010 - Same Game">
-				<link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
-		</javadoc>
+
+	<target
+		name="run"
+		depends="jar">
+		<java jar="${lib}/samegame.jar" fork="true"/>
 	</target>
+
 
 	<target 
 		name="clean"
@@ -59,5 +135,5 @@
 		<touch file="${build}/empty"/>
 		<touch file="${doc}/empty"/>
 	</target>
-</project>
 
+</project>

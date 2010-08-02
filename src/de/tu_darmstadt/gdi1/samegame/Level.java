@@ -1,15 +1,18 @@
 package de.tu_darmstadt.gdi1.samegame;
 
 import de.tu_darmstadt.gdi1.samegame.exceptions.WrongLevelFormatException;
+import de.tu_darmstadt.gdi1.samegame.exceptions.LevelNotLoadedFromFileException;
+import de.tu_darmstadt.gdi1.samegame.exceptions.ParameterOutOfRangeException;
 import de.tu_darmstadt.gdi1.samegame.highscore.Highscore;
 import static de.tu_darmstadt.gdi1.samegame.highscore.Highscore.HIGHSCORE_ENTRY;
-import de.tu_darmstadt.gdi1.samegame.exceptions.ParameterOutOfRangeException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.LineNumberReader;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.StringReader;
 import java.io.IOException;
 
@@ -100,6 +103,13 @@ public class Level {
 	 * break
 	 */
 	private StopWatch watch;
+
+
+	/**
+	 * Stores the file from wich the level information was loaded.
+	 * Is initialized in the function {@link #restoreLevel(File)}.
+	 */
+	private File loadedLevel;
 
 	////////////////////////Class/Constructors////////////////////////
 	/**
@@ -308,6 +318,80 @@ public class Level {
 	}
 
 
+	/**
+	 * return a string representation of the extra level informations.
+	 * It's in the form:<br>
+	 *
+	 * <code>###target_time:[number]|min_stones:[number]</code>
+	 * 
+	 * @return the string with the additional level informations
+	 */
+	public String getAdditionalLevelInf(){
+		StringBuffer out = new StringBuffer();
+		out.append("###target_time:").append(targetTime);
+		out.append("|min_stones:").append(minStones);
+		return out.toString();
+	}
+
+
+	/**
+	 * returns a string containing the level state information.
+	 * the level must been loaded from a file, else an exception
+	 * is thrown.
+	 * It's in the form: <br>
+	 *
+	 * <code>
+	 * [current level field state]<br>
+	 * ###loaded_level:[absolut path to file]|reached_points:[number]
+	 * |elapsed_time:[number]
+	 * </code> 
+	 *
+	 * @return the string wich contains current level state information
+	 *
+	 * @throws LevelNotLoadedFromFileException if the level wasn't loaded
+	 * from a file
+	 */
+	public String getLevelStateInf() 
+		throws LevelNotLoadedFromFileException{
+		if(loadedLevel == null)
+			throw new LevelNotLoadedFromFileException(
+					"so the level state information can't been print");
+
+		String stateInf;
+
+		stateInf = ORIGINAL_LEVEL_STATE.toString() + "\n"
+			+ "###loaded_level:" + this.loadedLevel.getAbsolutePath()
+			+   "|reached_points:" + currentGameState.getPoints()
+			+   "|elapsed_time:"+ watch.getTime();
+		
+		return stateInf;
+	}
+
+
+	/**
+	 * returns a string representation of the original level fieldstate
+	 * without extra level informations.
+	 *
+	 * @return the string wich contains a representation of the level
+	 * fieldstate
+	 */
+	public String getOrigLevelState(){
+		return ORIGINAL_LEVEL_STATE.toString();
+	}
+
+
+	/**
+	 * returns a string representation of the current level fieldstate
+	 * without extra level informations.
+	 *
+	 * @return the string wich contains a representation of the level
+	 * fieldstate
+	 */
+	public String getCurrentLevelState(){
+		return currentGameState.toString();
+	}
+
+
 
 	////////////////////////Class/Operations//////////////////////////
 	/**
@@ -483,7 +567,7 @@ public class Level {
 
 			if(s.hasNextLine())
 				Highscore.validate(s.next(".*"));
-		}else if(HIGHSCORE_ENTRY.matcher(parsedLine).matches())
+		}else if(Pattern.matches(HIGHSCORE_ENTRY, parsedLine))
 			Highscore.validate(parsedLine+"\n"+s.next(".*"));
 		else if(!Pattern.matches(LEVEL_LINE, parsedLine)){
 			throw new WrongLevelFormatException(
@@ -493,6 +577,77 @@ public class Level {
 		}
 
 		s.close();
+	}
+
+
+	/**
+	 * check if the additional level information have the right format
+	 * and if there are no dublicates.
+	 *
+	 * @param addLevelInf the line with the additional level 
+	 * informations
+	 *
+	 * @throws WrongLevelFormatException if the addtional level 
+	 * informations are not in the excepted format
+	 */
+	public static void validateAdditionalLevelInf(
+			final String addLevelInf)
+		throws WrongLevelFormatException{
+
+		if(!Pattern.matches(ADDITIONAL_LEVEL_INF, addLevelInf))
+			throw new WrongLevelFormatException(
+					"Wrong level format, the given additional level "
+					+ "informations are not valide");
+
+		Scanner s = new Scanner(addLevelInf);
+
+		s.skip("###");
+
+		String[] infos = new String[2];
+		int[] values = new int[2];
+		
+		// scanning informations
+		for(int i=0; i<2; i++){
+			try{
+				infos[i] = s.findInLine("(\\w|_)*");
+				s.skip(":");
+				values[i] = Integer.parseInt(s.findInLine("\\d*"));
+			}catch(NoSuchElementException e){
+				throw new WrongLevelFormatException(
+						"wrong level format while parsing additional "
+						+"Level informations from string :"
+						+ e.getMessage());
+			}catch(NumberFormatException e){
+				throw new WrongLevelFormatException(
+						"wrong level format while parsing additional "
+						+"Level informations from string :"
+						+ e.getMessage());
+			}
+			if(s.hasNext("\\|.*"))
+				s.skip("\\|");
+			else
+				break;
+		}
+
+		// test if min_stone have a value between[2,2^32]
+		if(infos[0].equals("min_stones") && values[0] < 2)
+			throw new WrongLevelFormatException(
+					"wrong level format while parsing additional Level"
+					+" informations from string: min_stone must be have"
+					+" a value of [2,2^32]:"+ values[0]);
+		
+		if(infos[1] != null && infos[1].equals("min_stones") && values[1] < 2)
+			throw new WrongLevelFormatException(
+					"wrong level format while parsing additional Level"
+					+" informations from string: min_stone must be have"
+					+" a value of [2,2^32]:"+ values[1]);
+
+		// if there are duplicated informations
+		if(infos[1] != null && infos[0].equals(infos[1]))
+			throw new WrongLevelFormatException(
+					"wrong level format while parsing additional Level"
+					+" informations from string: dublicated level "
+					+"informations");
 	}
 
 
@@ -633,72 +788,6 @@ public class Level {
 		return parsedArray;
 	}
 
-
-	/**
-	 * check if the additional level information have the right format
-	 * and if there are no dublicates.
-	 *
-	 * @param addLevelInf the line with the additional level 
-	 * informations
-	 *
-	 * @throws WrongLevelFormatException if the addtional level 
-	 * informations are not in the excepted format
-	 */
-	public static void validateAdditionalLevelInf(
-			final String addLevelInf)
-		throws WrongLevelFormatException{
-
-		Scanner s = new Scanner(addLevelInf);
-
-		s.skip("###");
-
-		String[] infos = new String[2];
-		int[] values = new int[2];
-		
-		// scanning informations
-		for(int i=0; i<2; i++){
-			try{
-				infos[i] = s.findInLine("(\\w|_)*");
-				s.skip(":");
-				values[i] = Integer.parseInt(s.findInLine("\\d*"));
-			}catch(NoSuchElementException e){
-				throw new WrongLevelFormatException(
-						"wrong level format while parsing additional "
-						+"Level informations from string :"
-						+ e.getMessage());
-			}catch(NumberFormatException e){
-				throw new WrongLevelFormatException(
-						"wrong level format while parsing additional "
-						+"Level informations from string :"
-						+ e.getMessage());
-			}
-			if(s.hasNext("\\|.*"))
-				s.skip("\\|");
-			else
-				break;
-		}
-
-		// test if min_stone have a value between[2,2^32]
-		if(infos[0].equals("min_stones") && values[0] < 2)
-			throw new WrongLevelFormatException(
-					"wrong level format while parsing additional Level"
-					+" informations from string: min_stone must be have"
-					+" a value of [2,2^32]:"+ values[0]);
-		
-		if(infos[1] != null && infos[1].equals("min_stones") && values[1] < 2)
-			throw new WrongLevelFormatException(
-					"wrong level format while parsing additional Level"
-					+" informations from string: min_stone must be have"
-					+" a value of [2,2^32]:"+ values[1]);
-
-		// if there are duplicated informations
-		if(infos[1] != null && infos[0].equals(infos[1]))
-			throw new WrongLevelFormatException(
-					"wrong level format while parsing additional Level"
-					+" informations from string: dublicated level "
-					+"informations");
-	}
-	
 
 	/**
 	 * parses additional level information like the target time or the
@@ -1194,18 +1283,103 @@ public class Level {
 
 
 	/**
-	 * save a level state to a *.sve file.
+	 * writes the given information into a file. Thows an exception if
+	 * the given file allready exists and the force option is false.
 	 *
-	 * @param f the file to save to
+	 * @param inf the information wich should be write in the file
+	 * @param f the file to write in
+	 * @param force if true: overwrite existing file
 	 *
+	 * @throws IllegalArgumentException if the given file allready 
+	 * exists and the force option is false
+	 * @throws IOException if a IO-exception accures during the reading
+	 * the file
+	 * @throws SecurityException if the user hasn't write permissions
+	 * the given path
+	 */
+	private void store(final String inf, final File f, final boolean force)
+		throws IllegalArgumentException, 
+			   IOException,
+			   SecurityException{
+		// test if the given path is a file
+		if(f.isFile() || !f.exists()){
+
+			// if the file allready exists overwrite it if the force
+			// option is on, else throw a exception
+			if(force && f.exists())
+				f.delete();
+			else if(!force && f.exists())
+				throw new IllegalArgumentException("Error while storing to *.lvl file: "
+						+"the given file allready exists: "+f.getName());
+
+			f.createNewFile();
+			BufferedWriter b = new BufferedWriter(new FileWriter(f));
+			b.write(inf, 0, inf.length());
+
+			this.loadedLevel = f;
+
+			b.close();
+
+		}else{
+			throw new IllegalArgumentException("Error while storing to *.lvl file: "
+					+"the given path is a directory: "+f.getPath());
+		}
+	}
+
+
+	/**
+	 * save level state information to a *.sve file. Don't proceed if the file
+	 * allready exists, except the force boolean is true.
+	 *
+	 * @param f the file in wich the level should be stored
+	 * @param force override an existing file
+	 *
+	 * @throws LevelNotLoadedFromFileException if the level wasn't loaded
+	 * from a file
+	 * @throws IllegalArgumentException if the given file allready 
+	 * exists and the force option is false
+	 * @throws IOException if a IO-exception accures during the reading
+	 * the file
+	 * @throws SecurityException if the user hasn't write permissions
+	 * the given path
+	 */
+	public void storeLevelState(final File f, boolean force) 
+		throws IllegalArgumentException, 
+			   IOException,
+			   SecurityException,
+			   LevelNotLoadedFromFileException{
+
+		String levelStateInf = this.getLevelStateInf();
+		store(levelStateInf, f, force);
+
+	}
+
+
+	/**
+	 * save level information to a *.lvl file. Don't proceed if the file
+	 * allready exists, except the force boolean is true.
+	 *
+	 * @param f the file in wich the level should be stored
+	 * @param force override an existing file
+	 *
+	 * @throws IllegalArgumentException if the given file allready 
+	 * exists and the force option is false
 	 * @throws FileNotFoundException if the file could not been found
 	 * @throws IOException if a IO-exception accures during the reading
 	 * the file
+	 * @throws SecurityException if the user hasn't write permissions
+	 * the given path
 	 */
-	public void storeLevelState(final File f) 
-		throws FileNotFoundException, 
-			   IOException{
-		//TODO impliment
+	public void storeLevel(final File f, boolean force)
+		throws IllegalArgumentException, 
+			   IOException,
+			   SecurityException{
+
+		String levelInf;
+		levelInf  = this.getOrigLevelState() + "\n"
+				  + this.getAdditionalLevelInf() + "\n";
+
+		store(levelInf, f, force);
 	}
 
 
@@ -1229,22 +1403,6 @@ public class Level {
 
 
 	/**
-	 * save level information to a *.lvl file.
-	 * See {@link #loadLevelFromString(String)} for levelformat
-	 *
-	 * @param f the file to save to
-	 *
-	 * @throws FileNotFoundException if the file could not been found
-	 * @throws IOException if a IO-exception accures during the reading
-	 * the file
-	 */
-	public void storeLevel()
-		throws FileNotFoundException, 
-			   IOException{
-		//TODO impliment
-	}
-
-	/**
 	 * load a level information from a *.lvl file.
 	 * See {@link #loadLevelFromString(String)} for levelformat
 	 *
@@ -1265,23 +1423,11 @@ public class Level {
 
 		char[] levelString = new char[(int)f.length()];
 		r.read(levelString, 0, (int)f.length());
-		loadLevelFromString(new String(levelString.toString()));
-	}
+		loadLevelFromString(new String(levelString));
+		
+		this.loadedLevel = f;
 
-
-	/**
-	 * return a string representation of the extra level informations.
-	 * It's in the form:<br>
-	 *
-	 * <code>###target_time:[number]|min_stones:[number]</code>
-	 * 
-	 * @return the string with the additional level informations
-	 */
-	public String additionalLevelInfToString(){
-		StringBuffer out = new StringBuffer();
-		out.append("###target_time:").append(targetTime);
-		out.append("|min_stones:").append(minStones);
-		return out.toString();
+		r.close();
 	}
 
 
@@ -1294,6 +1440,28 @@ public class Level {
 	 */
 	@Override
 	public String toString(){
-		return currentGameState.toString();
+		return this.getCurrentLevelState();
+	}
+
+	public static void main(String[] args){
+		File f = new File("./src/de/tu_darmstadt/gdi1/resources/levels/defaultlevels/level_01.lvl");
+		File to = new File("./src/de/tu_darmstadt/gdi1/resources/levels/defaultlevels/level_01.sve");
+		
+		try{
+			Level l = new Level(f, new ChangeListener(){public void stateChanged(ChangeEvent e){}});
+			l.removeStone(0, 0);
+			System.out.println(l.getLevelStateInf());
+			l.storeLevelState(to, false);
+		}catch(FileNotFoundException e){
+			System.err.println(e.getMessage());
+		}catch(WrongLevelFormatException e){
+			System.err.println(e.getMessage());
+		}catch(IOException e){
+			System.err.println(e.getMessage());
+		}catch(ParameterOutOfRangeException e){
+			System.err.println(e.getMessage());
+		}catch(LevelNotLoadedFromFileException e){
+			System.err.println(e.getMessage());
+		}
 	}
 }

@@ -1,7 +1,6 @@
 package de.tu_darmstadt.gdi1.samegame.tests.adapter;
 
 import de.tu_darmstadt.gdi1.samegame.Level;
-import de.tu_darmstadt.gdi1.samegame.SameGameViewer;
 import de.tu_darmstadt.gdi1.samegame.GameController;
 
 import java.awt.Component;
@@ -43,7 +42,7 @@ public class SameGameTestAdapterExtended1 extends SameGameTestAdapterMinimal {
 	 */
 	public String getLevelAsStringWithExtraInfo() {
 		return level.toString() + "\n" 
-			+ level.additionalLevelInfToString();
+			+ level.getAdditionalLevelInf();
 	}
 
 	/**

@@ -66,7 +66,7 @@ public class SameGameTestAdapterExtended2 extends SameGameTestAdapterExtended1 {
 	 * @see #getDateAtHighscorePosition(int)
 	 */
 	public void addHighscoreEntry(String playername, double rem_time, Date creation_date, double points) {
-		highscore.insertHighscore(playername, rem_time, rem_time, creation_date, points);
+		highscore.insertHighscore(playername, rem_time, creation_date, points);
 	}
 	
 	/** 
@@ -75,14 +75,14 @@ public class SameGameTestAdapterExtended2 extends SameGameTestAdapterExtended1 {
 	 * @return the number of highscore entries
 	 */
 	public int getHighscoreCount() {
-		return level.getHighscore().length;
+		return highscore.getHighscoreCount();
 	}
 	
 	/** 
 	 * Clear the highscore store and delete all entries.
 	 */
 	public void resetHighscore() {
-		level.resetHighscore();
+		highscore.resetHighscore();
 	}
 	
 	/** 
@@ -97,7 +97,7 @@ public class SameGameTestAdapterExtended2 extends SameGameTestAdapterExtended1 {
 	 * or null if the position is invalid 
 	 */
 	public String getPlayernameAtHighscorePosition(int position) {
-		return level.getHighscore()[position][3];
+		return highscore.getPlayername(position);
 	}
 	
 	/** 
@@ -112,7 +112,7 @@ public class SameGameTestAdapterExtended2 extends SameGameTestAdapterExtended1 {
 	 * or -1 if the position is invalid 
 	 */
 	public double getTimeAtHighscorePosition(int position) {
-		return (double) Integer.parseInt(level.getHighscore()[position][1]);
+		return highscore.getRemaining(position);
 	}
 
 	/**
@@ -127,7 +127,7 @@ public class SameGameTestAdapterExtended2 extends SameGameTestAdapterExtended1 {
 	 * or -1 if the position is invalid 
 	 */
 	public double getPointsAtHighscorePosition(int position) {
-		return (double) Integer.parseInt(level.getHighscore()[position][0]);
+		return highscore.getPoints(position);
 	}
 
 	/**
@@ -145,8 +145,6 @@ public class SameGameTestAdapterExtended2 extends SameGameTestAdapterExtended1 {
 	 * @return the date of the highscore entry at the specified position or null if the position is invalid
 	 */
 	public Date getDateAtHighscorePosition(int position) {
-		//TODO fill stub.
-		return null;
+		return highscore.getDate(position);
 	}
-
 }

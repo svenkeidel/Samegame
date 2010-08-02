@@ -96,8 +96,8 @@
 
 /======================================================================\
 | .gitignore-File:                                                     |
-| keep *.class-files and the whole content of the bin and doc dir      |
-| out of the version history                                           |
+| keep *.class-files, the whole content of the bin, the doc dir        |
+| and the generate samegame.jar out of the version history             |
 \======================================================================/
 
 /======================================================================\
@@ -105,8 +105,16 @@
 |      Build Targets:                                                  |
 |      compile  ->   compile the whole java sourcode from the          |
 |                    directory src tho bin                             |
+|        debug  ->   compile sourcecode with debugging symbols         |
+|          jar  ->   build a jar archive of the project with SameGame  |
+|                    Viewer as main class                              |
+|  test-report  ->   generate a html junit test report of all tests    |
+|                    and open them in a browser                        |
+|                    !!!IMPORTANT!!! Set the browser variable in the   |
+|                    build.xml file                                    |
 |          doc  ->   generate javadoc to the doc directory             |
 |  doc-private  ->   generate javadoc also for private classes         |
+|          run  ->   build the jar file and execute it                 |
 |        clean  ->   clean the bin and src directory                   |
 |                                                                      |
 |      Command-line-Usage:                                             |
@@ -126,6 +134,10 @@
 |                    it is distributed under Common Public License:    |
 |                    http://junit.sourceforge.net/cpl-v10.html         |
 |                                                                      |
+| commons-lang-2.5.jar  ->   The Commons is an Apache project focused  |
+|                    on all aspects of reusable Java components.       |
+|                    it is distributed under the Apache v2 license     |
+|                    http://commons.apache.org/license.html            |
 | UmlGraph-5.3  ->   UMLGraph allows the declarative specification     |
 |                    and drawing of UML class and sequence diagrams.   |
 |                    it is distributed under the BSD license           |

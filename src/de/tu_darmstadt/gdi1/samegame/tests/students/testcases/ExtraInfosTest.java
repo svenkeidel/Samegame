@@ -1,5 +1,6 @@
 package de.tu_darmstadt.gdi1.samegame.tests.students.testcases;
 
+import java.lang.Class;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -10,6 +11,11 @@ import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.tu_darmstadt.gdi1.samegame.Level;
+import de.tu_darmstadt.gdi1.samegame.SameGameViewer;
+
+import de.tu_darmstadt.gdi1.samegame.exceptions.WrongLevelFormatException;
+
 import de.tu_darmstadt.gdi1.samegame.tests.adapter.SameGameTestAdapterExtended1;
 
 /**
@@ -18,17 +24,74 @@ import de.tu_darmstadt.gdi1.samegame.tests.adapter.SameGameTestAdapterExtended1;
  */
 public class ExtraInfosTest {
 	
-	String level_1_with = "21212\n" + "21212\n" + "12345\n" + "21212\n" + "12121\n" + "###target_time:400|min_stones:4" ;
-	String level_1_without = "21212\n" + "21212\n" + "12345\n" + "21212\n" + "12121";
-	String level_1_withDefault = "21212\n" + "21212\n" + "12345\n" + "21212\n" + "12121\n" + "###target_time:25|min_stones:2";
-	String level_2_0_with =  "22222\n" + "11111\n" + "12345\n" + "21212\n" + "11121\n" + "###target_time:400|min_stones:5";
-	String level_2_0_without = "22222\n" + "11111\n" + "12345\n" + "21212\n" + "11121";
-	String level_2_1_with = "00000\n" + "11111\n" + "12345\n" + "21212\n" + "11121\n" + "###target_time:400|min_stones:5" ;
-	String level_2_1_without = "00000\n" + "11111\n" + "12345\n" + "21212\n" + "11121";
-	String level_2_2_with = "00000\n" + "00000\n" + "02345\n" + "21212\n" + "11121\n" + "###target_time:400|min_stones:5";
-	String level_2_2_without = "00000\n" + "00000\n" + "02345\n" + "21212\n" + "11121";
+	String level_1_with = 
+	"21212\n" + 
+	"21212\n" + 
+	"12345\n" + 
+	"21212\n" + 
+	"12121\n" + 
+	"###target_time:400|min_stones:4" ;
 
-	
+	String level_1_without = 
+	"21212\n" + 
+	"21212\n" + 
+	"12345\n" + 
+	"21212\n" + 
+	"12121";
+
+	String level_1_withDefault = 
+	"21212\n" + 
+	"21212\n" + 
+	"12345\n" + 
+	"21212\n" + 
+	"12121\n" + 
+	"###target_time:25|min_stones:2";
+
+	String level_2_0_with =  
+	"22222\n" + 
+	"11111\n" + 
+	"12345\n" + 
+	"21212\n" + 
+	"11121\n" + 
+	"###target_time:400|min_stones:5";
+
+	String level_2_0_without = 
+	"22222\n" + 
+	"11111\n" + 
+	"12345\n" + 
+	"21212\n" + 
+	"11121";
+
+	String level_2_1_with = 
+	"00000\n" + 
+	"11111\n" + 
+	"12345\n" + 
+	"21212\n" + 
+	"11121\n" + 
+	"###target_time:400|min_stones:5" ;
+
+	String level_2_1_without = 
+	"00000\n" + 
+	"11111\n" + 
+	"12345\n" + 
+	"21212\n" + 
+	"11121";
+
+	String level_2_2_with = 
+	"00000\n" + 
+	"00000\n" + 
+	"02345\n" + 
+	"21212\n" + 
+	"11121\n" + 
+	"###target_time:400|min_stones:5";
+
+	String level_2_2_without = 
+	"00000\n" + 
+	"00000\n" + 
+	"02345\n" + 
+	"21212\n" + 
+	"11121";
+
 	String level_3_0_with = 	
 	"1234512345\n"+
 	"1133552244\n"+
@@ -70,14 +133,74 @@ public class ExtraInfosTest {
 	"2241350000\n"+
 	"###target_time:400|min_stones:5";
 
-
+	String[] wrongLevels = new String[]{
+	// two times additional informations
+	"21212\n" +
+	"21212\n" + 
+	"###target_time:400|min_stones:4\n" + 
+	"###target_time:200|min_stones:4"
+	,
+	// level with additional information at the beginning
+	"###target_time:400|min_stones:4\n" +
+	"21212\n" +
+	"21212\n"
+	,
+	// level with some unexpected chars
+	"21212\n" +
+	"21212\n" + 
+	"###target_time:4|00|min_stones:4\n"
+	,
+	// level with one empty line between the field and the extra info
+	"21212\n" +
+	"21212\n\n" + 
+	"###target_time:4|00|min_stones:4\n"
+	,
+	// highscore informations over level extra informations
+	"21212\n" +
+	"21212\n" + 
+	"###name:Max M|points:120|date:28.05.2010 12;03;12|rem_time:14\n" +
+	"###target_time:4|min_stones:4\n"
+	,
+	// level with dublicated level informations
+	"21212\n" +
+	"21212\n" + 
+	"###target_time:4|target_time:5"
+	,
+	// level with no value for sth
+	"21212\n" +
+	"21212\n" + 
+	"###target_time:|"
+	,
+	// other wrong string
+	"21212\n" +
+	"21212\n" + 
+	"###target_time:abc|min_stonesasdf"} ;
+	
 	SameGameTestAdapterExtended1 adapter;
+
+	Level level;
+	SameGameViewer viewer;
 	
 	@Before
 	public void setUp() throws Exception {
 		adapter = new SameGameTestAdapterExtended1();
+		viewer = new SameGameViewer();
+		level = new Level(viewer);
 	}
 	
+	// own test
+	@Test
+	public void extraInfoIsWrong(){
+		for(int i=0; i<wrongLevels.length; i++)
+			try{
+				level.loadLevelFromString(wrongLevels[i]);
+				fail("the loaded level is wrong, the function " +
+					 "loadLevelfromString(String) should throw an " +
+					 "exception. Loaded Level: " + wrongLevels[i]);
+			}catch(WrongLevelFormatException e){
+				//every thing is all right because these are wrong levels
+			}
+	}
 	
 	@Test
 	public void extraInfoIsCorrect() {
@@ -180,6 +303,4 @@ public class ExtraInfosTest {
 		assertEquals(level_3_5_with_finished, adapter.getLevelAsStringWithExtraInfo());
 		assertTrue("Because of min-stones of 5 this level should be detected as finished:\n" + level_3_5_with_finished, adapter.isFinished());
 	}
-	
-
 }

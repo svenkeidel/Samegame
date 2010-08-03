@@ -3,21 +3,30 @@
 		the buildfile of the complete src in the java git repos
 	</description>
 
-	<property name="src" location="src"/>
-	<property name="lib" location="lib"/>
-	<property name="build" location="bin"/>
-	<property name="doc"  location="doc"/>
+	<property name="src"	location="src"/>
+	<property name="lib"	location="lib"/>
+	<property name="build"	location="bin"/>
+	<property name="doc"	location="doc"/>
+	<property name="uml"	location="uml"/>
 
 	<!-- path to browser. On win eg.: C:/Program Files/Mozilla Firefox/firefox.exe -->
 	<property name="browser" location="/usr/bin/firefox"/>
 
-	<property name="main.class" value="de.tu_darmstadt.gdi1.samegame.SameGameViewer"/>
+	<property name="main.class" 
+			  value="de.tu_darmstadt.gdi1.samegame.SameGameViewer"/>
 
-	<property name="classpath"  value="${bin}:${lib}/junit-4.8.2.jar:${lib}/commons-lang-2.5.jar"/>
-	<property name="javadoc-classpath" value="${src}:${lib}/junit-4.8.2.jar:${lib}/commons-lang-2.5.jar"/>
+	<property name="classpath"  
+			  value="${bin}:${lib}/junit-4.8.2.jar:${lib}/commons-lang-2.5.jar"/>
+
+	<property name="javadoc-classpath" 
+			  value="${src}:${lib}/junit-4.8.2.jar:${lib}/commons-lang-2.5.jar"/>
+	<property name="javadoc-sourcepath" 
+			  value="${src}:${uml}"/>
 
 	<property name="test.reports"  location="doc/reports"/>
-	<property name="tests" value="de.tu_darmstadt.gdi1.samegame.tests.students.suites"/>	
+	<property name="tests" 
+			  value="de.tu_darmstadt.gdi1.samegame.tests.students.suites"/>	
+
 	<path id="test.classpath">
 		<pathelement location="${build}"/>
 		<fileset dir="${lib}">
@@ -94,7 +103,7 @@
 	<target name="doc"
 		description="generate the javadoc" >
 		<javadoc 
-			sourcepath="${src}"
+			sourcepath="${javadoc-sourcepath}"
 			destdir="${doc}"
 			classpath="${javadoc-classpath}"
 			author="false"
@@ -107,7 +116,7 @@
 	<target name="doc-private"
 		description="generate the javadoc" >
 		<javadoc 
-			sourcepath="${src}"
+			sourcepath="${javadoc-sourcepath}"
 			destdir="${doc}"
 			classpath="${javadoc-classpath}"
 			private="true"

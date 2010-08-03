@@ -15,37 +15,16 @@ class UMLOptions{}
  * specific function in the Model
  *
  * @depend - "updates state" - Level
- * @composed - - - ContrActList
- * @composed - - - ContrKeyAdpt
- * @composed - - - ContrMenList
  */
 class GameController{
-
-	/**
-	 * ContrActList implements ActionListener
-	 * @opt commentname
-	 */
-	public class ContrActList implements ActionListener{
-		public void actionPerformed(ActionEvent e);
-	}
-
-	/**
-	 * ContrKeyAdpt extends KeyAdapter
-	 * @opt commentname
-	 */
-	public class ContrKeyAdpt extends KeyAdapter{
-		public void keyPressed(KeyEvent e);
-	}
-
-	/**
-	 * ContrMenList implements MenuListener
-	 * @opt commentname
-	 */
-	public class ContrMenList implements MenuListener{
-		public void menuCanceled(MenuEvent e);
-		void menuDeselected(MenuEvent e);
-		void menuSelected(MenuEvent e);
-	}
+	private Level level;
+	public GameController(Level level){}
+	public void setLevel(Level level){}
+	public void actionPerformed(ActionEvent e){}
+	public void keyPressed(KeyEvent e){}
+	public void menuCanceled(MenuEvent e){}
+	public void menuDeselected(MenuEvent e){}
+	public void menuSelected(MenuEvent e){}
 }
 
 /**
@@ -63,36 +42,59 @@ class Level {
 	private int minStones;
 	private GameState ORIGINAL_LEVEL_STATE;
 	private GameState currentGameState;
-	private CompoundEdit gameStateHistory;
 	private ChangeListener changeListener;
 	private Highscore highscore;
-	public Level(ChangeListener changeListener);
-	public Level(File f, ChangeListener changeListener);
-	public Level(int targetTime, int minStones, byte[][] field, ChangeListener changeListener);
-	private void init(ChangeListener changeListener);
-	public int getPoints();
-	public byte[][] getFieldState();
+	private static  String ADDITIONAL_LEVEL_INF;
+	private StopWatch watch;
+	private File loadedLevel;
+	public Level( ChangeListener changeListener);
+	public Level( File f,  ChangeListener changeListener);
+	public Level( int targetTime,  int minStones,  Byte[][] field,  ChangeListener changeListener);
+	public Level( String levelstring,  ChangeListener changeListener);
+	private void init( ChangeListener changeListener);
+	public double getPoints();
+	public Byte[][] getFieldState();
 	public String[][] getHighscore();
-	public void insertHighscore(int points, int remainingTime, String name);
-	void setTargetTime(int targetTime);
-	void setMinStones(int minStones);
+	public void insertHighscore( String playername,  double remTime,  Date creationDate,  double points);
+	public void resetHighscore();
+	void setTargetTime( int targetTime);
+	public int getTargetTime();
+	void setMinStones( int minStones);
+	public int getMinStones();
+	public String getAdditionalLevelInf();
+	public String getLevelStateInf();
+	public String getOrigLevelState();
+	public String getCurrentLevelState();
+	public String getHighscorelist();
 	public void restartLevel();
-	public boolean undo();
-	public boolean redo();
+	public void undo();
+	public void redo();
+	public void generateLevel( int width,  int height,  int numberOfColors,  int minStones);
 	public void generateLevel();
-	private boolean validateLevelSemantical(byte[][] level, int numOfCol);
-	private void parseLevel(File f);
-	private String parseLine(String pattern, LineNumberReader line, Scanner s, File f) ;
-	private Byte[] parseByteDigits(String s);
-	private void parseAdditionalLevelInf(LineNumberReader line, Scanner s, File f);
-	public boolean storeLevel(File f);
-	public boolean restoreLevel(File f);
-	private boolean validateLevel();
-	public boolean removeable(int row, int col);
-	public boolean removeStone(int row, int col);
-	private void moveUp();
+	private static boolean validateSemantical( Byte[][] level,  int numOfCol,  int minStones);
+	public static void validateSyntactical( String levelString);
+	public static void validateAdditionalLevelInf(  String addLevelInf);
+	public void loadLevelFromString( String levelString);
+	private Byte[] parseByteDigits( String s);
+	private void parseAdditionalLevelInf( String additionalLevelInf);
+	public static boolean removeable( Byte[][] state,  int minStones,  int row,  int col);
+	public boolean removeable( int row,  int col);
+	private static void countableFloodFill(Byte[][] state,  int row,  int col,  byte color,  byte newCol);
+	private static void removeFloodFill(Byte[][] state,  int row,  int col,  byte color, Integer stonesRemoved);
+	public boolean removeStone( int row,  int col);
+	public static void moveUp(Byte[][] state);
 	public boolean isFinished();
-	private void updatePoints(int stonesRemoved);
+	public static boolean isFinished(Byte[][] state, int minStones);
+	void updateState(Byte[][] state, int removedElements);
+	public double calculatePoints(Byte[][] state, int removedElements);
+	public static double calculatePoints(int removedElements, boolean afterTargetTime);
+	public double calculatePointsFinished( Byte[][] state);
+	public static double calculatePointsFinished(int elementsLeft, int timeLeft, int initialElements);
+	private void store( String inf,  File f,  boolean force);
+	public void storeLevelState( File f, boolean force);
+	public void storeLevel( File f, boolean force);
+	public void restoreLevelState( File f);
+	public void restoreLevel( File f);
 	public String toString();
 }
 
@@ -182,47 +184,57 @@ class AddHighscoreFrame{}
  * @composed 1 - n HighscoreEntry
  */
 class Highscore{
-	private Vector <HighscoreEntry> highscoreEntrys;
-
-	Highscore(Vector<HighscoreEntry> highscoreEntrys);
-	Highscore(LineNumberReader line, Scanner s, File f);
-
-	void insertHighscore(int points, int remainingTime, String name);
-	public String toString();
+	private Vector<HighscoreEntry> highscoreEntrys;
+	public  static String HIGHSCORE_ENTRY = HighscoreEntry.HIGHSCORE_ENTRY;
+	public Highscore();
+	public Highscore(Vector<HighscoreEntry> highscoreEntrys);
+	public Highscore(String entrys);
 	public String[][] getHighscoreEntrys();
-	private void parseHighscoreEntrys(LineNumberReader line, Scanner s, File f);
+	public int getHighscoreCount();
+	public String getPlayername(int position);
+	public double getRemaining(int position);
+	public double getPoints(int position);
+	public Date getDate(int position);
+	private void inRange(int position);
+	public void insertHighscore( String playername,  double remTime,  Date creationDate,  double points);
+	public static void validate(String highscoreList);
+	private void parseHighscoreEntrys(String entrys);
+	public String toString();
 }
 
 class HighscoreEntry{
-	private int points;
-	private int remaingTime;
-	private Date date;
 	private String name;
-	private final static SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH;mm;ss");
-
-	HighscoreEntry(int points, int remaingTime, Date date, String name);
-	HighscoreEntry(LineNumberReader line, Scanner s, File f);
-
-	public int getPoints();
-	public int getRemaingTime();
+	private double remainingTime;
+	private double points;
+	private Date date;
+	private  static SimpleDateFormat df;
+	private  static String HIGHSCORE_INFORMATION;
+	public static  String HIGHSCORE_ENTRY;
+	HighscoreEntry( String playername,  double rem_time,  Date creation_date,  double points);
+	HighscoreEntry(String highscoreEntry, int line);
+	public double getPoints();
+	public double getRemainingTime();
 	public Date getDate();
-	public String getName();
+	public String getPlayername();
+	public static void validate(String highscoreEntry, int line);
+	private void parseHighscoreEntry(String highscoreEntry, int line);
 	public int compareTo(HighscoreEntry another);
 	public String[] toStringArray();
 	public String toString();
-	private void parseHighscoreEntry(LineNumberReader line, Scanner s, File f);
 }
 
 /**
  * GameState extends javax.swing.undo.AbstractUndoableEdit
  * @opt commentname
  */
-class GameState extends AbstractUndoableEdit{
-	private byte[][] fieldState;
-	private int points; 
-
-	public GameState(byte[][] fieldState, int points);
+class GameState{
+	public GameState(Byte[][] fieldState, double points);
+	public Byte[][] getFieldState();
+	public void setFieldState(Byte[][] fieldState);
+	public double getPoints();
+	public void setPoints(double points);
 	public Object clone();
+	public String toString();
 }
 
 

@@ -36,12 +36,26 @@ import static de.tu_darmstadt.gdi1.samegame.highscore.Highscore.HIGHSCORE_ENTRY;
 
 
 /**
- * The Model of the MVC Design pattern. It contains the level data and
- * implements it's buissnes logic, wich means that it nows how to
- * change its state. If this state is changed, the Model invokes a
- * ChangeEvent, wich is listend by the View class, so that the View
- * can update it's content
+ * The Model of the MVC Design pattern. <br><br>
+ *
+ * It contains the level data and implements it's buissnes logic, wich 
+ * means that it nows how to change its state. If this state is 
+ * changed, the Model invokes a ChangeEvent, wich is listend by the 
+ * View class, so that the View can update it's content 
+ * ({@link #updateState(Byte[][], int) updateState(...)}). <br><br>
+ *
+ * It is also an {@link javax.swing.undo.UndoManager UndoManager} for 
+ * the game state, wich means it can {@link #undo() undo} and 
+ * {@link #redo() redo} the field and point state of a game. <br><br>
+ *
+ * A level can be parsed from a valid {@link #loadLevelFromString(String)} 
+ * string or from a file {@link #restoreLevel(File)}. <br><br>
+ *
+ * Also the current level state could be 
+ * {@link #storeLevelState(File, boolean) saved} and 
+ * {@link #restoreLevelState(File) loaded} from files.
  */
+@SuppressWarnings("serial")
 public class Level extends UndoManager{
 
 	////////////////////////Class/Attributes//////////////////////////
@@ -415,7 +429,7 @@ public class Level extends UndoManager{
 	/**
 	 * undo to the last game state
 	 *
-	 * @return return true if an undo is possible
+	 * @throws CannotUndoException if undo is impossible
 	 */
 	@Override
 	public void undo() throws CannotUndoException{
@@ -433,7 +447,7 @@ public class Level extends UndoManager{
 	/**
 	 * redo to the previous undone action
 	 *
-	 * @return return true if a redo was possible
+	 * @throws CannotredoException if redo is impossible
 	 */
 	@Override
 	public void redo() throws CannotRedoException{

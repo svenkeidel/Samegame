@@ -12,14 +12,21 @@
 	<!-- path to browser. On win eg.: C:/Program Files/Mozilla Firefox/firefox.exe -->
 	<property name="browser" location="/usr/bin/firefox"/>
 
+	<!-- jar files-->
+	<property name="junit.jar" 
+			  value="${lib}/junit-4.8.2.jar"/>
+	<property name="commons-lang.jar" 
+			  value="${lib}/commons-lang-2.5.jar"/>
+
+
 	<property name="main.class" 
 			  value="de.tu_darmstadt.gdi1.samegame.SameGameViewer"/>
 
 	<property name="classpath"  
-			  value="${bin}:${lib}/junit-4.8.2.jar:${lib}/commons-lang-2.5.jar"/>
+			  value="${build}:${junit.jar}:${commons-lang.jar}"/>
 
 	<property name="javadoc-classpath" 
-			  value="${src}:${lib}/junit-4.8.2.jar:${lib}/commons-lang-2.5.jar"/>
+			  value="${src}:${junit.jar}:${commons-lang.jar}"/>
 	<property name="javadoc-sourcepath" 
 			  value="${src}:${uml}"/>
 
@@ -35,35 +42,70 @@
 	</path>
 
 
+	<target
+		name="init"
+		description="initialize the projekt directory strucure">
+		<!-- make every directory in wich generatable content should be stored -->
+		<mkdir dir="${build}"/>
+		<mkdir dir="${doc}"/>
+	</target>
+
+
 	<target 
-		name="compile"
+		name="compile" depends="init"
 		description="compile the source" >
 		<javac 
 			srcdir="${src}" 
 			destdir="${build}" 
 			classpath="${classpath}" 
 			debug="off"/>
+		<antcall target="copy-resources"/>
 		<touch file="${build}/empty"/>
 	</target>
 
 
 	<target 
-		name="debug"
+		name="debug" depends="init"
 		description="compile the source with debugging symbols" >
 		<javac 
 			srcdir="${src}" 
 			destdir="${build}" 
 			classpath="${classpath}" 
 			debug="on"/>
+		<antcall target="copy-resources"/>
 		<touch file="${build}/empty"/>
 	</target>
 
+	
+	<target
+		name="copy-resources" depends="init">
+		<copy todir="${build}">
+			<fileset dir="${src}" 
+					 includes="**/resources/**,**/*.properties"/>
+		</copy>
+	</target>
 
-	<target name="jar">
-		<jar destfile="${lib}/samegame.jar" basedir="${build}/">
+
+	<target name="jar-bin" depends="clean,compile">
+		<delete file="${lib}/samegame-bin.jar"/>
+		<jar destfile="${lib}/samegame-bin.jar">
+			<fileset dir="${build}"
+					 excludes="**/tests/**,empty"/>
+			<fileset dir="${src}" 
+					 includes="**/resources/,**/*.properties"/>
+			<zipfileset src="${commons-lang.jar}" 
+						excludes="**/META-INF/**"/>
             <manifest>
 				<attribute name="Main-Class" value="${main.class}"/>
             </manifest>
+        </jar>
+    </target>
+
+
+	<target name="jar-src" depends="clean,doc">
+		<delete file="${lib}/samegame-src.jar"/>
+		<jar destfile="${lib}/samegame-src.jar">
+			<fileset dir="./" excludes="**/.git/**,**/.gitignore"/>
         </jar>
     </target>
 
@@ -129,8 +171,8 @@
 
 	<target
 		name="run"
-		depends="jar">
-		<java jar="${lib}/samegame.jar" fork="true"/>
+		depends="jar-bin">
+		<java jar="${lib}/samegame-bin.jar" fork="true"/>
 	</target>
 
 

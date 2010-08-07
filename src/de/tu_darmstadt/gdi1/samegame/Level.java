@@ -247,6 +247,31 @@ public class Level extends UndoManager{
 
 
 	/**
+	 * get the height of the level field
+	 *
+	 * @return the field height
+	 *
+	 * @throws NullPointerException if no level is loaded
+	 */
+	public int getFieldHeight(){
+		return currentGameState.getFieldState().length;
+	}
+
+
+	/**
+	 * get the width of the level field
+	 *
+	 * @return the field width
+	 *
+	 * @throws NullPointerException if no level is loaded
+	 */
+	public int getFieldWidth(){
+		return currentGameState.getFieldState()[0].length;
+	}
+	
+
+
+	/**
 	 * Get a highscore list in form of a two dimensional String array.
 	 * <ol>
 	 * 	<li>Column: points</li>
@@ -304,6 +329,16 @@ public class Level extends UndoManager{
 	 */
 	public int getTargetTime(){
 		return this.targetTime;
+	}
+
+
+	/**
+	 * gets the elapsed time for the current game
+	 *
+	 * @return the elapsed time for the current game
+	 */
+	public long getElapsedTime(){
+		return watch.getTime();
 	}
 
 

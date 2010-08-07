@@ -1,7 +1,6 @@
 package de.tu_darmstadt.gdi1.samegame.tests.adapter;
 
 import de.tu_darmstadt.gdi1.samegame.Level;
-import de.tu_darmstadt.gdi1.samegame.GameController;
 
 import java.awt.Component;
 import java.awt.event.KeyEvent;
@@ -132,6 +131,7 @@ public class SameGameTestAdapterExtended1 extends SameGameTestAdapterMinimal {
 	 * interaction. Remember also that your game must work without this 
 	 * TestAdapter.
 	 */
+	@SuppressWarnings("serial")
 	public void handleKeyPressedNew() {
 		contr.keyPressed(new KeyEvent(new Component(){},
 									  KeyEvent.KEY_PRESSED,

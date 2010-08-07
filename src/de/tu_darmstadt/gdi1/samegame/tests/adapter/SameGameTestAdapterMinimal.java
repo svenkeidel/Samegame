@@ -6,9 +6,6 @@ import de.tu_darmstadt.gdi1.samegame.SameGameViewer;
 import de.tu_darmstadt.gdi1.samegame.exceptions.WrongLevelFormatException;
 import de.tu_darmstadt.gdi1.samegame.exceptions.ParameterOutOfRangeException;
 
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 /**
  * This is the test adapter for the minimal stage of completion. You <b>must</b> implement the method stubs and match
  * them to your concrete implementation. Please read all the Javadoc of a method before implementing it. <br>
@@ -47,6 +44,7 @@ public class SameGameTestAdapterMinimal {
 		viewer = new SameGameViewer();
 		correctLevel = false;
 		level = new Level(viewer);
+		viewer.setLevel(level);
 		contr  = new GameController(level);
 	}
 	

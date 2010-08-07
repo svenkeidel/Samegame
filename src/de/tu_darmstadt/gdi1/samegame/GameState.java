@@ -2,6 +2,7 @@ package de.tu_darmstadt.gdi1.samegame;
 
 import javax.swing.undo.AbstractUndoableEdit;
 
+@SuppressWarnings("serial")
 class GameState extends AbstractUndoableEdit implements Cloneable{
 
 	private Byte[][] fieldState;

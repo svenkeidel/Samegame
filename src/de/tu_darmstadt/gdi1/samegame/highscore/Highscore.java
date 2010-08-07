@@ -1,7 +1,5 @@
 package de.tu_darmstadt.gdi1.samegame.highscore;
 
-import java.io.LineNumberReader;
-
 import static java.util.Collections.*;
 import java.util.Date;
 import java.util.Scanner;

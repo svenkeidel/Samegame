@@ -2,13 +2,20 @@
 package de.tu_darmstadt.gdi1.samegame.gameframes;
 
 import java.awt.Color;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 
+import java.util.Locale;
+import javax.swing.JFrame;
+
+@SuppressWarnings("serial")
 public class SaveGameFrame extends JFrame{
-	public SaveGameFrame(){
-		// TODO find a better Window Label
-		super("insert your name");
+
+	private Locale locale;
+
+	public SaveGameFrame(Locale locale){
+		super();
+
+		// TODO I18n this file
+		this.locale = locale;
 
 		// TODO fill method stub
 		setBackground(Color.lightGray);

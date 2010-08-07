@@ -1,11 +1,20 @@
 package de.tu_darmstadt.gdi1.samegame;
 
+import java.util.Locale;
+import java.util.Vector;
+
+import javax.swing.JFrame;
+
 import de.tu_darmstadt.gdi1.samegame.gameframes.*;
 
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 
 public class SameGameViewer implements ChangeListener{
+
+	public static final Locale DEFAULT_LOCALE = new Locale("en", "US");
+	private Locale currentLocale;
+
 	private Level level;
 
 	private int markedRow, markedCol;
@@ -20,83 +29,113 @@ public class SameGameViewer implements ChangeListener{
     private AboutFrame aboutFrame;
 
 	public SameGameViewer(){
-		super();
+		currentLocale = (Locale) DEFAULT_LOCALE.clone();
+		this.mainFrame = new MainFrame(level, currentLocale);
+	}
+
+	public void setLevel(Level level){
+		this.level = level;
 	}
 
 	// implements method from interface javax.swing.event.ChangeListener
 	public void stateChanged(ChangeEvent e){
-		//TODO write method stub
+		//TODO Update whatIsDisplayed()
 	}
 
-	public void printContent(){
-		//TODO write method stub
+	public Vector<JFrame> whatIsDisplayed(){
+		Vector<JFrame> frames = new Vector<JFrame>();
+		if(mainFrame != null)
+			frames.add(this.mainFrame);
+		if(optionsFrame != null)
+			frames.add(this.optionsFrame);
+		if(askForSaveFrame != null)
+			frames.add(this.askForSaveFrame);
+		if(addHighscoreFrame != null)
+			frames.add(this.addHighscoreFrame);
+		if(highscoreFrame != null)
+			frames.add(this.highscoreFrame);
+		if(saveGameFrame != null)
+			frames.add(this.saveGameFrame);
+		if(loadGameFrame != null)
+			frames.add(this.loadGameFrame);
+		if(aboutFrame != null)
+			frames.add(this.aboutFrame);
+		return frames;
 	}
 
 	public void markField(int row, int col){
-		//TODO write method stub
+		mainFrame.markField(row, col);
 	}
 
 	public void showMainFrame(){
-		//TODO write method stub
+		this.mainFrame = new MainFrame(level, currentLocale);
 	}
 
 	public void showOptionsFrame(){
-		//TODO write method stub
+		this.optionsFrame = new OptionsFrame(currentLocale);
 	}
 
 	public void showAskForSaveFrame(){
-		//TODO write method stub
+		askForSaveFrame = new AskForSaveFrame(currentLocale);
 	}
 
 	public void showAddHighscoreFrame(){
-		//TODO write method stub
+		addHighscoreFrame = new AddHighscoreFrame(currentLocale);
 	}
 
 	public void showHighscoreFrame(){
-		//TODO write method stub
+		highscoreFrame = new HighscoreFrame(currentLocale);
 	}
 
 	public void showSaveGameFrame(){
-		//TODO write method stub
+		saveGameFrame = new SaveGameFrame(currentLocale);
 	}
 
 	public void showLoadGameFrame(){
-		//TODO write method stub
+		loadGameFrame = new LoadGameFrame(currentLocale);
 	}
 
 	public void showAboutFrame(){
-		//TODO write method stub
+		aboutFrame = new AboutFrame(currentLocale);
 	}
 
+	
+	// TODO proof wether the close methods are needed
 	public void closeMainFrame(){
-		//TODO write method stub
+		mainFrame = null;
 	}
 
 	public void closeOptionsFrame(){
-		//TODO write method stub
+		optionsFrame = null;
 	}
 
 	public void closeAskForSaveFrame(){
-		//TODO write method stub
+		askForSaveFrame = null;
 	}
 
 	public void closeAddHighscoreFrame(){
-		//TODO write method stub
+		addHighscoreFrame = null;
 	}
 
 	public void closeHighscoreFrame(){
-		//TODO write method stub
+		highscoreFrame = null;
 	}
 
 	public void closeSaveGameFrame(){
-		//TODO write method stub
+		saveGameFrame = null;
 	}
 
 	public void closeLoadGameFrame(){
-		//TODO write method stub
+		loadGameFrame = null;
 	}
 
 	public void closeAboutFrame(){
-		//TODO write method stub
+		aboutFrame = null;
+	}
+
+	public static void main(String args[]){
+		SameGameViewer viewer = new SameGameViewer();
+		Level level = new Level(viewer);
+		viewer.setLevel(level);
 	}
 }

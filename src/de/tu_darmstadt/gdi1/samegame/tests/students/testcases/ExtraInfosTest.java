@@ -1,7 +1,5 @@
 package de.tu_darmstadt.gdi1.samegame.tests.students.testcases;
 
-import java.lang.Class;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;

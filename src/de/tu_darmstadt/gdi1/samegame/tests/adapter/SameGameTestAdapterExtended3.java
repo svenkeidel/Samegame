@@ -19,6 +19,7 @@ import de.tu_darmstadt.gdi1.samegame.ui.GameWindow;
  * @author Jonas Marczona
  * @author Manuel Pütz
  */
+@SuppressWarnings("serial")
 public class SameGameTestAdapterExtended3 extends SameGameTestAdapterExtended2 {
 
 	/**

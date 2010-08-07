@@ -10,18 +10,18 @@ import javax.swing.JLabel;
 @SuppressWarnings("serial")
 public class AboutFrame extends JFrame{
 
-	private Locale currentLocale;
+	private Locale locale;
 
 	private ResourceBundle messages;
 
-	public AboutFrame(){
+	public AboutFrame(Locale locale){
 		super("About");
 
-        currentLocale = new Locale("de", "DE");
+        this.locale = locale;
 
 		messages = 
 			ResourceBundle.getBundle("de.tu_darmstadt.gdi1.samegame.gameframes.AboutBundle", 
-									 currentLocale, 
+									 locale, 
 									 this.getClass().getClassLoader()); 
 
 		setBackground(Color.lightGray);
@@ -34,9 +34,5 @@ public class AboutFrame extends JFrame{
 					+ "Seb, Tim, Svenja and Sven"));
 
 		this.setVisible(true);
-	}
-
-	public static void main(String args[]){
-		AboutFrame about = new AboutFrame();
 	}
 }

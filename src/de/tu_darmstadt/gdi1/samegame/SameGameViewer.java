@@ -30,7 +30,6 @@ public class SameGameViewer implements ChangeListener{
 
 	public SameGameViewer(){
 		currentLocale = (Locale) DEFAULT_LOCALE.clone();
-		this.mainFrame = new MainFrame(level, currentLocale);
 	}
 
 	public void setLevel(Level level){
@@ -137,5 +136,6 @@ public class SameGameViewer implements ChangeListener{
 		SameGameViewer viewer = new SameGameViewer();
 		Level level = new Level(viewer);
 		viewer.setLevel(level);
+		viewer.showMainFrame();
 	}
 }

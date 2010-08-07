@@ -12,4 +12,5 @@ doc/*
 !doc/empty
 
 # ignore builded jar
-lib/samegame.jar
+lib/samegame-src.jar
+lib/samegame-bin.jar

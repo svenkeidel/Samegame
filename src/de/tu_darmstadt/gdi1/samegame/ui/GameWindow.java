@@ -6,9 +6,11 @@ package de.tu_darmstadt.gdi1.samegame.ui;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Locale;
 
 import javax.swing.JFrame;
 
+import de.tu_darmstadt.gdi1.samegame.Level;
 import de.tu_darmstadt.gdi1.samegame.exceptions.InternalFailureException;
 import de.tu_darmstadt.gdi1.samegame.exceptions.ParameterOutOfRangeException;
 
@@ -40,7 +42,7 @@ public abstract class GameWindow extends JFrame implements KeyListener {
 	 * @throws InternalFailureException
 	 * 			   Thrown if an uncorrectable internal error occurs
 	 */
-	public GameWindow(String windowTitle) {
+	public GameWindow(String windowTitle, Level level, Locale locale) {
 		super(windowTitle);
 
 		// We may need to correct the window title
@@ -48,7 +50,7 @@ public abstract class GameWindow extends JFrame implements KeyListener {
 			setTitle("SameGame Student Implementation");
 
 		// Create the game panel
-		gamePanel = createGamePanel ();
+		gamePanel = createGamePanel(level);
 		if (gamePanel == null)
 			throw new RuntimeException("The game panel may not be null");
 
@@ -65,7 +67,7 @@ public abstract class GameWindow extends JFrame implements KeyListener {
 	 * 
 	 * @return An instance of the GamePanel you want to use
 	 */
-	protected abstract GamePanel createGamePanel ();
+	protected abstract GamePanel createGamePanel (Level level);
 
 	/* ======================================================================== */
 

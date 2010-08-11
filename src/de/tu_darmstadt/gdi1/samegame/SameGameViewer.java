@@ -5,6 +5,10 @@ import java.util.Vector;
 
 import javax.swing.JFrame;
 
+import de.tu_darmstadt.gdi1.samegame.exceptions.InternalFailureException;
+import de.tu_darmstadt.gdi1.samegame.exceptions.InvalidOperationException;
+import de.tu_darmstadt.gdi1.samegame.exceptions.ParameterOutOfRangeException;
+
 import de.tu_darmstadt.gdi1.samegame.gameframes.*;
 
 import javax.swing.event.ChangeListener;
@@ -68,6 +72,7 @@ public class SameGameViewer implements ChangeListener{
 
 	public void showMainFrame(){
 		this.mainFrame = new MainFrame(level, currentLocale);
+		this.mainFrame.setVisible(true);
 	}
 
 	public void showOptionsFrame(){
@@ -135,7 +140,15 @@ public class SameGameViewer implements ChangeListener{
 	public static void main(String args[]){
 		SameGameViewer viewer = new SameGameViewer();
 		Level level = new Level(viewer);
+		level.generateLevel(6, 6, 5, 3);
 		viewer.setLevel(level);
 		viewer.showMainFrame();
+		try{
+			viewer.mainFrame.notifyLevelLoaded(level.getFieldWidth(), level.getFieldHeight());
+		}catch(ParameterOutOfRangeException e){
+			e.printStackTrace();
+		}catch(InternalFailureException e){
+			e.printStackTrace();
+		}
 	}
 }

@@ -513,7 +513,7 @@ public class Level extends UndoManager{
 		else{
 
 			Random r = new Random();
-			Byte[][] level = new Byte[height-1][width-1];
+			Byte[][] level = new Byte[height][width];
 
 			do{
 				for(int i = 0; i<height; i++)
@@ -523,8 +523,12 @@ public class Level extends UndoManager{
 			}while(!validateSemantical(level, numberOfColors, minStones));
 
 			this.targetTime = width * height;
+			this.minStones = minStones;
 
 			currentGameState = new GameState(level, 0);
+			try{
+				ORIGINAL_LEVEL_STATE = (GameState) currentGameState.clone();
+			}catch(CloneNotSupportedException ignored){}
 		}
 	}
 
@@ -1115,7 +1119,6 @@ public class Level extends UndoManager{
 			return false;
 
 		byte color = state[row][col];
-
 
 		if (removeable(state, minStones, row, col)) {
 			

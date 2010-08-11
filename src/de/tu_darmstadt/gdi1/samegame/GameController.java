@@ -32,6 +32,27 @@ public class GameController extends KeyAdapter implements ActionListener, MenuLi
 			case VK_N:
 				level.restartLevel();
 				break;
+			case VK_U:
+				level.undo();
+				break;
+			case VK_R:
+				level.redo();
+				break;
+			case VK_ENTER:
+				level.removeStone();
+				break;
+			case VK_LEFT:
+				// TODO
+				break;
+			case VK_RIGHT:
+				// TODO
+				break;
+			case VK_UP:
+				// TODO
+				break;
+			case VK_DOWN:
+				// TODO
+				break;
 			// TODO Write more cases like this
 			default:;
 		}

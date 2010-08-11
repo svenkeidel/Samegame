@@ -118,6 +118,19 @@ public class Level extends UndoManager{
 
 
 	/**
+	 * true if the game is paused
+	 */
+	private boolean paused;
+
+
+	/**
+	 * if the first click was performed. True if this is the first
+	 * click. False if this is a later click
+	 */
+	private boolean firstClick;
+
+
+	/**
 	 * Stores the file from wich the level information was loaded.
 	 * Is initialized in the function {@link #restoreLevel(File)}.
 	 */
@@ -210,6 +223,9 @@ public class Level extends UndoManager{
 	private void init(final ChangeListener changeListener){
 		
 		watch = new StopWatch();
+
+		firstClick = true;
+		paused = true;
 
 		try{
 			ORIGINAL_LEVEL_STATE = (GameState) currentGameState.clone();
@@ -444,7 +460,17 @@ public class Level extends UndoManager{
 		else
 			return null;
 	}
+	
+	
+	
 	////////////////////////Class/Operations//////////////////////////
+	// TODO write javadoc
+	public void pause(){
+		watch.suspend();
+		paused = true;
+	}
+
+
 	/**
 	 * Resets the current level state and delete the undo/redo history
 	 */
@@ -1131,6 +1157,15 @@ public class Level extends UndoManager{
 
 			updateState(state, elementsRemoved);
 
+			if(firstClick){
+				watch.start();
+				firstClick = false;
+				paused = false;
+			}else if(paused){
+				watch.resume();
+				paused = false;
+			}
+
 			return true;
 		}
 		return false;
@@ -1203,7 +1238,12 @@ public class Level extends UndoManager{
 			return true;
 		else{
 			Byte[][] state = currentGameState.getFieldState();
-			return isFinished(state, minStones);
+			boolean finished = isFinished(state, minStones);
+			if(finished && !paused){
+				watch.suspend();
+				paused = true;
+			}
+			return finished;
 		}
 	}
 

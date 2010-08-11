@@ -39,7 +39,7 @@ public class GameController extends KeyAdapter implements ActionListener, MenuLi
 				level.redo();
 				break;
 			case VK_ENTER:
-				level.removeStone();
+				// level.removeStone();
 				break;
 			case VK_LEFT:
 				// TODO

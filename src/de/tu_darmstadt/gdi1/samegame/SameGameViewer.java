@@ -42,28 +42,7 @@ public class SameGameViewer implements ChangeListener{
 
 	// implements method from interface javax.swing.event.ChangeListener
 	public void stateChanged(ChangeEvent e){
-		//TODO Update whatIsDisplayed()
-	}
-
-	public Vector<JFrame> whatIsDisplayed(){
-		Vector<JFrame> frames = new Vector<JFrame>();
-		if(mainFrame != null)
-			frames.add(this.mainFrame);
-		if(optionsFrame != null)
-			frames.add(this.optionsFrame);
-		if(askForSaveFrame != null)
-			frames.add(this.askForSaveFrame);
-		if(addHighscoreFrame != null)
-			frames.add(this.addHighscoreFrame);
-		if(highscoreFrame != null)
-			frames.add(this.highscoreFrame);
-		if(saveGameFrame != null)
-			frames.add(this.saveGameFrame);
-		if(loadGameFrame != null)
-			frames.add(this.loadGameFrame);
-		if(aboutFrame != null)
-			frames.add(this.aboutFrame);
-		return frames;
+		mainFrame.redraw();
 	}
 
 	public void markField(int row, int col){
@@ -73,6 +52,8 @@ public class SameGameViewer implements ChangeListener{
 	public void showMainFrame(){
 		this.mainFrame = new MainFrame(level, currentLocale);
 		this.mainFrame.setVisible(true);
+		Thread timeUpdate = new Thread(mainFrame);
+		timeUpdate.start();
 	}
 
 	public void showOptionsFrame(){

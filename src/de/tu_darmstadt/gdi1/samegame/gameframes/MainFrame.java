@@ -115,11 +115,13 @@ public class MainFrame extends GameWindow implements Runnable{
 	public void redraw(){
 		if(level.isFinished()){
 			// TODO show finished message
-		}
+			ElapsedTime.setText(""+level.getElapsedTime()/1000.0);
+		}else
+			ElapsedTime.setText(""+(int)(level.getElapsedTime()/1000.0));
 
-		MinStones.setText(""+level.getMinStones());
+
 		Points.setText(""+(int)level.getPoints());
-		ElapsedTime.setText(""+(int)(level.getElapsedTime()/1000.0));
+		MinStones.setText(""+level.getMinStones());
 		TargetTime.setText(""+level.getTargetTime());
 	}
 

@@ -42,7 +42,8 @@ public class SameGameViewer implements ChangeListener{
 
 	// implements method from interface javax.swing.event.ChangeListener
 	public void stateChanged(ChangeEvent e){
-		mainFrame.redraw();
+		if(mainFrame != null)
+			mainFrame.redraw();
 	}
 
 	public void markField(int row, int col){
@@ -121,7 +122,7 @@ public class SameGameViewer implements ChangeListener{
 	public static void main(String args[]){
 		SameGameViewer viewer = new SameGameViewer();
 		Level level = new Level(viewer);
-		level.generateLevel(6, 6, 5, 3);
+		level.generateLevel(10, 10, 5, 3);
 		viewer.setLevel(level);
 		viewer.showMainFrame();
 		try{

@@ -13,6 +13,7 @@ class UMLOptions{}
  * @assoc - - - SameGameViewer
  * @assoc - - - GameState
  * @navassoc - - - package_highscore
+ * @navassoc - - - package_ui
  * @navassoc - - - package_gameframes
  */
 class package_samegame{}
@@ -26,15 +27,8 @@ class GameController{}
 /** 
  * + Level
  * @opt commentname
- * @composed - - - TimeUpdate
  */
 class Level {}
-
-/**
- * - TimeUpdate
- * @opt commentname
- */
-class TimeUpdate{}
 
 /** 
  * + SameGameViewer
@@ -75,6 +69,7 @@ class HighscoreEntry{}
  * @opt shape package
  * @opt commentname
  * @assoc - - - MainFrame
+ * @assoc - - - MainPanel
  * @assoc - - - HighscoreFrame
  * @assoc - - - AskForSaveFrame
  * @assoc - - - AboutFrame
@@ -84,11 +79,41 @@ class HighscoreEntry{}
  * @assoc - - - AddHighscoreFrame
  */
 class package_gameframes{}
+
+
+/**
+ * de.tu_darmstadt.gdi1.samegame.ui
+ * @opt shape package
+ * @opt commentname
+ * @assoc - - - GameWindow
+ * @assoc - - - GamePanel
+ */
+class package_ui{}
+
+/**
+ * + GameWindow
+ * @opt commentname
+ */
+class GameWindow{}
+
+/**
+ * + GamePanel
+ * @opt commentname
+ */
+class GamePanel{}
+
 /**
  * + MainFrame
  * @opt commentname
  */
-class MainFrame{}
+class MainFrame extends GameWindow{}
+
+/**
+ * + MainFrame
+ * @opt commentnam
+ */
+class MainPanel extends GamePanel{}
+
 /**
  * + HighscoreFrame
  * @opt commentname

@@ -38,14 +38,14 @@ import static de.tu_darmstadt.gdi1.samegame.highscore.Highscore.HIGHSCORE_ENTRY;
 /**
  * The Model of the MVC Design pattern. <br><br>
  *
- * It contains the level data and implements it's buissnes logic, wich 
+ * It contains the level data and implements it's buisiness logic, which 
  * means that it nows how to change its state. If this state is 
- * changed, the Model invokes a ChangeEvent, wich is listend by the 
+ * changed, the Model invokes a ChangeEvent, which is listened by the 
  * View class, so that the View can update it's content 
  * ({@link #updateState(Byte[][], int) updateState(...)}). <br><br>
  *
  * It is also an {@link javax.swing.undo.UndoManager UndoManager} for 
- * the game state, wich means it can {@link #undo() undo} and 
+ * the game state, which means it can {@link #undo() undo} and 
  * {@link #redo() redo} the field and point state of a game. <br><br>
  *
  * A level can be parsed from a valid {@link #loadLevelFromString(String)} 
@@ -66,7 +66,7 @@ public class Level extends UndoManager{
 
 
 	/**
-	 * minimal number of Stones wich can be deleted
+	 * minimal number of Stones which can be deleted
 	 */
 	private int minStones;
 
@@ -80,14 +80,14 @@ public class Level extends UndoManager{
 
 	/**
 	 * the current game state. It contains the field state and the
-	 * number of points the player reached. Is keept under Undo/Redo
+	 * number of points the player reached. Is kept under Undo/Redo
 	 * history by the CompoundEdit-Manager
 	 */
 	private GameState currentGameState;
 
 
 	/**
-	 * the listener from the view, wich is used to tell the view to
+	 * the listener from the view, which is used to tell the view to
 	 * update.
 	 */
 	private ChangeListener changeListener;
@@ -131,14 +131,14 @@ public class Level extends UndoManager{
 
 
 	/**
-	 * Stores the file from wich the level information was loaded.
+	 * Stores the file from which the level information was loaded.
 	 * Is initialized in the function {@link #restoreLevel(File)}.
 	 */
 	private File loadedLevel;
 
 	////////////////////////Class/Constructors////////////////////////
 	/**
-	 * Class constructor to instanciate a level without a field state
+	 * Class constructor to instantiate a level without a field state
 	 *
 	 * @param changeListener the listener from the view
 	 */
@@ -150,17 +150,17 @@ public class Level extends UndoManager{
 
 
 	/**
-	 * Class constructor to instanciate a level and read the level date
+	 * Class constructor to instantiate a level and read the level date
 	 * from a file on the disc
 	 *
-	 * @param f the file wich contains the level date
+	 * @param f the file which contains the level date
 	 * @param changeListener the listener from the view
 	 *
 	 * @throws FileNotFoundException if the file could not been found
 	 * @throws WrongLevelFormatException if the file contains a invalid
 	 * level
-	 * @throws IOException if a IO-exception accures during the reading
-	 * the file
+	 * @throws IOException if a IO-exception occurs during the reading
+	 * of the file
 	 */
 	public Level(final File f, final ChangeListener changeListener)
 		throws FileNotFoundException, WrongLevelFormatException, 
@@ -173,14 +173,14 @@ public class Level extends UndoManager{
 
 
 	/**
-	 * Class constructor to instanciate a level and set specific
+	 * Class constructor to instantiate a level and set specific
 	 * attributes given as params
 	 *
 	 * @param targetTime the time in which the player should finish the
 	 * level
 	 * @param minStones the number of stones needed to apply an delete
 	 * operation
-	 * @param field the field wich is assigned to the level state
+	 * @param field the field which is assigned to the level state
 	 * @param changeListener the listener from the view
 	 */
 	public Level(final int targetTime, 
@@ -199,7 +199,7 @@ public class Level extends UndoManager{
 
 	/**
 	 * Construct a level from a String. The function parses the string.
-	 * if the level isn't valide, it throws a WrongLevelFormatException
+	 * if the level isn't valid, it throws a WrongLevelFormatException
 	 *
 	 * @param levelstring the string to be load
 	 *
@@ -329,7 +329,7 @@ public class Level extends UndoManager{
 	}
 
 	/**
-	 * sets the target time in wich the player has to finish the level
+	 * sets the target time in which the player has to finish the level
 	 *
 	 * @param targetTime the time the player has to finish the level
 	 */
@@ -339,7 +339,7 @@ public class Level extends UndoManager{
 
 
 	/**
-	 * gets the target time in wich the player has to finish the level
+	 * gets the target time in which the player has to finish the level
 	 *
 	 * @return the time the player has to finish the level
 	 */
@@ -404,11 +404,11 @@ public class Level extends UndoManager{
 	 *
 	 * <code>
 	 * [current level field state]<br>
-	 * ###loaded_level:[absolut path to file]|reached_points:[number]
+	 * ###loaded_level:[absolute path to file]|reached_points:[number]
 	 * |elapsed_time:[number]
 	 * </code> 
 	 *
-	 * @return the string wich contains current level state information
+	 * @return the string which contains current level state information
 	 *
 	 * @throws LevelNotLoadedFromFileException if the level wasn't loaded
 	 * from a file
@@ -434,7 +434,7 @@ public class Level extends UndoManager{
 	 * returns a string representation of the original level fieldstate
 	 * without extra level informations.
 	 *
-	 * @return the string wich contains a representation of the level
+	 * @return the string which contains a representation of the level
 	 * fieldstate
 	 */
 	public String getOrigLevelState(){
@@ -446,14 +446,18 @@ public class Level extends UndoManager{
 	 * returns a string representation of the current level fieldstate
 	 * without extra level informations.
 	 *
-	 * @return the string wich contains a representation of the level
+	 * @return the string which contains a representation of the level
 	 * fieldstate
 	 */
 	public String getCurrentLevelState(){
 		return currentGameState.toString();
 	}
 
-	// TODO write javadoc
+	/**
+	 * returns the highscore-list of the level
+	 * 
+	 * @return the highscore-list of the level
+	 */
 	public String getHighscorelist(){
 		if(highscore != null)
 			return highscore.toString();
@@ -464,7 +468,9 @@ public class Level extends UndoManager{
 	
 	
 	////////////////////////Class/Operations//////////////////////////
-	// TODO write javadoc
+/**
+ * pauses the time
+ */
 	public void pause(){
 		watch.suspend();
 		paused = true;
@@ -522,7 +528,14 @@ public class Level extends UndoManager{
 		
 	}
 
-
+	/**
+	 * generates a new level according to the given parameters
+	 * @param width the number of columns
+	 * @param height the number of rows
+	 * @param numberOfColors the number of different stone-colors 
+	 * @param minStones the minimal number of same-colored stones, which can be removed
+	 * @throws IllegalArgumentException if one of the parameters is out of range
+	 */
 	public void generateLevel(final int width, 
 							  final int height, 
 							  final int numberOfColors, 
@@ -700,12 +713,12 @@ public class Level extends UndoManager{
 
 	/**
 	 * check if the additional level information have the right format
-	 * and if there are no dublicates.
+	 * and if there are no duplicates.
 	 *
 	 * @param addLevelInf the line with the additional level 
 	 * informations
 	 *
-	 * @throws WrongLevelFormatException if the addtional level 
+	 * @throws WrongLevelFormatException if the additional level 
 	 * informations are not in the excepted format
 	 */
 	public static void validateAdditionalLevelInf(
@@ -789,28 +802,28 @@ public class Level extends UndoManager{
 	 * 	</li>
 	 *
 	 * 	<li>
-	 * 		The addtional level information must have the following format:<br>
+	 * 		The additional level information must have the following format:<br>
 	 *
 	 * 		a "###" at the beginning of the line, then one or two of the 
 	 * 		following informations: target_time:[number] AND/OR 
-	 * 		min_stones:[number], seperated with a "|".<br>
+	 * 		min_stones:[number], separated with a "|".<br>
 	 *
 	 * 		Example: <code>###target_time:888|min_stones:4</code>
 	 * 	</li>
 	 *
 	 * 	<li>
-	 *		The highscore entrys must have the following format:<br>
+	 *		The highscore entries must have the following format:<br>
 	 *		a "###" at the beginning of the line, then each of the following
 	 *		informations:<br>
 	 *		name:[string] AND points:[number] AND date:dd.mm.yy HH;MM;SS AND 
 	 *		rem_time:[number]<br>
-	 *		seperated with a "|".<br>
+	 *		separated with a "|".<br>
 	 *		Example: 
 	 *		<code>###name:xyz|points:888|date:23.05.2010 23;59;12|rem_time:123</code>
 	 *	</li>	
 	 * </ol>
 	 *
-	 * @param levelString the string wich contains the whole level
+	 * @param levelString the string which contains the whole level
 	 *
 	 * @throws WrongLevelFormatException if the level is not in the 
 	 * described format
@@ -916,9 +929,9 @@ public class Level extends UndoManager{
 
 	/**
 	 * parses additional level information like the target time or the
-	 * minimal number of stones wich can be removed.
+	 * minimal number of stones which can be removed.
 	 *
-	 * @param additionalLevelInf the string wich contains the extra 
+	 * @param additionalLevelInf the string which contains the extra 
 	 * level informations
 	 *
 	 * @throws WrongLevelFormatException if the level is not in the
@@ -963,10 +976,10 @@ public class Level extends UndoManager{
 	 * the minimal number of stones to remove.
 	 * Static version of the function.
 	 *
-	 * @param state the field wich contains the level informations
-	 * @param minStones the minimal number of stones wich can be removed
-	 * @param row the row in wich a member of the stone group is located
-	 * @param col the col in wich a member of the stone group is located
+	 * @param state the field which contains the level informations
+	 * @param minStones the minimal number of stones which can be removed
+	 * @param row the row in which a member of the stone group is located
+	 * @param col the col in which a member of the stone group is located
 	 *
 	 * @return true if the stone group is removeable
 	 */
@@ -997,7 +1010,7 @@ public class Level extends UndoManager{
 		else
 			return false;
 
-		// count the number of stones wich may be removed
+		// count the number of stones which may be removed
 		int stonesToRemove = 0;
 		for (int i = 0; i < rows; i++)
 			for (int j = 0; j < cols; j++)
@@ -1014,8 +1027,8 @@ public class Level extends UndoManager{
 	 * Non-Static version of the function with uses object attributes to
 	 * calculate
 	 *
-	 * @param row the row in wich a member of the stone group is located
-	 * @param col the col in wich a member of the stone group is located
+	 * @param row the row in which a member of the stone group is located
+	 * @param col the col in which a member of the stone group is located
 	 *
 	 * @return true if the stone group is removeable
 	 */
@@ -1027,13 +1040,13 @@ public class Level extends UndoManager{
 
 	
 	/**
-	 * a floodfill algorithm wich fill a group of stones in the field.
+	 * a floodfill algorithm which fill a group of stones in the field.
 	 * It changes the color of the selected stone group to the new 
 	 * color, so the new color can be count etc.
 	 *
 	 * @param state the field to operate on, <b>changes during operation!!!</b>
-	 * @param row the row in wich a member of the stone group is located
-	 * @param col the col in wich a member of the stone group is located
+	 * @param row the row in which a member of the stone group is located
+	 * @param col the col in which a member of the stone group is located
 	 * @param color the color of the stonegroup
 	 * @param newCol the new color to color the stone group with
 	 */
@@ -1058,15 +1071,15 @@ public class Level extends UndoManager{
 
 
 	/**
-	 * a floodfill algorithm wich fill a group of stones in the field.
+	 * a floodfill algorithm which fill a group of stones in the field.
 	 * It fills the selected stone group with 0's and count the stones
-	 * wich are removed
+	 * which are removed
 	 *
 	 * @param state the field to operate on, <b>changes during operation!!!</b>
-	 * @param row the row in wich a member of the stone group is located
-	 * @param col the col in wich a member of the stone group is located
+	 * @param row the row in which a member of the stone group is located
+	 * @param col the col in which a member of the stone group is located
 	 * @param color the color of the stonegroup
-	 * @param stonesRemoved the number of stones wich are removed.
+	 * @param stonesRemoved the number of stones which are removed.
 	 * The object contains the number after the operation
 	 */
 	private static void removeFloodFill(Byte[][] state, 
@@ -1094,7 +1107,7 @@ public class Level extends UndoManager{
 	 * function to remove stones in the level field. The function also
 	 * performs a move up of the stones that means that the stones 
 	 * first fall down and than empty columns are deleted. At the end
-	 * of a succsesfull remove the current level state is updated 
+	 * of a successful remove the current level state is updated 
 	 * ({@link #updateState(Byte[][], int) updateState(...)})
 	 * and points for the operation are calculated
 	 *
@@ -1111,10 +1124,10 @@ public class Level extends UndoManager{
 	 *      110      <br>
 	 * </code>
 	 *
-	 * @param row the row in wich a member of the stone group is 
-	 * located, wich is be removed.
-	 * @param col the col in wich a member of the stone group is
-	 * located, wich is be removed.
+	 * @param row the row in which a member of the stone group is 
+	 * located, which is be removed.
+	 * @param col the col in which a member of the stone group is
+	 * located, which is be removed.
 	 *
 	 * @throws ParameterOutOfRangeException if the row and the col
 	 * parameter are not inside the field
@@ -1140,7 +1153,7 @@ public class Level extends UndoManager{
 					"the \"col\" parameter is out of possible range"
 					+"[0,"+cols+"]: "+col);
 
-		// if the position is allready removed
+		// if the position is already removed
 		if (state[row][col] == 0)
 			return false;
 
@@ -1173,8 +1186,8 @@ public class Level extends UndoManager{
 
 
 	/**
-	 * function to move up a field in wich recently a remove operration
-	 * has happend.<br>
+	 * function to move up a field in which recently a remove operation
+	 * has happened.<br>
 	 *
 	 * Example move up operation:<br>
 	 *
@@ -1189,7 +1202,7 @@ public class Level extends UndoManager{
 	 *      110      <br>
 	 * </code>
 	 *
-	 * @param state the field wich have to be updated
+	 * @param state the field which have to be updated
 	 */
 	public static void moveUp(Byte[][] state) {
 
@@ -1253,7 +1266,7 @@ public class Level extends UndoManager{
 	 * Static version of the function.
 	 *
 	 * @param state the field to check
-	 * @param minStones the minimal number of stones wich can be removed
+	 * @param minStones the minimal number of stones which can be removed
 	 *
 	 * @return return true if no remove operation is possible anymore
 	 */
@@ -1274,7 +1287,7 @@ public class Level extends UndoManager{
 
 
 	/**
-	 * updates the current level state and notyfies the viewer to update.
+	 * updates the current level state and notifies the viewer to update.
 	 *
 	 * @param state the new field state
 	 * @param removedElements the number of elements wich was removed
@@ -1296,8 +1309,8 @@ public class Level extends UndoManager{
 	/**
 	 * calculates the points after a remove operation.
 	 * 
-	 * @param state the new field in wich the points are counted
-	 * @param removedElements the number of elements wich was removed
+	 * @param state the new field in which the points are counted
+	 * @param removedElements the number of elements which was removed
 	 *
 	 * @return the new calculate Points
 	 */
@@ -1317,10 +1330,10 @@ public class Level extends UndoManager{
 
 	/**
 	 * calculate the points for a remove operation.
-	 * If the opperation was performed just in time, the new points
+	 * If the operation was performed just in time, the new points
 	 * are (removedElements)&sup2; else (removedElements/2)&sup2;<br>
 	 *
-	 * @param removedElements the number of elements wich was removed
+	 * @param removedElements the number of elements which was removed
 	 * @param afterTargetTime if the remove operation was performed 
 	 * after ore before the target time
 	 *
@@ -1345,7 +1358,7 @@ public class Level extends UndoManager{
 	 * 		 is added to the points, else removed </li>
 	 * 	<li> the remaining stones are counted as malus</li>
 	 * 	<li> if the stones could all be removed, it's added an extra
-	 * 		 bonus: the number of stones wich was in the original 
+	 * 		 bonus: the number of stones which was in the original 
 	 * 		 level</li>
 	 * </ul>
 	 *
@@ -1386,13 +1399,13 @@ public class Level extends UndoManager{
 	 * 		 is added to the points, else removed </li>
 	 * 	<li> the remaining stones are counted as malus</li>
 	 * 	<li> if the stones could all be removed, it's added an extra
-	 * 		 bonus: the number of stones wich was in the original 
+	 * 		 bonus: the number of stones which was in the original 
 	 * 		 level</li>
 	 * </ul>
 	 *
 	 * @param elementsLeft the elements left in field
 	 * @param timeLeft the remaining time until the target time is over
-	 * @param initialElements the number of elements wich was in the
+	 * @param initialElements the number of elements which was in the
 	 * original field
 	 *
 	 * @return just the point bonus or malus
@@ -1418,16 +1431,16 @@ public class Level extends UndoManager{
 
 
 	/**
-	 * writes the given information into a file. Thows an exception if
-	 * the given file allready exists and the force option is false.
+	 * writes the given information into a file. Throws an exception if
+	 * the given file already exists and the force option is false.
 	 *
-	 * @param inf the information wich should be write in the file
+	 * @param inf the information which should be write in the file
 	 * @param f the file to write in
 	 * @param force if true: overwrite existing file
 	 *
-	 * @throws IllegalArgumentException if the given file allready 
+	 * @throws IllegalArgumentException if the given file already 
 	 * exists and the force option is false
-	 * @throws IOException if a IO-exception accures during the reading
+	 * @throws IOException if a IO-exception occurs during the reading
 	 * the file
 	 * @throws SecurityException if the user hasn't write permissions
 	 * the given path
@@ -1439,7 +1452,7 @@ public class Level extends UndoManager{
 		// test if the given path is a file
 		if(f.isFile() || !f.exists()){
 
-			// if the file allready exists overwrite it if the force
+			// if the file already exists overwrite it if the force
 			// option is on, else throw a exception
 			if(force && f.exists())
 				f.delete();
@@ -1464,16 +1477,16 @@ public class Level extends UndoManager{
 
 	/**
 	 * save level state information to a *.sve file. Don't proceed if the file
-	 * allready exists, except the force boolean is true.
+	 * already exists, except the force boolean is true.
 	 *
-	 * @param f the file in wich the level should be stored
+	 * @param f the file in which the level should be stored
 	 * @param force override an existing file
 	 *
 	 * @throws LevelNotLoadedFromFileException if the level wasn't loaded
 	 * from a file
-	 * @throws IllegalArgumentException if the given file allready 
+	 * @throws IllegalArgumentException if the given file already 
 	 * exists and the force option is false
-	 * @throws IOException if a IO-exception accures during the reading
+	 * @throws IOException if a IO-exception occurs during the reading
 	 * the file
 	 * @throws SecurityException if the user hasn't write permissions
 	 * the given path
@@ -1492,15 +1505,15 @@ public class Level extends UndoManager{
 
 	/**
 	 * save level information to a *.lvl file. Don't proceed if the file
-	 * allready exists, except the force boolean is true.
+	 * already exists, except the force boolean is true.
 	 *
-	 * @param f the file in wich the level should be stored
+	 * @param f the file in which the level should be stored
 	 * @param force override an existing file
 	 *
-	 * @throws IllegalArgumentException if the given file allready 
+	 * @throws IllegalArgumentException if the given file already 
 	 * exists and the force option is false
 	 * @throws FileNotFoundException if the file could not been found
-	 * @throws IOException if a IO-exception accures during the reading
+	 * @throws IOException if a IO-exception occurs during the reading
 	 * the file
 	 * @throws SecurityException if the user hasn't write permissions
 	 * the given path
@@ -1526,7 +1539,7 @@ public class Level extends UndoManager{
 	 * @throws FileNotFoundException if the file could not been found
 	 * @throws WrongLevelFormatException if the file contains a invalid
 	 * level
-	 * @throws IOException if a IO-exception accures during the reading
+	 * @throws IOException if a IO-exception occurs during the reading
 	 * the file
 	 */
 	public void restoreLevelState(final File f)
@@ -1546,7 +1559,7 @@ public class Level extends UndoManager{
 	 * @throws FileNotFoundException if the file could not been found
 	 * @throws WrongLevelFormatException if the file contains a invalid
 	 * level
-	 * @throws IOException if a IO-exception accures during the reading
+	 * @throws IOException if a IO-exception occurs during the reading
 	 * the file
 	 */
 	public void restoreLevel(final File f)
@@ -1570,7 +1583,7 @@ public class Level extends UndoManager{
 	 * returns a string representation of the current level fieldstate
 	 * without extra level informations.
 	 *
-	 * @return the string wich contains a representation of the level
+	 * @return the string which contains a representation of the level
 	 * fieldstate
 	 */
 	@Override

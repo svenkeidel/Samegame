@@ -129,6 +129,14 @@ public class MainFrame extends GameWindow implements Runnable{
 		panel.markField(row, col);
 	}
 
+	public int getMarkedFieldRow(){
+		return panel.getMarkedFieldRow();
+	}
+
+	public int getMarkedFieldCol(){
+		return panel.getMarkedFieldCol();
+	}
+
 	@Override
 	protected GamePanel createGamePanel(Level level) {
 		this.panel = new MainPanel(this, level);

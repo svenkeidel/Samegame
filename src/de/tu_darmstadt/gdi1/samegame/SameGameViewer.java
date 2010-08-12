@@ -50,6 +50,14 @@ public class SameGameViewer implements ChangeListener{
 		mainFrame.markField(row, col);
 	}
 
+	public int getMarkedFieldRow(){
+		return mainFrame.getMarkedFieldRow();
+	}
+
+	public int getMarkedFieldCol(){
+		return mainFrame.getMarkedFieldCol();
+	}
+
 	public void showMainFrame(){
 		this.mainFrame = new MainFrame(level, currentLocale);
 		this.mainFrame.setVisible(true);

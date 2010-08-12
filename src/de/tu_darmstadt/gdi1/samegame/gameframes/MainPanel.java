@@ -58,6 +58,14 @@ public class MainPanel extends GamePanel{
 			markedCol = col;
 		}
 	}
+	public int getMarkedFieldRow(){
+		return markedRow;
+	}
+
+	public int getMarkedFieldCol(){
+		return markedCol;
+	}
+
 
 	@Override
 	public void setGamePanelContents(){

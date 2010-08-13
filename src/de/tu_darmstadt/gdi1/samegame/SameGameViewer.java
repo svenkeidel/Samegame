@@ -58,6 +58,14 @@ public class SameGameViewer implements ChangeListener{
 		return mainFrame.getMarkedFieldCol();
 	}
 
+	public boolean duringAnimation(){
+		return mainFrame.duringAnimation();
+	}
+
+	public void startAnimation(){
+		mainFrame.startAnimation();
+	}
+
 	public void showMainFrame(){
 		this.mainFrame = new MainFrame(level, currentLocale);
 		this.mainFrame.setVisible(true);

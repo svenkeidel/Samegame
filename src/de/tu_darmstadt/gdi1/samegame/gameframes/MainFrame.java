@@ -137,6 +137,16 @@ public class MainFrame extends GameWindow implements Runnable{
 		return panel.getMarkedFieldCol();
 	}
 
+	
+	public boolean duringAnimation(){
+		return this.panel.duringAnimation();
+	}
+
+
+	public void startAnimation(){
+		this.panel.startAnimation();
+	}
+
 	@Override
 	protected GamePanel createGamePanel(Level level) {
 		this.panel = new MainPanel(this, level);

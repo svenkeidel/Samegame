@@ -136,6 +136,7 @@ public class Level extends UndoManager{
 	 */
 	private File loadedLevel;
 
+
 	////////////////////////Class/Constructors////////////////////////
 	/**
 	 * Class constructor to instantiate a level without a field state
@@ -1082,11 +1083,11 @@ public class Level extends UndoManager{
 	 * @param stonesRemoved the number of stones which are removed.
 	 * The object contains the number after the operation
 	 */
-	private static void removeFloodFill(Byte[][] state, 
-										final int row, 
-										final int col, 
-										final byte color,
-										Integer stonesRemoved){
+	public static void removeFloodFill(Byte[][] state, 
+									   final int row, 
+									   final int col, 
+									   final byte color,
+									   Integer stonesRemoved){
 
 		int rows = state.length;
 		int cols = state[0].length;
@@ -1236,6 +1237,28 @@ public class Level extends UndoManager{
 			}
 			walkTroughCols--;
 		}
+	}
+
+
+	public static boolean fallDownOneField(Byte[][] state){
+
+		boolean fieldstateHasChanged = false;
+
+		int rows = state.length;
+		int cols = state[0].length;
+		// let the stones fall down
+
+		for (int i = rows - 2; i >= 0; i--) {
+			for (int j = cols - 1; j >= 0; j--) {
+				if (state[i + 1][j] == 0 && state[i][j] != 0) {
+					state[i + 1][j] = state[i][j];
+					state[i][j] = 0;
+					fieldstateHasChanged = true;
+				}
+			}
+		}
+
+		return fieldstateHasChanged;
 	}
 
 

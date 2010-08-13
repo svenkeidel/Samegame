@@ -21,10 +21,16 @@ public class MainPanel extends GamePanel{
 
 	private int markedRow, markedCol;
 
+	private boolean duringAnimation;
+
+	private Byte[][] field;
+
 	public MainPanel(GameWindow window, Level level){
 		super(window);
 
 		this.level = level;
+
+		this.field = level.getFieldState();
 
 		this.controller = new GameController(level);
 
@@ -49,6 +55,8 @@ public class MainPanel extends GamePanel{
 		markedRow = markedCol = 0;
 
 		setAutosize(true);
+
+		duringAnimation = false;
 	}
 
 	public void markField(int row, int col){
@@ -58,18 +66,50 @@ public class MainPanel extends GamePanel{
 			markedCol = col;
 		}
 	}
+
+
 	public int getMarkedFieldRow(){
 		return markedRow;
 	}
+
 
 	public int getMarkedFieldCol(){
 		return markedCol;
 	}
 
 
+	public boolean duringAnimation(){
+		return this.duringAnimation;
+	}
+
+	void endAnimation(){
+		duringAnimation = false;
+		this.field = level.getFieldState();
+		try{
+			this.redraw();
+		}catch(InternalFailureException e){
+			e.printStackTrace();
+		}
+	}
+
+	public void startAnimation(int row, int col){
+		duringAnimation = true;
+
+		Level.removeFloodFill(this.field, row, col, field[row][col], new Integer(0));
+
+		AnimationThread animation = new AnimationThread(this.field, 1000, this);
+		animation.start();
+	}
+
+
 	@Override
 	public void setGamePanelContents(){
-		Byte[][] field = level.getFieldState();
+
+		// if an animation is performed, let the AnimationThread handle the
+		// field state
+		if(!duringAnimation)
+			this.field = level.getFieldState();
+	
 		int width = level.getFieldWidth();
 		int height = level.getFieldHeight();
 		for(int i=0; i<height; i++)
@@ -89,13 +129,17 @@ public class MainPanel extends GamePanel{
 
 	@Override
 	public void entityClicked(int positionX, int positionY){
-		try{
-			level.removeStone(positionY, positionX);
-			this.redraw();
-		}catch(ParameterOutOfRangeException e){
-			e.printStackTrace();
-		}catch(InternalFailureException e){
-			e.printStackTrace();
+
+		if(!duringAnimation && level.removeable(positionY, positionX)){
+			try{
+				startAnimation(positionY, positionX);
+				level.removeStone(positionY, positionX);
+				this.redraw();
+			}catch(ParameterOutOfRangeException e){
+				e.printStackTrace();
+			}catch(InternalFailureException e){
+				e.printStackTrace();
+			}
 		}
 	}
 }

@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.StringReader;
+import java.io.StringWriter;
 
 import java.util.Date;
 import java.util.NoSuchElementException;
@@ -25,7 +26,31 @@ import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+
+import javax.xml.transform.dom.DOMSource;
+
+import javax.xml.transform.stream.StreamResult;
+
 import org.apache.commons.lang.time.StopWatch;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import org.xml.sax.SAXException;
 
 import de.tu_darmstadt.gdi1.samegame.exceptions.LevelNotLoadedFromFileException;
 import de.tu_darmstadt.gdi1.samegame.exceptions.ParameterOutOfRangeException;
@@ -33,7 +58,6 @@ import de.tu_darmstadt.gdi1.samegame.exceptions.WrongLevelFormatException;
 
 import de.tu_darmstadt.gdi1.samegame.highscore.Highscore;
 import static de.tu_darmstadt.gdi1.samegame.highscore.Highscore.HIGHSCORE_ENTRY;
-
 
 /**
  * The Model of the MVC Design pattern. <br><br>
@@ -1546,11 +1570,62 @@ public class Level extends UndoManager{
 			   IOException,
 			   SecurityException{
 
-		String levelInf;
-		levelInf  = this.getOrigLevelState() + "\n"
-				  + this.getAdditionalLevelInf() + "\n";
+		try{
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
-		store(levelInf, f, force);
+			DocumentBuilder parser = factory.newDocumentBuilder();
+
+			Document doc = parser.newDocument();
+			
+			Element levelState = doc.createElement("levelState");
+
+			if(loadedLevel != null)
+				levelState.setAttribute("name", loadedLevel.getAbsolutePath());
+			else
+				levelState.setAttribute("name", "null");
+			levelState.setAttribute("pointsReached", ""+(long)this.currentGameState.getPoints());
+			levelState.setAttribute("elapsedTime", ""+watch.getTime());
+
+			Element fieldState = doc.createElement("fieldState");
+			Element fieldLine;
+			Byte[][] field = this.ORIGINAL_LEVEL_STATE.getFieldState();
+			StringBuilder lineString;
+
+			for(int i=0; i<field.length; i++){
+				fieldLine = doc.createElement("line");
+				lineString = new StringBuilder();
+
+				for(int j=0; j<field[0].length; j++)
+					lineString.append(field[i][j]);
+				
+				fieldLine.setAttribute("value", lineString.toString());
+				fieldState.appendChild(fieldLine);
+			}
+
+			doc.appendChild(levelState);
+			levelState.appendChild(fieldState);
+
+			TransformerFactory tranFactory = TransformerFactory.newInstance(); 
+			Transformer aTransformer = tranFactory.newTransformer(); 
+			aTransformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            aTransformer.setOutputProperty(OutputKeys.INDENT, "yes");
+
+            //create string from xml tree
+            StringWriter sw = new StringWriter();
+            StreamResult result = new StreamResult(sw);
+            DOMSource source = new DOMSource(doc);
+            aTransformer.transform(source, result);
+            String xmlString = sw.toString();
+
+			store(xmlString, f, force);
+
+		}catch(ParserConfigurationException e){
+			e.printStackTrace();
+		}catch(TransformerConfigurationException e){
+			e.printStackTrace();
+		}catch(TransformerException e){
+			e.printStackTrace();
+		}
 	}
 
 
@@ -1560,18 +1635,76 @@ public class Level extends UndoManager{
 	 * @param f the file to load from
 	 *
 	 * @throws FileNotFoundException if the file could not been found
-	 * @throws WrongLevelFormatException if the file contains a invalid
-	 * level
+	 * @throws SAXException if the file is not in valid xml format
 	 * @throws IOException if a IO-exception occurs during the reading
 	 * the file
 	 */
-	public void restoreLevelState(final File f)
+	public void restoreLevelState(final File f) 
 		throws FileNotFoundException, 
 			   WrongLevelFormatException, 
 			   IOException{
-		//TODO impliment
+
+		BufferedReader r = new BufferedReader(new FileReader(f));
+		
+		String xmlString = r.readLine();
+
+		try{
+			DocumentBuilderFactory fact = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = fact.newDocumentBuilder();
+			Document doc = builder.parse(xmlString);
+
+			Node levelState = doc.getDocumentElement();
+			NamedNodeMap attr = levelState.getAttributes();
+
+			String loadedLevel = attr.getNamedItem("name").getNodeValue();
+			if(loadedLevel.equals("null"))
+				this.loadedLevel = null;
+			else
+				this.loadedLevel = new File(loadedLevel);
+
+			double points = Double.parseDouble(attr.getNamedItem("pointsReached").getNodeValue());
+			long elapsedTime = Long.parseLong(attr.getNamedItem("elapsedTime").getNodeValue());
+			// TODO fix time update to elapsedTime!!!
+			// this.watch.setTime(elapsedTime);
+
+			NodeList lines = levelState.getFirstChild().getChildNodes();
+
+			int height = lines.getLength();
+			int width = lines.item(0).getNodeValue().length();
+			Byte[][] field = new Byte[height][width];
+
+			for(int i=0; i<height; i++)
+				field[i] = 
+					parseByteDigits(
+							lines.item(i).getNodeValue());
+
+			this.currentGameState = new GameState(field, points);
+
+		}catch(ParserConfigurationException e){
+			e.printStackTrace();
+		}catch(SAXException e){
+			throw new WrongLevelFormatException(
+					"The parsed level state xml file is not well-formed");
+		}catch(NullPointerException e){
+			throw new WrongLevelFormatException(
+					"While parsing level state xml file: some attribute wasn't found");
+		}catch(NumberFormatException e){
+			throw new WrongLevelFormatException(
+					"While parsing level state xml file: a number wasn't in the right format");
+		}
 	}
 
+
+	public static void main(String[] args){
+		SameGameViewer viewer = new SameGameViewer();
+		Level l = new Level(viewer);
+		l.generateLevel();
+		try{
+			//TODO write some tests for store and restore level
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * load a level information from a *.lvl file.
@@ -1612,27 +1745,5 @@ public class Level extends UndoManager{
 	@Override
 	public String toString(){
 		return this.getCurrentLevelState();
-	}
-
-	public static void main(String[] args){
-		File f = new File("./src/de/tu_darmstadt/gdi1/resources/levels/defaultlevels/level_01.lvl");
-		File to = new File("./src/de/tu_darmstadt/gdi1/resources/levels/defaultlevels/level_01.sve");
-		
-		try{
-			Level l = new Level(f, new ChangeListener(){public void stateChanged(ChangeEvent e){}});
-			l.removeStone(0, 0);
-			System.out.println(l.getLevelStateInf());
-			l.storeLevelState(to, false);
-		}catch(FileNotFoundException e){
-			System.err.println(e.getMessage());
-		}catch(WrongLevelFormatException e){
-			System.err.println(e.getMessage());
-		}catch(IOException e){
-			System.err.println(e.getMessage());
-		}catch(ParameterOutOfRangeException e){
-			System.err.println(e.getMessage());
-		}catch(LevelNotLoadedFromFileException e){
-			System.err.println(e.getMessage());
-		}
 	}
 }

@@ -52,11 +52,17 @@ public class SameGameViewer implements ChangeListener{
 	}
 
 	public int getMarkedFieldRow(){
-		return mainFrame.getMarkedFieldRow();
+		if(mainFrame != null)
+			return mainFrame.getMarkedFieldRow();
+		else
+			return -1;
 	}
 
 	public int getMarkedFieldCol(){
-		return mainFrame.getMarkedFieldCol();
+		if(mainFrame != null)
+			return mainFrame.getMarkedFieldCol();
+		else
+			return -1;
 	}
 
 	public boolean duringAnimation(){

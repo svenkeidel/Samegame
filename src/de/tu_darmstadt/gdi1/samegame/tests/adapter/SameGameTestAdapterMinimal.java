@@ -42,11 +42,11 @@ public class SameGameTestAdapterMinimal {
 	 */
 	public SameGameTestAdapterMinimal() {
 		viewer = new SameGameViewer();
-		correctLevel = false;
 		level = new Level(viewer);
+		contr  = new GameController(level, viewer);
 		viewer.setLevel(level);
 		viewer.setController(contr);
-		contr  = new GameController(level, viewer);
+		correctLevel = false;
 	}
 	
 	
@@ -65,6 +65,7 @@ public class SameGameTestAdapterMinimal {
 		try{
 			level = new Level(levelstring, viewer);
 			contr.setLevel(level);
+			viewer.setLevel(level);
 			correctLevel = true;
 		}catch (WrongLevelFormatException e){
 			correctLevel = false;

@@ -261,6 +261,10 @@ public class Level extends UndoManager{
 
 		this.changeListener = changeListener;
 		this.changeListener.stateChanged(new ChangeEvent(this));
+	
+		if(this.currentGameState.getFieldState() != null)
+			this.addEdit(currentGameState);
+
 	}
 
 

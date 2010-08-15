@@ -62,8 +62,8 @@ public class SameGameViewer implements ChangeListener{
 		return mainFrame.duringAnimation();
 	}
 
-	public void startAnimation(){
-		mainFrame.startAnimation();
+	public void startAnimation(int row, int col){
+		mainFrame.startAnimation(row, col);
 	}
 
 	public void showMainFrame(){

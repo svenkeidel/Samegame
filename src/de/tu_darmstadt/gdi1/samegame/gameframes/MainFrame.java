@@ -143,8 +143,8 @@ public class MainFrame extends GameWindow implements Runnable{
 	}
 
 
-	public void startAnimation(){
-		this.panel.startAnimation();
+	public void startAnimation(int row, int col){
+		this.panel.startAnimation(row, col);
 	}
 
 	@Override

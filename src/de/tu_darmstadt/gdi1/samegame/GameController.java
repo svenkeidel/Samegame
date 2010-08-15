@@ -8,6 +8,9 @@ import static java.awt.event.KeyEvent.*;
 import javax.swing.event.MenuListener;
 import javax.swing.event.MenuEvent;
 
+import javax.swing.undo.CannotRedoException;
+import javax.swing.undo.CannotUndoException;
+
 import de.tu_darmstadt.gdi1.samegame.exceptions.ParameterOutOfRangeException;
 
 public class GameController extends KeyAdapter implements ActionListener, MenuListener{
@@ -45,11 +48,15 @@ public class GameController extends KeyAdapter implements ActionListener, MenuLi
 				break;
 			case VK_BACK_SPACE:
 				if (viewer.duringAnimation() != true)
-				level.undo();
+					try{
+						level.undo();
+					}catch(CannotUndoException ignored){}
 				break;
 			case VK_ENTER:
 				if (viewer.duringAnimation() != true)
-				level.redo();
+					try{
+						level.redo();
+					}catch(CannotRedoException ignored){}
 				break;
 			case VK_SPACE:
 				if (viewer.duringAnimation() != true)

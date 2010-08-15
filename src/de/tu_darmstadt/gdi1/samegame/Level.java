@@ -261,8 +261,6 @@ public class Level extends UndoManager{
 
 		this.changeListener = changeListener;
 		this.changeListener.stateChanged(new ChangeEvent(this));
-
-		this.addEdit(currentGameState);
 	}
 
 
@@ -296,7 +294,7 @@ public class Level extends UndoManager{
 	 * @throws NullPointerException if no level is loaded
 	 */
 	public int getFieldHeight(){
-		return currentGameState.getFieldState().length;
+		return ORIGINAL_LEVEL_STATE.getFieldState().length;
 	}
 
 
@@ -308,7 +306,7 @@ public class Level extends UndoManager{
 	 * @throws NullPointerException if no level is loaded
 	 */
 	public int getFieldWidth(){
-		return currentGameState.getFieldState()[0].length;
+		return ORIGINAL_LEVEL_STATE.getFieldState()[0].length;
 	}
 	
 
@@ -598,6 +596,7 @@ public class Level extends UndoManager{
 			try{
 				ORIGINAL_LEVEL_STATE = (GameState) currentGameState.clone();
 			}catch(CloneNotSupportedException ignored){}
+			this.addEdit(currentGameState);
 		}
 	}
 

@@ -122,11 +122,11 @@ public class MainFrame extends GameWindow implements Runnable{
 		
 		
 		JMenuItem ger_lang = new JMenuItem(messages.getString("German"));
-		exit.setName("German");
+		ger_lang.setName("German");
 		setLanguage.add(ger_lang);
 	
 		JMenuItem eng_lang = new JMenuItem(messages.getString("English"));
-		exit.setName("English");
+		eng_lang.setName("English");
 		setLanguage.add(eng_lang);		
 		
 		

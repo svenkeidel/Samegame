@@ -131,10 +131,6 @@ public class MainPanel extends GamePanel{
 	@Override
 	public void entityClicked(int positionX, int positionY){
 		getParentWindow().requestFocus();
-		if(getParentWindow().isFocusable())
-			System.out.println("Das fenster ist focusable");
-		if(getParentWindow().isFocused())
-			System.out.println("Das fenster ist im fokus");
 
 		if(!duringAnimation && level.removeable(positionY, positionX)){
 			try{

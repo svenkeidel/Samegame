@@ -34,10 +34,6 @@ class AnimationThread extends Thread{
 
 		this.animationSpeed = animationSpeed;
 	}
-	
-	private boolean allStonesReachedBottom(){
-		return false;
-	}
 
 	@Override
 	public void run(){
@@ -58,7 +54,7 @@ class AnimationThread extends Thread{
 				}
 				catch(InterruptedException ignored){}
 			}
-		}while(fieldstateHasChanged && !allStonesReachedBottom());
+		}while(fieldstateHasChanged);
 
 		mainPanel.endAnimation();
 	}

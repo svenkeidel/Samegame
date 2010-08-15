@@ -11,7 +11,6 @@ import de.tu_darmstadt.gdi1.samegame.exceptions.ParameterOutOfRangeException;
 import de.tu_darmstadt.gdi1.samegame.gameframes.*;
 
 public class SameGameViewer implements ChangeListener{
-
 	public static final Locale DEFAULT_LOCALE = new Locale("en", "US");
 	private Locale currentLocale;
 

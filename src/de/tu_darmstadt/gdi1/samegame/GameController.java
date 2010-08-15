@@ -35,8 +35,8 @@ public class GameController extends KeyAdapter implements ActionListener, MenuLi
 	@Override
 	public void keyPressed(KeyEvent e){
 		int key = e.getKeyCode();
-		int markedRow = 0;
-		int markedCol = 0;
+		int markedRow = viewer.getMarkedFieldRow();
+		int markedCol = viewer.getMarkedFieldCol();
 		viewer.markField(markedRow, markedCol);
 
 		switch(key){
@@ -60,20 +60,16 @@ public class GameController extends KeyAdapter implements ActionListener, MenuLi
 					}
 				break;
 			case VK_LEFT:
-				if (markedCol != 0){
 				markedCol -=1;
 				viewer.markField(markedRow,markedCol);
-				}
 				break;
 			case VK_RIGHT:
 				markedCol +=1;
 				viewer.markField(markedRow,markedCol);
 				break;
 			case VK_UP:
-				if (markedRow != 0){
-					markedRow -=1;
-					viewer.markField(markedRow, markedCol);
-				}
+				markedRow -=1;
+				viewer.markField(markedRow, markedCol);
 				break;
 			case VK_DOWN:
 				markedRow +=1;

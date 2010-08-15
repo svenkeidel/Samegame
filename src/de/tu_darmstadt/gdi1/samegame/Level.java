@@ -260,6 +260,7 @@ public class Level extends UndoManager{
 		}
 
 		this.changeListener = changeListener;
+		this.changeListener.stateChanged(new ChangeEvent(this));
 
 		this.addEdit(currentGameState);
 	}
@@ -515,6 +516,8 @@ public class Level extends UndoManager{
 
 		this.discardAllEdits();
 		this.addEdit(currentGameState);
+
+		this.changeListener.stateChanged(new ChangeEvent(this));
 	}
 
 

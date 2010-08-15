@@ -19,6 +19,8 @@ import javax.swing.JPanel;
 import de.tu_darmstadt.gdi1.samegame.GameController;
 import de.tu_darmstadt.gdi1.samegame.Level;
 
+import de.tu_darmstadt.gdi1.samegame.exceptions.InternalFailureException;
+
 import de.tu_darmstadt.gdi1.samegame.ui.GamePanel;
 import de.tu_darmstadt.gdi1.samegame.ui.GameWindow;
 
@@ -178,6 +180,14 @@ public class MainFrame extends GameWindow implements Runnable{
 		Points.setText(""+(int)level.getPoints());
 		MinStones.setText(""+level.getMinStones());
 		TargetTime.setText(""+level.getTargetTime());
+
+		try{
+			if(!duringAnimation())
+				panel.redraw();
+		}catch(InternalFailureException e){
+			e.printStackTrace();
+		}
+
 	}
 
 	public void markField(int row, int col){

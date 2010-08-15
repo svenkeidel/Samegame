@@ -106,7 +106,6 @@ public class MainPanel extends GamePanel{
 
 	@Override
 	public void setGamePanelContents(){
-
 		// if an animation is performed, let the AnimationThread handle the
 		// field state
 		if(!duringAnimation)

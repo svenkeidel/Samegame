@@ -1,5 +1,7 @@
 package de.tu_darmstadt.gdi1.samegame.gameframes;
 
+import java.awt.Component;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -25,14 +27,14 @@ public class MainPanel extends GamePanel{
 
 	private Byte[][] field;
 
-	public MainPanel(GameWindow window, Level level){
+	public MainPanel(GameWindow window, Level level, GameController controller){
 		super(window);
 
 		this.level = level;
 
 		this.field = level.getFieldState();
 
-		this.controller = new GameController(level);
+		this.controller = controller;
 
 		try{
 			String path = this.getClass().
@@ -92,12 +94,12 @@ public class MainPanel extends GamePanel{
 		}
 	}
 
-	public void startAnimation(int row, int col){
+	public void startAnimation(int row, int col, long animationSpeed){
 		duringAnimation = true;
 
 		Level.removeFloodFill(this.field, row, col, field[row][col], new Integer(0));
 
-		AnimationThread animation = new AnimationThread(this.field, 1000, this);
+		AnimationThread animation = new AnimationThread(this.field, animationSpeed, this);
 		animation.start();
 	}
 
@@ -129,10 +131,15 @@ public class MainPanel extends GamePanel{
 
 	@Override
 	public void entityClicked(int positionX, int positionY){
+		getParentWindow().requestFocus();
+		if(getParentWindow().isFocusable())
+			System.out.println("Das fenster ist focusable");
+		if(getParentWindow().isFocused())
+			System.out.println("Das fenster ist im fokus");
 
 		if(!duringAnimation && level.removeable(positionY, positionX)){
 			try{
-				startAnimation(positionY, positionX);
+				startAnimation(positionY, positionX, 500);
 				level.removeStone(positionY, positionX);
 				this.redraw();
 			}catch(ParameterOutOfRangeException e){

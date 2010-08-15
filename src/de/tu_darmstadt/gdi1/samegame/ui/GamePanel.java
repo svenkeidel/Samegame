@@ -438,13 +438,11 @@ public abstract class GamePanel extends JPanel implements MouseListener {
 			entities.add(btn);
 		}
 
-		btn.addKeyListener(parentWindow);
 		btn.addMouseListener(this);
 		btn.setIcon(icon);
 
 		// add it
 		add(btn);
-		btn.requestFocus();
 
 		return( btn );
 	}

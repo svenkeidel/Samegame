@@ -1,7 +1,7 @@
 package de.tu_darmstadt.gdi1.samegame.gameframes;
 
 import java.awt.BorderLayout;
-import java.awt.Container;
+import java.awt.Component;
 import java.awt.GridLayout;
 
 import static java.lang.Thread.sleep;
@@ -16,6 +16,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
+import de.tu_darmstadt.gdi1.samegame.GameController;
 import de.tu_darmstadt.gdi1.samegame.Level;
 
 import de.tu_darmstadt.gdi1.samegame.ui.GamePanel;
@@ -29,23 +30,30 @@ public class MainFrame extends GameWindow implements Runnable{
 
 	private ResourceBundle messages;
 
+	private GameController controller;
+
 	private MainPanel panel;
 
 	private JLabel MinStones;
 	private JLabel Points;
 	private JLabel ElapsedTime;
 	private JLabel TargetTime;
-
-	public MainFrame(Level level, Locale locale){
+	
+	public MainFrame(Level level, Locale locale, GameController controller){
 		super("Same Game", level, locale);
 		this.level = level;
+		this.controller = controller;
+
 		this.locale = locale;
 
+		this.setFocusable(true);
+		this.addKeyListener(this.controller);
+		
 		try{
 			messages = 
 				ResourceBundle.getBundle(
 						"de.tu_darmstadt.gdi1.samegame.gameframes.MainBundle", 
-						locale, 
+						this.locale, 
 						this.getClass().getClassLoader()); 
 		}catch(MissingResourceException e){
 			this.locale = new Locale("de", "DE");
@@ -53,7 +61,7 @@ public class MainFrame extends GameWindow implements Runnable{
 			messages = 
 				ResourceBundle.getBundle(
 						"de.tu_darmstadt.gdi1.samegame.gameframes.MainBundle", 
-						locale,
+						this.locale,
 						this.getClass().getClassLoader()); 
 		}
 
@@ -109,7 +117,7 @@ public class MainFrame extends GameWindow implements Runnable{
 		statusLine.add(statusLineValues, BorderLayout.EAST);
 
 		this.add(statusLine, BorderLayout.SOUTH);
-
+		this.requestFocus();
 	}
 
 	public void redraw(){
@@ -143,19 +151,20 @@ public class MainFrame extends GameWindow implements Runnable{
 	}
 
 
-	public void startAnimation(int row, int col){
-		this.panel.startAnimation(row, col);
+	public void startAnimation(int row, int col, long animationSpeed){
+		this.panel.startAnimation(row, col, animationSpeed);
 	}
 
 	@Override
 	protected GamePanel createGamePanel(Level level) {
-		this.panel = new MainPanel(this, level);
+		this.panel = new MainPanel(this, level, controller);
 		this.add(panel, BorderLayout.CENTER);
 		return panel;
 	}
 
 	@Override
 	public void run(){
+		// Time update
 		while(true){
 			redraw();
 			try{

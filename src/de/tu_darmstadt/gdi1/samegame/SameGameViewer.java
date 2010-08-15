@@ -1,18 +1,14 @@
 package de.tu_darmstadt.gdi1.samegame;
 
 import java.util.Locale;
-import java.util.Vector;
 
-import javax.swing.JFrame;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import de.tu_darmstadt.gdi1.samegame.exceptions.InternalFailureException;
-import de.tu_darmstadt.gdi1.samegame.exceptions.InvalidOperationException;
 import de.tu_darmstadt.gdi1.samegame.exceptions.ParameterOutOfRangeException;
 
 import de.tu_darmstadt.gdi1.samegame.gameframes.*;
-
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
 
 public class SameGameViewer implements ChangeListener{
 
@@ -20,6 +16,7 @@ public class SameGameViewer implements ChangeListener{
 	private Locale currentLocale;
 
 	private Level level;
+	private GameController controller;
 
 	private int markedRow, markedCol;
 
@@ -38,6 +35,10 @@ public class SameGameViewer implements ChangeListener{
 
 	public void setLevel(Level level){
 		this.level = level;
+	}
+
+	public void setController(GameController controller){
+		this.controller = controller;
 	}
 
 	// implements method from interface javax.swing.event.ChangeListener
@@ -62,12 +63,12 @@ public class SameGameViewer implements ChangeListener{
 		return mainFrame.duringAnimation();
 	}
 
-	public void startAnimation(int row, int col){
-		mainFrame.startAnimation(row, col);
+	public void startAnimation(int row, int col, long animationSpeed){
+		mainFrame.startAnimation(row, col, animationSpeed);
 	}
 
 	public void showMainFrame(){
-		this.mainFrame = new MainFrame(level, currentLocale);
+		this.mainFrame = new MainFrame(level, currentLocale, controller);
 		this.mainFrame.setVisible(true);
 		Thread timeUpdate = new Thread(mainFrame);
 		timeUpdate.start();
@@ -138,8 +139,10 @@ public class SameGameViewer implements ChangeListener{
 	public static void main(String args[]){
 		SameGameViewer viewer = new SameGameViewer();
 		Level level = new Level(viewer);
-		level.generateLevel(10, 10, 5, 3);
+		GameController controller = new GameController(level);
+		viewer.setController(controller);
 		viewer.setLevel(level);
+		level.generateLevel(10, 10, 5, 3);
 		viewer.showMainFrame();
 		try{
 			viewer.mainFrame.notifyLevelLoaded(level.getFieldWidth(), level.getFieldHeight());

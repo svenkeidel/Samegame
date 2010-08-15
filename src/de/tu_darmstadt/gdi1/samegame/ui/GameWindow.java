@@ -4,8 +4,6 @@ package de.tu_darmstadt.gdi1.samegame.ui;
 
 /*============================================================================*/
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.Locale;
 
 import javax.swing.JFrame;
@@ -23,7 +21,7 @@ import de.tu_darmstadt.gdi1.samegame.exceptions.ParameterOutOfRangeException;
  * @author Steven Arzt, Oren Avni, Jonas Marczona
  * @version 1.1
  */
-public abstract class GameWindow extends JFrame implements KeyListener {
+public abstract class GameWindow extends JFrame {
 
 	/* ======================================================================== */
 
@@ -55,7 +53,6 @@ public abstract class GameWindow extends JFrame implements KeyListener {
 			throw new RuntimeException("The game panel may not be null");
 
 		// Configure the frame
-		addKeyListener( this );
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
 	}
@@ -68,167 +65,6 @@ public abstract class GameWindow extends JFrame implements KeyListener {
 	 * @return An instance of the GamePanel you want to use
 	 */
 	protected abstract GamePanel createGamePanel (Level level);
-
-	/* ======================================================================== */
-
-	/**
-	 * Method that is invoked whenever the left arrow key is pressed. Override
-	 * this method to implement your custom solution
-	 */
-	protected void keyLeftPressed() {		
-	}
-
-	/* ======================================================================== */
-
-	/**
-	 * Method that is invoked whenever the right arrow key is pressed. Override
-	 * this method to implement your custom solution
-	 */
-	protected void keyRightPressed() {		
-	}
-
-	/* ======================================================================== */
-
-	/**
-	 * Method that is invoked whenever the up arrow key is pressed. Override
-	 * this method to implement your custom solution
-	 */
-	protected void keyUpPressed() {		
-	}
-
-	/* ======================================================================== */
-
-	/**
-	 * Method that is invoked whenever the down arrow key is pressed. Override
-	 * this method to implement your custom solution
-	 */
-	protected void keyDownPressed() {		
-	}
-
-	/* ======================================================================== */
-
-	/**
-	 * Method that is invoked whenever the "q" key is pressed. Override this
-	 * method to implement your custom solution
-	 */
-	protected void keyQuitPressed(){		
-	}
-
-	/* ======================================================================== */
-
-	/**
-	 * Method that is invoked whenever the "n" key is pressed. Override this
-	 * method to implement your custom solution
-	 */
-	protected void keyNewGamePressed() {		
-	}
-
-	/* ======================================================================== */
-
-	/**
-	 * Method that is invoked whenever the backspace key is pressed. Override
-	 * this method to implement your custom solution
-	 */
-	protected void keyUndoPressed() {		
-	}
-
-	/* ======================================================================== */
-
-	/**
-	 * Method that is invoked whenever the return key is pressed. Override this
-	 * method to implement your custom solution
-	 */
-	protected void keyRedoPressed(){		
-	}
-
-	/* ======================================================================== */
-
-	/**
-	 * Method that is invoked whenever the space key is pressed. Override this
-	 * method to implement your custom solution
-	 */
-	protected void keySpacePressed() {		
-	}
-	
-	/* ======================================================================== */
-	
-	/**
-	 * Method that is invoked whenever a key that is not explicitly handled has
-	 * been pressed. Override this method to implement your custom solution.
-	 */
-	protected void keyOtherPressed (KeyEvent key){		
-	}
-	
-	/* ======================================================================== */
-
-	/**
-	 * This method consumes a KeyEvent caused by the user pressing a key. If the
-	 * key is "known", the appropriate method key*Pressed will be called.
-	 * 
-	 * @see #keyUpPressed()
-	 * @see #keyLeftPressed()
-	 * @see #keyRightPressed()
-	 * @see #keyDownPressed()
-	 * @see #keyNewGamePressed()
-	 * @see #keyRedoPressed()
-	 * @see #keyUndoPressed()
-	 */
-	public void keyPressed(KeyEvent key) {
-		// retrieve the key code and call the appropriate method, if any
-		switch (key.getKeyCode()) {
-		case KeyEvent.VK_LEFT:
-			keyLeftPressed();
-			break;
-
-		case KeyEvent.VK_RIGHT:
-			keyRightPressed();
-			break;
-
-		case KeyEvent.VK_UP:
-			keyUpPressed();
-			break;
-
-		case KeyEvent.VK_DOWN:
-			keyDownPressed();
-			break;
-
-		case KeyEvent.VK_Q:
-			keyQuitPressed();
-			break;
-
-		case KeyEvent.VK_N:
-			keyNewGamePressed();
-			break;
-
-		case KeyEvent.VK_BACK_SPACE:
-			keyUndoPressed();
-			break;
-
-		case KeyEvent.VK_ENTER:
-			keyRedoPressed();
-			break;
-			
-		case KeyEvent.VK_SPACE:
-			keySpacePressed();
-			break;
-
-		default:
-			keyOtherPressed(key);
-			break;
-		}
-	}
-
-	/* ======================================================================== */
-
-	public void keyReleased(KeyEvent key) {
-		// nothing to be done here
-	}
-
-	/* ======================================================================== */
-
-	public void keyTyped(KeyEvent key) {
-		// nothing to be done here
-	}
 
 	/* ======================================================================== */
 

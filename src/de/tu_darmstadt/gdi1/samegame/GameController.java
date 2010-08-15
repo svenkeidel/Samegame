@@ -11,11 +11,12 @@ import javax.swing.event.MenuEvent;
 public class GameController extends KeyAdapter implements ActionListener, MenuListener{
 
 	private Level level;
+	private SameGameViewer samegameviewer = new SameGameViewer();
 
 	public GameController(Level level){
 		this.level = level;
 	}
-
+	
 	public void setLevel(Level level){
 		this.level = level;
 	}
@@ -27,31 +28,45 @@ public class GameController extends KeyAdapter implements ActionListener, MenuLi
 	@Override
 	public void keyPressed(KeyEvent e){
 		int key = e.getKeyCode();
+		int markedRow = 0;
+		int markedCol = 0;
+		samegameviewer.markField(markedRow, markedCol);
 
 		switch(key){
 			case VK_N:
 				level.restartLevel();
 				break;
-			case VK_U:
+			case VK_BACK_SPACE:
+				if (samegameviewer.duringAnimation() != true)
 				level.undo();
 				break;
-			case VK_R:
+			case VK_ENTER:
+				if (samegameviewer.duringAnimation() != true)
 				level.redo();
 				break;
-			case VK_ENTER:
-				// level.removeStone();
+			case VK_SPACE:
+				if (samegameviewer.duringAnimation() != true)
+				level.removeStone(markedRow, markedCol);
 				break;
 			case VK_LEFT:
-				// TODO
+				if (markedCol != 0){
+				markedCol -=1;
+				samegameviewer.markField(markedRow,markedCol);
+				}
 				break;
 			case VK_RIGHT:
-				// TODO
+				markedCol +=1;
+				samegameviewer.markField(markedRow,markedCol);
 				break;
 			case VK_UP:
-				// TODO
+				if (markedRow != 0){
+				markedRow -=1;
+				samegameviewer.markField(markedRow, markedCol);
+				}
 				break;
 			case VK_DOWN:
-				// TODO
+				markedRow +=1;
+				samegameviewer.markField(markedRow, markedCol);
 				break;
 			// TODO Write more cases like this
 			default:;

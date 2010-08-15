@@ -67,20 +67,28 @@ public class GameController extends KeyAdapter implements ActionListener, MenuLi
 					}
 				break;
 			case VK_LEFT:
+				if (markedCol >=0){
 				markedCol -=1;
 				viewer.markField(markedRow,markedCol);
+				}
 				break;
 			case VK_RIGHT:
+				if (markedCol <= level.getFieldWidth()){
 				markedCol +=1;
 				viewer.markField(markedRow,markedCol);
+				}
 				break;
 			case VK_UP:
+				if (markedRow >=0){
 				markedRow -=1;
 				viewer.markField(markedRow, markedCol);
+				}
 				break;
 			case VK_DOWN:
+				if (markedRow <= level.getFieldHeight()){
 				markedRow +=1;
 				viewer.markField(markedRow, markedCol);
+				}
 				break;
 			default:;
 		}

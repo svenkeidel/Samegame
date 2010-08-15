@@ -8,15 +8,22 @@ import static java.awt.event.KeyEvent.*;
 import javax.swing.event.MenuListener;
 import javax.swing.event.MenuEvent;
 
+import de.tu_darmstadt.gdi1.samegame.exceptions.ParameterOutOfRangeException;
+
 public class GameController extends KeyAdapter implements ActionListener, MenuListener{
 
 	private Level level;
-	private SameGameViewer samegameviewer = new SameGameViewer();
+	private SameGameViewer viewer;
 
 	public GameController(Level level){
 		this.level = level;
 	}
-	
+
+	public GameController(Level level, SameGameViewer viewer){
+		this.level = level;
+		this.viewer = viewer;
+	}
+
 	public void setLevel(Level level){
 		this.level = level;
 	}
@@ -30,45 +37,48 @@ public class GameController extends KeyAdapter implements ActionListener, MenuLi
 		int key = e.getKeyCode();
 		int markedRow = 0;
 		int markedCol = 0;
-		samegameviewer.markField(markedRow, markedCol);
+		viewer.markField(markedRow, markedCol);
 
 		switch(key){
 			case VK_N:
 				level.restartLevel();
 				break;
 			case VK_BACK_SPACE:
-				if (samegameviewer.duringAnimation() != true)
+				if (viewer.duringAnimation() != true)
 				level.undo();
 				break;
 			case VK_ENTER:
-				if (samegameviewer.duringAnimation() != true)
+				if (viewer.duringAnimation() != true)
 				level.redo();
 				break;
 			case VK_SPACE:
-				if (samegameviewer.duringAnimation() != true)
-				level.removeStone(markedRow, markedCol);
+				if (viewer.duringAnimation() != true)
+					try {
+						level.removeStone(markedRow, markedCol);
+					} catch (ParameterOutOfRangeException e1) {
+						e1.printStackTrace();
+					}
 				break;
 			case VK_LEFT:
 				if (markedCol != 0){
 				markedCol -=1;
-				samegameviewer.markField(markedRow,markedCol);
+				viewer.markField(markedRow,markedCol);
 				}
 				break;
 			case VK_RIGHT:
 				markedCol +=1;
-				samegameviewer.markField(markedRow,markedCol);
+				viewer.markField(markedRow,markedCol);
 				break;
 			case VK_UP:
 				if (markedRow != 0){
-				markedRow -=1;
-				samegameviewer.markField(markedRow, markedCol);
+					markedRow -=1;
+					viewer.markField(markedRow, markedCol);
 				}
 				break;
 			case VK_DOWN:
 				markedRow +=1;
-				samegameviewer.markField(markedRow, markedCol);
+				viewer.markField(markedRow, markedCol);
 				break;
-			// TODO Write more cases like this
 			default:;
 		}
 	}

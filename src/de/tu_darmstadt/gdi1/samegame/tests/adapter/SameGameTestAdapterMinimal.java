@@ -45,7 +45,8 @@ public class SameGameTestAdapterMinimal {
 		correctLevel = false;
 		level = new Level(viewer);
 		viewer.setLevel(level);
-		contr  = new GameController(level);
+		viewer.setController(contr);
+		contr  = new GameController(level, viewer);
 	}
 	
 	

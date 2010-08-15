@@ -48,7 +48,8 @@ public class SameGameViewer implements ChangeListener{
 	}
 
 	public void markField(int row, int col){
-		mainFrame.markField(row, col);
+		if(mainFrame != null)
+			mainFrame.markField(row, col);
 	}
 
 	public int getMarkedFieldRow(){
@@ -60,7 +61,9 @@ public class SameGameViewer implements ChangeListener{
 	}
 
 	public boolean duringAnimation(){
-		return mainFrame.duringAnimation();
+		if(mainFrame != null)
+			return mainFrame.duringAnimation();
+		else return false;
 	}
 
 	public void startAnimation(int row, int col, long animationSpeed){
@@ -139,7 +142,7 @@ public class SameGameViewer implements ChangeListener{
 	public static void main(String args[]){
 		SameGameViewer viewer = new SameGameViewer();
 		Level level = new Level(viewer);
-		GameController controller = new GameController(level);
+		GameController controller = new GameController(level, viewer);
 		viewer.setController(controller);
 		viewer.setLevel(level);
 		level.generateLevel(10, 10, 5, 3);

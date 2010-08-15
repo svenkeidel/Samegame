@@ -527,10 +527,11 @@ public class Level extends UndoManager{
 	public void undo() throws CannotUndoException{
 		super.undo();
 		
-		if(this.editToBeUndone() instanceof GameState)
+		if(this.editToBeUndone() instanceof GameState){
 			this.currentGameState = 
 			(GameState) this.editToBeUndone();
-		else
+			changeListener.stateChanged(new ChangeEvent(this));
+		} else
 			throw new CannotUndoException();
 		
 	}
@@ -545,10 +546,11 @@ public class Level extends UndoManager{
 	public void redo() throws CannotRedoException{
 		super.redo();
 			
-		if(this.editToBeUndone() instanceof GameState)
+		if(this.editToBeUndone() instanceof GameState){
 			this.currentGameState = 
 			(GameState) this.editToBeUndone();
-		else
+			changeListener.stateChanged(new ChangeEvent(this));
+		} else
 			throw new CannotRedoException();
 		
 	}

@@ -227,6 +227,29 @@ public class MainFrame extends GameWindow implements Runnable{
 	public void startAnimation(int row, int col, long animationSpeed){
 		this.panel.startAnimation(row, col, animationSpeed);
 	}
+	
+	
+	public void setLanguage(String language){
+		String l = "";
+		if (language.equals("German"))
+			l = "de.tu_darmstadt.gdi1.samegame.gameframes.MainBundle";
+		// if (language.equals("English")) TODO
+		try{
+			messages = 
+				ResourceBundle.getBundle(
+						l, 
+						this.locale, 
+						this.getClass().getClassLoader()); 
+		}catch(MissingResourceException e){
+			this.locale = new Locale("de", "DE");
+
+			messages = 
+				ResourceBundle.getBundle(
+						"de.tu_darmstadt.gdi1.samegame.gameframes.MainBundle", 
+						this.locale,
+						this.getClass().getClassLoader()); 
+		}
+	}
 
 	@Override
 	protected GamePanel createGamePanel(Level level) {

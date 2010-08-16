@@ -74,6 +74,11 @@ public class SameGameViewer implements ChangeListener{
 	public void startAnimation(int row, int col, long animationSpeed){
 		mainFrame.startAnimation(row, col, animationSpeed);
 	}
+	
+	void setLanguage(String language){
+		mainFrame.setLanguage(language);
+	}
+	
 
 	public void showMainFrame(){
 		this.mainFrame = new MainFrame(level, currentLocale, controller);

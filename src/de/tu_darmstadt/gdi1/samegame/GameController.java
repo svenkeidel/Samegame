@@ -36,7 +36,21 @@ public class GameController extends KeyAdapter implements ActionListener{
 	public void actionPerformed(ActionEvent e){
 		if(e.getSource() instanceof JMenuItem){
 			JMenuItem source = (JMenuItem) e.getSource();
-			System.out.println("Action Event performed!!!\n Source: "+source.getName());
+			if (source.getName().equals("FileMenu_GenerateLevel") )
+				level.restartLevel();
+			if (source.getName().equals("FileMenu_SaveLevel"))
+				viewer.showMainFrame();
+			if (source.getName().equals("FileMenu_LoadLevel"))
+				viewer.showLoadGameFrame();
+			if (source.getName().equals("FileMenu_Exit"))
+				viewer.closeMainFrame();
+			if (source.getName().equals("GameMenu_Undo"))
+				level.undo();
+			if (source.getName().equals("German"))
+				viewer.setLanguage("German");
+			if (source.getName().equals("English"))
+				viewer.setLanguage("English");
+			// TODO add some more
 		}
 		// TODO Write method stub
 	}

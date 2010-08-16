@@ -6,8 +6,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import static java.awt.event.KeyEvent.*;
 
-import javax.swing.event.MenuDragMouseEvent;
-import javax.swing.event.MenuDragMouseListener;
+import javax.swing.JMenuItem;
 import javax.swing.event.MenuListener;
 import javax.swing.event.MenuEvent;
 
@@ -16,8 +15,7 @@ import javax.swing.undo.CannotUndoException;
 
 import de.tu_darmstadt.gdi1.samegame.exceptions.ParameterOutOfRangeException;
 
-
-public class GameController extends KeyAdapter implements ActionListener, MenuListener, MenuDragMouseListener{
+public class GameController extends KeyAdapter implements ActionListener{
 
 	private Level level;
 	private SameGameViewer viewer;
@@ -36,6 +34,10 @@ public class GameController extends KeyAdapter implements ActionListener, MenuLi
 	}
 	
 	public void actionPerformed(ActionEvent e){
+		if(e.getSource() instanceof JMenuItem){
+			JMenuItem source = (JMenuItem) e.getSource();
+			System.out.println("Action Event performed!!!\n Source: "+source.getName());
+		}
 		// TODO Write method stub
 	}
 	
@@ -103,44 +105,4 @@ public class GameController extends KeyAdapter implements ActionListener, MenuLi
 			default:;
 		}
 	}
-
-	public void menuCanceled(MenuEvent e){
-		// TODO Write method stub
-	}
-
-	public void menuDeselected(MenuEvent e){
-		// TODO Write method stub
-	}
-
-	public void menuSelected(MenuEvent e){
-		// TODO Write method stub
-	}
-	
-	public void menuDragMouseReleased(MenuDragMouseEvent e) {
-		
-		// if (e.getSource() == generate)
-        level.restartLevel();
-		// else
-			// if (e.getSource() == "Game_Menu_Undo")
-			// {}
-	}
-
-	@Override
-	public void menuDragMouseEntered(MenuDragMouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void menuDragMouseExited(MenuDragMouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void menuDragMouseDragged(MenuDragMouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-	
 }

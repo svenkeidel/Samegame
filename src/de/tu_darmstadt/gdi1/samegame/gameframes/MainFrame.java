@@ -80,73 +80,72 @@ public class MainFrame extends GameWindow implements Runnable{
 		
 		JMenuItem gen_lvl = new JMenuItem(messages.getString("FileMenu_GenerateLevel"));
 		gen_lvl.setName("FileMenu_GenerateLevel");
+		gen_lvl.addActionListener(controller);
 		fileMenu.add(gen_lvl);
 		
 		fileMenu.addSeparator();
 		
 		JMenuItem save_lvl = new JMenuItem(messages.getString("FileMenu_SaveLevel"));
 		save_lvl.setName("FileMenu_SaveLevel");
+		save_lvl.addActionListener(controller);
 		fileMenu.add(save_lvl);
 		
 		JMenuItem load_lvl = new JMenuItem(messages.getString("FileMenu_LoadLevel"));
 		load_lvl.setName("FileMenu_LoadLevel");
+		load_lvl.addActionListener(controller);
 		fileMenu.add(load_lvl);
 		
 		fileMenu.addSeparator();
 		
 		JMenuItem save_game = new JMenuItem(messages.getString("FileMenu_SaveGameState"));
 		save_game.setName("FileMenu_SaveGameState");
+		save_game.addActionListener(controller);
 		fileMenu.add(save_game);
 		
 		JMenuItem load_game = new JMenuItem(messages.getString("FileMenu_LoadGameState"));
 		load_game.setName("FileMenu_LoadGameState");
+		load_game.addActionListener(controller);
 		fileMenu.add(load_game);
 		
 		fileMenu.addSeparator();
 		
 		JMenuItem exit = new JMenuItem(messages.getString("FileMenu_Exit"));
 		exit.setName("FileMenu_Exit");
+		exit.addActionListener(controller);
 		fileMenu.add(exit);
 				
-		fileMenu.addMenuListener(controller);
-		
-		
 		// TODO write some menu entrys
 		JMenu viewMenu = new JMenu(messages.getString("ViewMenu_Border"));
-		
-		viewMenu.addMenuListener(controller);
 		
 		// Game-Menu
 		JMenu GameMenu = new JMenu(messages.getString("GameMenu"));
 		
 		JMenuItem generate = new JMenuItem(messages.getString("GameMenu_Generate"));
 		generate.setName("GameMenu_Generate");
-		generate.addMenuDragMouseListener(controller);
+		generate.addActionListener(controller);
 		GameMenu.add(generate);
 		
 		JMenuItem undo = new JMenuItem(messages.getString("GameMenu_Undo"));
 		undo.setName("GameMenu_Undo");
-		undo.addMenuDragMouseListener(controller);
+		undo.addActionListener(controller);
 		GameMenu.add(undo);
 		
+
 		// TODO write some menu entrys
 		JMenu optionsMenu = new JMenu(messages.getString("OptionsMenu_Border"));
+
+
 		JMenu setLanguage = new JMenu(messages.getString("SetLanguage"));
-		
-		
-		optionsMenu.addMenuListener(controller);
-		setLanguage.addMenuListener(controller);
-		
 		
 		JMenuItem ger_lang = new JMenuItem(messages.getString("German"));
 		ger_lang.setName("German");
+		ger_lang.addActionListener(controller);
 		setLanguage.add(ger_lang);
 	
 		JMenuItem eng_lang = new JMenuItem(messages.getString("English"));
 		eng_lang.setName("English");
+		eng_lang.addActionListener(controller);
 		setLanguage.add(eng_lang);		
-		
-		
 		
 		optionsMenu.add(setLanguage);
 
@@ -157,8 +156,7 @@ public class MainFrame extends GameWindow implements Runnable{
 
 		this.add(menuBar, BorderLayout.NORTH);
 
-		
-		
+
 		// ===== status line =====
 		JPanel statusLine = new JPanel(new BorderLayout());
 		JPanel statusLineLabels = new JPanel(new GridLayout(4, 1));

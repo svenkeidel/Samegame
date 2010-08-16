@@ -10,11 +10,15 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+
+import javax.swing.event.MenuDragMouseListener;
+import javax.swing.event.MenuDragMouseEvent;
 
 import de.tu_darmstadt.gdi1.samegame.GameController;
 import de.tu_darmstadt.gdi1.samegame.Level;
@@ -33,7 +37,7 @@ public class MainFrame extends GameWindow implements Runnable{
 	private ResourceBundle messages;
 
 	private GameController controller;
-
+	
 	private MainPanel panel;
 
 	private JLabel MinStones;
@@ -41,7 +45,7 @@ public class MainFrame extends GameWindow implements Runnable{
 	private JLabel ElapsedTime;
 	private JLabel TargetTime;
 	
-		
+			
 	public MainFrame(Level level, Locale locale, GameController controller){
 		super("Same Game", level, locale);
 		this.level = level;
@@ -112,6 +116,19 @@ public class MainFrame extends GameWindow implements Runnable{
 		
 		viewMenu.addMenuListener(controller);
 		
+		// Game-Menu
+		JMenu GameMenu = new JMenu(messages.getString("GameMenu"));
+		
+		JMenuItem generate = new JMenuItem(messages.getString("GameMenu_Generate"));
+		generate.setName("GameMenu_Generate");
+		generate.addMenuDragMouseListener(controller);
+		GameMenu.add(generate);
+		
+		JMenuItem undo = new JMenuItem(messages.getString("GameMenu_Undo"));
+		undo.setName("GameMenu_Undo");
+		undo.addMenuDragMouseListener(controller);
+		GameMenu.add(undo);
+		
 		// TODO write some menu entrys
 		JMenu optionsMenu = new JMenu(messages.getString("OptionsMenu_Border"));
 		JMenu setLanguage = new JMenu(messages.getString("SetLanguage"));
@@ -135,6 +152,7 @@ public class MainFrame extends GameWindow implements Runnable{
 
 		menuBar.add(fileMenu);
 		menuBar.add(viewMenu);
+		menuBar.add(GameMenu);
 		menuBar.add(optionsMenu);
 
 		this.add(menuBar, BorderLayout.NORTH);

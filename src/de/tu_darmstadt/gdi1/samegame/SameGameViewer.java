@@ -1,5 +1,6 @@
 package de.tu_darmstadt.gdi1.samegame;
 
+import java.awt.Color;
 import java.util.Locale;
 
 import javax.swing.event.ChangeEvent;
@@ -16,7 +17,10 @@ public class SameGameViewer implements ChangeListener{
 
 	private Level level;
 	private GameController controller;
-
+	
+	private Color BColor;
+	private Color FColor;
+	
 	private int markedRow, markedCol;
 
 	private MainFrame mainFrame;
@@ -39,7 +43,15 @@ public class SameGameViewer implements ChangeListener{
 	public void setController(GameController controller){
 		this.controller = controller;
 	}
-
+	
+	public void setBColor(Color BColor){
+		this.BColor = BColor;
+	}
+	
+	public void setFColor(Color FColor){
+		this.FColor = FColor;
+	}
+	
 	// implements method from interface javax.swing.event.ChangeListener
 	public void stateChanged(ChangeEvent e){
 		if(mainFrame != null)
@@ -81,7 +93,7 @@ public class SameGameViewer implements ChangeListener{
 	
 
 	public void showMainFrame(){
-		this.mainFrame = new MainFrame(level, currentLocale, controller);
+		this.mainFrame = new MainFrame(level, currentLocale, controller, BColor, FColor);
 		this.mainFrame.setVisible(true);
 		Thread timeUpdate = new Thread(mainFrame);
 		timeUpdate.start();

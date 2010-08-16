@@ -55,7 +55,6 @@ public class GameController extends KeyAdapter implements ActionListener{
 		// TODO Write method stub
 	}
 	
-		
 	
 	@Override
 	public void keyPressed(KeyEvent e){

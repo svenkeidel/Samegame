@@ -1,8 +1,10 @@
 package de.tu_darmstadt.gdi1.samegame.gameframes;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridLayout;
+import java.awt.event.KeyEvent;
 
 import static java.lang.Thread.sleep;
 
@@ -11,14 +13,15 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 
-import javax.swing.event.MenuDragMouseListener;
-import javax.swing.event.MenuDragMouseEvent;
 
 import de.tu_darmstadt.gdi1.samegame.GameController;
 import de.tu_darmstadt.gdi1.samegame.Level;
@@ -44,15 +47,27 @@ public class MainFrame extends GameWindow implements Runnable{
 	private JLabel Points;
 	private JLabel ElapsedTime;
 	private JLabel TargetTime;
+	private JLabel sl_MinStones;
+	private JLabel sl_Points;
+	private JLabel sl_ElapsedTime;
+	private JLabel sl_TargetTime;
+	
+	private Color FColor;
+	private Color BColor;
 	
 			
-	public MainFrame(Level level, Locale locale, GameController controller){
+	public MainFrame(Level level, Locale locale, GameController controller, Color FColor, Color BColor){
 		super("Same Game", level, locale);
 		this.level = level;
 		this.controller = controller;
 
 		this.locale = locale;
 
+		// Example for choosing a Colorset : FColor = Fontcolor,  BColor = Backgrouncolor:
+		
+		// FColor = Color.white;
+		// BColor = Color.black;
+		
 		this.setFocusable(true);
 		this.addKeyListener(this.controller);
 		
@@ -75,24 +90,48 @@ public class MainFrame extends GameWindow implements Runnable{
 
 		// ========= menu =========
 		JMenuBar menuBar = new JMenuBar();
-		JMenu fileMenu = new JMenu(messages.getString("FileMenu_Border"));
+		menuBar.setBackground(BColor);
 		
+		JMenu fileMenu = new JMenu(messages.getString("FileMenu_Border"));
+		fileMenu.setForeground(FColor);
+		fileMenu.setBackground(BColor);
+		
+		JMenu new_lvl = new JMenu(messages.getString("FileMenu_NewLevel"));
+		new_lvl.setForeground(FColor);
+		new_lvl.setBackground(BColor);
+		fileMenu.add(new_lvl);
 		
 		JMenuItem gen_lvl = new JMenuItem(messages.getString("FileMenu_GenerateLevel"));
-		gen_lvl.setName("FileMenu_GenerateLevel");
 		gen_lvl.addActionListener(controller);
-		fileMenu.add(gen_lvl);
+		gen_lvl.setName("FileMenu_GenerateLevel");
+		gen_lvl.setForeground(FColor);
+		gen_lvl.setBackground(BColor);
+		
+		
+		JMenuItem genc_lvl = new JMenuItem(messages.getString("FileMenu_GenerateCustomLevel"));
+		genc_lvl.addActionListener(controller);
+		genc_lvl.setName("FileMenu_GenerateCustomLevel");
+		genc_lvl.setForeground(FColor);
+		genc_lvl.setBackground(BColor);
+		
+		new_lvl.add(gen_lvl);
+		new_lvl.add(genc_lvl);
+		
 		
 		fileMenu.addSeparator();
 		
 		JMenuItem save_lvl = new JMenuItem(messages.getString("FileMenu_SaveLevel"));
 		save_lvl.setName("FileMenu_SaveLevel");
 		save_lvl.addActionListener(controller);
+		save_lvl.setForeground(FColor);
+		save_lvl.setBackground(BColor);
 		fileMenu.add(save_lvl);
 		
 		JMenuItem load_lvl = new JMenuItem(messages.getString("FileMenu_LoadLevel"));
 		load_lvl.setName("FileMenu_LoadLevel");
 		load_lvl.addActionListener(controller);
+		load_lvl.setForeground(FColor);
+		load_lvl.setBackground(BColor);
 		fileMenu.add(load_lvl);
 		
 		fileMenu.addSeparator();
@@ -100,11 +139,15 @@ public class MainFrame extends GameWindow implements Runnable{
 		JMenuItem save_game = new JMenuItem(messages.getString("FileMenu_SaveGameState"));
 		save_game.setName("FileMenu_SaveGameState");
 		save_game.addActionListener(controller);
+		save_game.setForeground(FColor);
+		save_game.setBackground(BColor);
 		fileMenu.add(save_game);
 		
 		JMenuItem load_game = new JMenuItem(messages.getString("FileMenu_LoadGameState"));
 		load_game.setName("FileMenu_LoadGameState");
 		load_game.addActionListener(controller);
+		load_game.setForeground(FColor);
+		load_game.setBackground(BColor);
 		fileMenu.add(load_game);
 		
 		fileMenu.addSeparator();
@@ -112,48 +155,91 @@ public class MainFrame extends GameWindow implements Runnable{
 		JMenuItem exit = new JMenuItem(messages.getString("FileMenu_Exit"));
 		exit.setName("FileMenu_Exit");
 		exit.addActionListener(controller);
+		exit.setForeground(FColor);
+		exit.setBackground(BColor);
 		fileMenu.add(exit);
 				
-		// TODO write some menu entrys
-		JMenu viewMenu = new JMenu(messages.getString("ViewMenu_Border"));
-		
+			
 		// Game-Menu
 		JMenu GameMenu = new JMenu(messages.getString("GameMenu"));
+		GameMenu.setForeground(FColor);
+		GameMenu.setBackground(BColor);
 		
-		JMenuItem generate = new JMenuItem(messages.getString("GameMenu_Generate"));
-		generate.setName("GameMenu_Generate");
-		generate.addActionListener(controller);
-		GameMenu.add(generate);
+		JMenuItem restart = new JMenuItem(messages.getString("GameMenu_RestartLvl"));
+		restart.setName("GameMenu_RestartLvl");
+		restart.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, 0));
+		restart.addActionListener(controller);
+		restart.setForeground(FColor);
+		restart.setBackground(BColor);
+		GameMenu.add(restart);
+		
+		GameMenu.addSeparator();
 		
 		JMenuItem undo = new JMenuItem(messages.getString("GameMenu_Undo"));
 		undo.setName("GameMenu_Undo");
+		undo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0));
 		undo.addActionListener(controller);
+		undo.setForeground(FColor);
+		undo.setBackground(BColor);
 		GameMenu.add(undo);
+		
+		JMenuItem redo = new JMenuItem(messages.getString("GameMenu_Redo"));
+		redo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0));
+		redo.setName("GameMenu_Redo");
+		redo.addActionListener(controller);
+		redo.setForeground(FColor);
+		redo.setBackground(BColor);
+		GameMenu.add(redo);
 		
 
 		// TODO write some menu entrys
 		JMenu optionsMenu = new JMenu(messages.getString("OptionsMenu_Border"));
-
-
-		JMenu setLanguage = new JMenu(messages.getString("SetLanguage"));
+		optionsMenu.setForeground(FColor);
+		optionsMenu.setBackground(BColor);
 		
-		JMenuItem ger_lang = new JMenuItem(messages.getString("German"));
+		JMenu setLanguage = new JMenu(messages.getString("SetLanguage"));
+		setLanguage.setForeground(FColor);
+		setLanguage.setBackground(BColor);
+		
+		String path = this.getClass().getResource("../../resources/images/icons").toString();
+		
+		
+		//sets an icon for JMenuItem German 
+		JMenuItem ger_lang = new JMenuItem(messages.getString("German"), 
+											new ImageIcon(path+"/ger.png"));
 		ger_lang.setName("German");
 		ger_lang.addActionListener(controller);
+		ger_lang.setForeground(FColor);
+		ger_lang.setBackground(BColor);
 		setLanguage.add(ger_lang);
 	
-		JMenuItem eng_lang = new JMenuItem(messages.getString("English"));
+		//sets an icon for JMenuItem English
+		JMenuItem eng_lang = new JMenuItem(messages.getString("English"),
+											new ImageIcon(path+"/eng.png"));
 		eng_lang.setName("English");
 		eng_lang.addActionListener(controller);
+		eng_lang.setForeground(FColor);
+		eng_lang.setBackground(BColor);
 		setLanguage.add(eng_lang);		
 		
 		optionsMenu.add(setLanguage);
 
+		JMenu Qm = new JMenu("?");
+		Qm.setForeground(FColor);
+		Qm.setBackground(BColor);
+		
+		JMenuItem about = new JMenuItem(messages.getString("About"));
+		about.setName("About");
+		about.addActionListener(controller);
+		about.setForeground(FColor);
+		about.setBackground(BColor);
+		
+		Qm.add(about);
+		
 		menuBar.add(fileMenu);
-		menuBar.add(viewMenu);
 		menuBar.add(GameMenu);
 		menuBar.add(optionsMenu);
-
+		menuBar.add(Qm);
 		this.add(menuBar, BorderLayout.NORTH);
 
 
@@ -161,21 +247,37 @@ public class MainFrame extends GameWindow implements Runnable{
 		JPanel statusLine = new JPanel(new BorderLayout());
 		JPanel statusLineLabels = new JPanel(new GridLayout(4, 1));
 		JPanel statusLineValues = new JPanel(new GridLayout(4, 1, 10, 0));
+		statusLineLabels.setBackground(BColor);
+		statusLineValues.setBackground(BColor);
 
-		statusLineLabels.add(new JLabel(messages.getString("StatusLine_MinStones")));
-		MinStones = new JLabel(""+level.getMinStones());
-		statusLineValues.add(MinStones);
 		
-		statusLineLabels.add(new JLabel(messages.getString("StatusLine_Points")));
+		//changed to be able to set Font-Colors --> last two lines per JLabel-Group
+		sl_MinStones = new JLabel(messages.getString("StatusLine_MinStones"));
+		sl_MinStones.setForeground(FColor);
+		MinStones = new JLabel(""+level.getMinStones());
+		MinStones.setForeground(FColor);
+		statusLineLabels.add(sl_MinStones);
+		statusLineValues.add(MinStones);
+			
+		sl_Points = new JLabel(messages.getString("StatusLine_Points"));
+		sl_Points.setForeground(FColor);
 		Points = new JLabel(""+(int)level.getPoints());
+		Points.setForeground(FColor);
+		statusLineLabels.add(sl_Points);
 		statusLineValues.add(Points);
 
-		statusLineLabels.add(new JLabel(messages.getString("StatusLine_ElapsedTime")));
+		sl_ElapsedTime = new JLabel(messages.getString("StatusLine_ElapsedTime"));
+		sl_ElapsedTime.setForeground(FColor);
 		ElapsedTime = new JLabel(""+(int)(level.getElapsedTime()/1000.0));
+		ElapsedTime.setForeground(FColor);
+		statusLineLabels.add(sl_ElapsedTime);	
 		statusLineValues.add(ElapsedTime);
 		
-		statusLineLabels.add(new JLabel(messages.getString("StatusLine_TargetTime")));
+		sl_TargetTime = new JLabel(messages.getString("StatusLine_TargetTime"));
+		sl_TargetTime.setForeground(FColor);
 		TargetTime = new JLabel(""+level.getTargetTime());
+		TargetTime.setForeground(FColor);
+		statusLineLabels.add(sl_TargetTime);
 		statusLineValues.add(TargetTime);
 
 		statusLine.add(statusLineLabels, BorderLayout.CENTER);

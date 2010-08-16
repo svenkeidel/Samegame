@@ -1073,7 +1073,7 @@ public class Level extends UndoManager{
 
 	
 	/**
-	 * a floodfill algorithm which fill a group of stones in the field.
+	 * a floodfill algorithm which fills a group of stones in the field.
 	 * It changes the color of the selected stone group to the new 
 	 * color, so the new color can be count etc.
 	 *
@@ -1104,7 +1104,7 @@ public class Level extends UndoManager{
 
 
 	/**
-	 * a floodfill algorithm which fill a group of stones in the field.
+	 * a floodfill algorithm which fills a group of stones in the field.
 	 * It fills the selected stone group with 0's and count the stones
 	 * which are removed
 	 *
@@ -1365,15 +1365,16 @@ public class Level extends UndoManager{
 	 * calculates the points after a remove operation.
 	 * 
 	 * @param state the new field in which the points are counted
-	 * @param removedElements the number of elements which was removed
+	 * @param removedElements the number of elements which were removed
 	 *
-	 * @return the new calculate Points
+	 * @return the new calculated Points
 	 */
 	public double calculatePoints(Byte[][] state, int removedElements){
 
 		double newPoints = currentGameState.getPoints();
 
-		boolean overTime = targetTime - watch.getTime() < 0;
+		double time =  (double)watch.getTime() /1000;
+		boolean overTime = targetTime - time < 0;
 		newPoints += Level.calculatePoints(removedElements, overTime);
 
 		if(isFinished(state, minStones))
@@ -1384,15 +1385,15 @@ public class Level extends UndoManager{
 	
 
 	/**
-	 * calculate the points for a remove operation.
+	 * calculates the points for a remove operation.
 	 * If the operation was performed just in time, the new points
 	 * are (removedElements)&sup2; else (removedElements/2)&sup2;<br>
 	 *
-	 * @param removedElements the number of elements which was removed
+	 * @param removedElements the number of elements which were removed
 	 * @param afterTargetTime if the remove operation was performed 
 	 * after ore before the target time
 	 *
-	 * @return the new calculate Points
+	 * @return the new calculated Points
 	 */
 	public static double calculatePoints(int removedElements,
 									  boolean afterTargetTime){
@@ -1404,16 +1405,16 @@ public class Level extends UndoManager{
 	}
 
 	/**
-	 * calculate pointbonus or malus if the level was finished.
+	 * calculates pointbonus or malus if the level was finished.
 	 *
-	 * the bonus is calculated the following:<br>
+	 * the bonus is calculated as follows:<br>
 	 *
 	 * <ul>
 	 * 	<li> if the level was finished just in time, the remaining time
-	 * 		 is added to the points, else removed </li>
+	 * 		 is added to, else removed from the points </li>
 	 * 	<li> the remaining stones are counted as malus</li>
-	 * 	<li> if the stones could all be removed, it's added an extra
-	 * 		 bonus: the number of stones which was in the original 
+	 * 	<li> if the stones could all be removed, an extra
+	 * 		 bonus is added: the number of stones which were in the original 
 	 * 		 level</li>
 	 * </ul>
 	 *
@@ -1429,20 +1430,18 @@ public class Level extends UndoManager{
 				if(state[i][j] != 0)
 					elementsLeft++;
 
-		int timeLeft = targetTime - (int) watch.getTime();
+		double timeLeft =  targetTime -  (double) watch.getTime()/1000;
 
 		int initialElements = 0;
 		Byte[][] origState = ORIGINAL_LEVEL_STATE.getFieldState();
-		for(int i=0; i<origState.length; i++)
-			for(int j=0; j<origState[i].length; j++)
-				if(origState[i][j] != 0)
-					initialElements++;
-
+		int rows = origState.length;
+		int cols = origState[0].length;
+		initialElements = rows * cols;
+		
 		return calculatePointsFinished(elementsLeft,
 									   timeLeft,
 									   initialElements);
 	}
-
 
 	/**
 	 * calculate pointbonus or malus if the level was finished.
@@ -1466,7 +1465,7 @@ public class Level extends UndoManager{
 	 * @return just the point bonus or malus
 	 */
 	public static double calculatePointsFinished(int elementsLeft,
-											  int timeLeft,
+											  double timeLeft,
 											  int initialElements){
 		
 		double additionalPoints = 0;

@@ -1115,11 +1115,11 @@ public class Level extends UndoManager{
 	 * @param stonesRemoved the number of stones which are removed.
 	 * The object contains the number after the operation
 	 */
-	public static void removeFloodFill(Byte[][] state, 
+	public static int removeFloodFill(Byte[][] state, 
 									   final int row, 
 									   final int col, 
 									   final byte color,
-									   Integer stonesRemoved){
+									   int stonesRemoved){
 
 		int rows = state.length;
 		int cols = state[0].length;
@@ -1128,11 +1128,13 @@ public class Level extends UndoManager{
 
 			state[row][col] = 0;
 			stonesRemoved++;
-			removeFloodFill(state, row - 1, col, color, stonesRemoved);
-			removeFloodFill(state, row + 1, col, color, stonesRemoved);
-			removeFloodFill(state, row, col - 1, color, stonesRemoved);
-			removeFloodFill(state, row, col + 1, color, stonesRemoved);
+
+			stonesRemoved += removeFloodFill(state, row - 1, col, color, stonesRemoved);
+			stonesRemoved += removeFloodFill(state, row + 1, col, color, stonesRemoved);
+			stonesRemoved += removeFloodFill(state, row, col - 1, color, stonesRemoved);
+			return stonesRemoved + removeFloodFill(state, row, col + 1, color, stonesRemoved);
 		}
+		else return 0;
 	}
 
 
@@ -1194,9 +1196,7 @@ public class Level extends UndoManager{
 
 		if (removeable(state, minStones, row, col)) {
 			
-			Integer elementsRemoved = 0;
-
-			removeFloodFill(state, row, col, color, elementsRemoved);
+			int elementsRemoved = removeFloodFill(state, row, col, color, 0);
 			
 			// perform the fall down and empty column deletion
 			moveUp(state);
@@ -1548,33 +1548,6 @@ public class Level extends UndoManager{
 	public void storeLevelState(final File f, boolean force) 
 		throws IllegalArgumentException, 
 			   IOException,
-			   SecurityException,
-			   LevelNotLoadedFromFileException{
-
-		String levelStateInf = this.getLevelStateInf();
-		store(levelStateInf, f, force);
-
-	}
-
-
-	/**
-	 * save level information to a *.lvl file. Don't proceed if the file
-	 * already exists, except the force boolean is true.
-	 *
-	 * @param f the file in which the level should be stored
-	 * @param force override an existing file
-	 *
-	 * @throws IllegalArgumentException if the given file already 
-	 * exists and the force option is false
-	 * @throws FileNotFoundException if the file could not been found
-	 * @throws IOException if a IO-exception occurs during the reading
-	 * the file
-	 * @throws SecurityException if the user hasn't write permissions
-	 * the given path
-	 */
-	public void storeLevel(final File f, boolean force)
-		throws IllegalArgumentException, 
-			   IOException,
 			   SecurityException{
 
 		try{
@@ -1633,6 +1606,37 @@ public class Level extends UndoManager{
 		}catch(TransformerException e){
 			e.printStackTrace();
 		}
+	}
+
+
+	/**
+	 * save level information to a *.lvl file. Don't proceed if the file
+	 * already exists, except the force boolean is true.
+	 *
+	 * @param f the file in which the level should be stored
+	 * @param force override an existing file
+	 *
+	 * @throws IllegalArgumentException if the given file already 
+	 * exists and the force option is false
+	 * @throws FileNotFoundException if the file could not been found
+	 * @throws IOException if a IO-exception occurs during the reading
+	 * the file
+	 * @throws SecurityException if the user hasn't write permissions
+	 * the given path
+	 */
+	public void storeLevel(final File f, boolean force)
+		throws IllegalArgumentException, 
+			   IOException,
+			   SecurityException,
+			   LevelNotLoadedFromFileException{
+
+		String levelInf = 
+			this.getOrigLevelState() + "\n" +
+			this.getAdditionalLevelInf() + "\n" + 
+			this.getHighscorelist();
+
+		store(levelInf, f, force);
+
 	}
 
 
@@ -1701,17 +1705,6 @@ public class Level extends UndoManager{
 		}
 	}
 
-
-	public static void main(String[] args){
-		SameGameViewer viewer = new SameGameViewer();
-		Level l = new Level(viewer);
-		l.generateLevel();
-		try{
-			//TODO write some tests for store and restore level
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-	}
 
 	/**
 	 * load a level information from a *.lvl file.

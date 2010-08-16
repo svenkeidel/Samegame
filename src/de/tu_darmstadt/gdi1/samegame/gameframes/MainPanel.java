@@ -97,7 +97,7 @@ public class MainPanel extends GamePanel{
 	public void startAnimation(int row, int col, long animationSpeed){
 		duringAnimation = true;
 
-		Level.removeFloodFill(this.field, row, col, field[row][col], new Integer(0));
+		Level.removeFloodFill(this.field, row, col, field[row][col]);
 
 		AnimationThread animation = new AnimationThread(this.field, animationSpeed, this);
 		animation.start();

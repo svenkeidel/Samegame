@@ -174,8 +174,11 @@
 
 	<target
 		name="run"
-		depends="jar-bin">
-		<java jar="${lib}/samegame-bin.jar" fork="true"/>
+		depends="compile">
+		<java 
+			classname="de.tu_darmstadt.gdi1.samegame.SameGameViewer" 
+			classpath="${classpath}"
+			fork="true"/>
 	</target>
 
 

@@ -1118,8 +1118,7 @@ public class Level extends UndoManager{
 	public static int removeFloodFill(Byte[][] state, 
 									   final int row, 
 									   final int col, 
-									   final byte color,
-									   int stonesRemoved){
+									   final byte color){
 
 		int rows = state.length;
 		int cols = state[0].length;
@@ -1127,12 +1126,13 @@ public class Level extends UndoManager{
 			&& state[row][col] == color && state[row][col] != 0) {
 
 			state[row][col] = 0;
-			stonesRemoved++;
+			int stonesRemoved = 1;
 
-			stonesRemoved += removeFloodFill(state, row - 1, col, color, stonesRemoved);
-			stonesRemoved += removeFloodFill(state, row + 1, col, color, stonesRemoved);
-			stonesRemoved += removeFloodFill(state, row, col - 1, color, stonesRemoved);
-			return stonesRemoved + removeFloodFill(state, row, col + 1, color, stonesRemoved);
+			stonesRemoved += removeFloodFill(state, row - 1, col, color);
+			stonesRemoved += removeFloodFill(state, row + 1, col, color);
+			stonesRemoved += removeFloodFill(state, row, col - 1, color);
+			stonesRemoved += removeFloodFill(state, row, col + 1, color);
+			return stonesRemoved;
 		}
 		else return 0;
 	}
@@ -1196,7 +1196,7 @@ public class Level extends UndoManager{
 
 		if (removeable(state, minStones, row, col)) {
 			
-			int elementsRemoved = removeFloodFill(state, row, col, color, 0);
+			int elementsRemoved = removeFloodFill(state, row, col, color);
 			
 			// perform the fall down and empty column deletion
 			moveUp(state);

@@ -36,7 +36,7 @@ public class GameController extends KeyAdapter implements ActionListener{
 	public void actionPerformed(ActionEvent e){
 		if(e.getSource() instanceof JMenuItem){
 			JMenuItem source = (JMenuItem) e.getSource();
-			if (source.getName().equals("FileMenu_GenerateLevel") )
+			if (source.getName().equals("GameMenu_RestartLvl") )
 				level.restartLevel();
 			if (source.getName().equals("FileMenu_SaveLevel"))
 				viewer.showMainFrame();
@@ -46,6 +46,8 @@ public class GameController extends KeyAdapter implements ActionListener{
 				viewer.closeMainFrame();
 			if (source.getName().equals("GameMenu_Undo"))
 				level.undo();
+			if (source.getName().equals("GameMenu_Redo"))
+				level.redo();
 			if (source.getName().equals("German"))
 				viewer.setLanguage("German");
 			if (source.getName().equals("English"))

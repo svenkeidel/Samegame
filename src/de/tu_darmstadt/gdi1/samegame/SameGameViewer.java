@@ -120,7 +120,7 @@ public class SameGameViewer implements ChangeListener{
 	}
 
 	public void showLoadGameFrame(){
-		loadGameFrame = new LoadGameFrame(currentLocale);
+		loadGameFrame = new LoadGameFrame(currentLocale, BColor, FColor);
 	}
 
 	public void showAboutFrame(){

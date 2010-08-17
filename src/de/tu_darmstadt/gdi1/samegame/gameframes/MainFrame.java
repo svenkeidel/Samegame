@@ -194,19 +194,21 @@ public class MainFrame extends GameWindow implements Runnable{
 		GameMenu.add(redo);
 		
 
-		// TODO write some menu entrys
+		// Options-Menu
 		JMenu optionsMenu = new JMenu(messages.getString("OptionsMenu_Border"));
 		optionsMenu.setForeground(FColor);
 		optionsMenu.setBackground(BColor);
 		
+		
+		//Sub-Options-Menu Language
 		JMenu setLanguage = new JMenu(messages.getString("SetLanguage"));
 		setLanguage.setForeground(FColor);
 		setLanguage.setBackground(BColor);
-		
+			
 		String iconsPath = this.getClass().getResource("../../resources/images/icons").toString();
 
+		// JMenuItem German 
 		JMenuItem ger_lang;
-		//sets an icon for JMenuItem German 
 		try{
 			ger_lang = new JMenuItem(messages.getString("German"), 
 									 new ImageIcon(new URL(iconsPath+"/ger.png")));
@@ -221,7 +223,7 @@ public class MainFrame extends GameWindow implements Runnable{
 		setLanguage.add(ger_lang);
 	
 
-		//sets an icon for JMenuItem English
+		//JMenuItem English
 		JMenuItem eng_lang;
 		try{
 			eng_lang = new JMenuItem(messages.getString("English"),
@@ -236,8 +238,31 @@ public class MainFrame extends GameWindow implements Runnable{
 		eng_lang.setBackground(BColor);
 		setLanguage.add(eng_lang);		
 		
+		//Sub-Options-Menu Set Skin
+		JMenu setSkin = new JMenu(messages.getString("SetSkin"));
+		setSkin.setForeground(FColor);
+		setSkin.setBackground(BColor);
+		
+		JMenuItem skin_default = new JMenuItem(messages.getString("Skin_Default"));
+		skin_default.setName("Skin_Default");
+		skin_default.addActionListener(controller);
+		skin_default.setForeground(FColor);
+		skin_default.setBackground(BColor);
+		
+		JMenuItem skin_tuskin = new JMenuItem(messages.getString("Skin_Tuskin"));
+		skin_tuskin.setName("Skin_Tuskin");
+		skin_tuskin.addActionListener(controller);
+		skin_tuskin.setForeground(FColor);
+		skin_tuskin.setBackground(BColor);
+		
+		setSkin.add(skin_default);
+		setSkin.add(skin_tuskin);
+		//Place to for additional skins
+		
+		
 		optionsMenu.add(setLanguage);
-
+		optionsMenu.add(setSkin);
+		
 		JMenu Qm = new JMenu("?");
 		Qm.setForeground(FColor);
 		Qm.setBackground(BColor);

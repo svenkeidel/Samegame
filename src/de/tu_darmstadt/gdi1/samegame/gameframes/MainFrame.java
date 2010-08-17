@@ -45,6 +45,7 @@ public class MainFrame extends JFrame implements Runnable{
 
 	private JMenuBar menuBar;
 
+	private JPanel statusLine;
 	private JLabel MinStones;
 	private JLabel Points;
 	private JLabel ElapsedTime;
@@ -324,7 +325,10 @@ public class MainFrame extends JFrame implements Runnable{
 		this.add(menuBar, BorderLayout.NORTH);
 
 		// ===== status line =====
-		JPanel statusLine = new JPanel(new BorderLayout());
+		if(statusLine != null)
+			this.remove(statusLine);
+
+		statusLine = new JPanel(new BorderLayout());
 		JPanel statusLineLabels = new JPanel(new GridLayout(4, 1));
 		JPanel statusLineValues = new JPanel(new GridLayout(4, 1, 10, 0));
 		statusLineLabels.setBackground(BColor);

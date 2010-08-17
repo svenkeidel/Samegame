@@ -2,11 +2,13 @@ package de.tu_darmstadt.gdi1.samegame.gameframes;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 
 import static java.lang.Thread.sleep;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import java.util.Locale;
 import java.util.MissingResourceException;
@@ -201,21 +203,33 @@ public class MainFrame extends GameWindow implements Runnable{
 		setLanguage.setForeground(FColor);
 		setLanguage.setBackground(BColor);
 		
-		String path = this.getClass().getResource("../../resources/images/icons").toString();
-		
-		
+		String iconsPath = this.getClass().getResource("../../resources/images/icons").toString();
+
+		JMenuItem ger_lang;
 		//sets an icon for JMenuItem German 
-		JMenuItem ger_lang = new JMenuItem(messages.getString("German"), 
-											new ImageIcon(path+"/ger.png"));
+		try{
+			ger_lang = new JMenuItem(messages.getString("German"), 
+									 new ImageIcon(new URL(iconsPath+"/ger.png")));
+		}catch(MalformedURLException e){
+			e.printStackTrace();
+			ger_lang = new JMenuItem(messages.getString("German"));
+		}
 		ger_lang.setName("German");
 		ger_lang.addActionListener(controller);
 		ger_lang.setForeground(FColor);
 		ger_lang.setBackground(BColor);
 		setLanguage.add(ger_lang);
 	
+
 		//sets an icon for JMenuItem English
-		JMenuItem eng_lang = new JMenuItem(messages.getString("English"),
-											new ImageIcon(path+"/eng.png"));
+		JMenuItem eng_lang;
+		try{
+			eng_lang = new JMenuItem(messages.getString("English"),
+									 new ImageIcon(new URL(iconsPath+"/eng.png")));
+		}catch(MalformedURLException e){
+			e.printStackTrace();
+			eng_lang = new JMenuItem(messages.getString("German"));
+		}
 		eng_lang.setName("English");
 		eng_lang.addActionListener(controller);
 		eng_lang.setForeground(FColor);

@@ -1,7 +1,5 @@
 package de.tu_darmstadt.gdi1.samegame.gameframes;
 
-import java.awt.Component;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 

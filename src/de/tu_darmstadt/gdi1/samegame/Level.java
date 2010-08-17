@@ -1374,7 +1374,7 @@ public class Level extends UndoManager{
 		double newPoints = currentGameState.getPoints();
 
 		double time =  (double)watch.getTime() /1000;
-		boolean overTime = targetTime - time < 0;
+		boolean overTime = (double)targetTime - time < 0;
 		newPoints += Level.calculatePoints(removedElements, overTime);
 
 		if(isFinished(state, minStones))
@@ -1469,11 +1469,8 @@ public class Level extends UndoManager{
 											  int initialElements){
 		
 		double additionalPoints = 0;
-
-		if(timeLeft >= 0)
-			additionalPoints += timeLeft;
-		else
-			additionalPoints -= timeLeft;
+		additionalPoints += timeLeft;
+		
 		
 		if(elementsLeft > 0)
 			additionalPoints -= elementsLeft;

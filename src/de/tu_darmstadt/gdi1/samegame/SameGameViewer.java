@@ -2,6 +2,7 @@ package de.tu_darmstadt.gdi1.samegame;
 
 import java.awt.Color;
 import java.util.Locale;
+import java.util.Vector;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;

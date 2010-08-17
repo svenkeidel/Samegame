@@ -1,5 +1,6 @@
 package de.tu_darmstadt.gdi1.samegame.gameframes;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Image;
@@ -21,6 +22,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+
+import javax.swing.border.LineBorder;
+
+import javax.swing.plaf.basic.BasicBorders;
 
 import de.tu_darmstadt.gdi1.samegame.GameController;
 import de.tu_darmstadt.gdi1.samegame.Level;
@@ -410,7 +415,7 @@ public class MainPanel extends JPanel{
 	 *             acceptable values
 	 * @return The placed entity (JButton).
 	 */
-	private JButton placeEntity(String imageIdentifier)
+	private JButton placeEntity(String imageIdentifier, boolean marked)
 			throws ParameterOutOfRangeException {
 
 		// Check the parameters
@@ -423,7 +428,7 @@ public class MainPanel extends JPanel{
 			throw new RuntimeException("An image with the identifier "
 					+ imageIdentifier + " could not be found");
 
-		return(placeEntity(img));
+		return(placeEntity(img, marked));
 	}
 
 	/**
@@ -433,8 +438,8 @@ public class MainPanel extends JPanel{
 	 *            An image which will be used for the entity.
 	 * @return The placed entity (JButton).
 	 */
-	private JButton placeEntity(Image image){
-		return( placeEntity( new ImageIcon( image)));
+	private JButton placeEntity(Image image, boolean marked){
+		return( placeEntity( new ImageIcon( image), marked));
 	}
 
 
@@ -445,7 +450,7 @@ public class MainPanel extends JPanel{
 	 *            An icon which will be used for the entity.
 	 * @return The placed entity (JButton).
 	 */
-	private JButton placeEntity(Icon icon){
+	private JButton placeEntity(Icon icon, boolean marked){
 		// Create the visual entity
 		JButton btn = new JButton();
 
@@ -457,6 +462,9 @@ public class MainPanel extends JPanel{
 
 		btn.addActionListener(controller);
 		btn.setIcon(icon);
+
+		if(marked)
+			btn.setBorder(new LineBorder(Color.BLACK, 2));
 
 		// add it
 		this.add(btn);
@@ -500,7 +508,10 @@ public class MainPanel extends JPanel{
 		for(int i=0; i<height; i++)
 			for(int j=0; j<width; j++)
 				try{
-					placeEntity(""+field[i][j]);
+					if(markedRow == i && markedCol == j)
+						placeEntity(""+field[i][j], true);
+					else
+						placeEntity(""+field[i][j], false);
 				}catch(ParameterOutOfRangeException e){
 					System.err.println(e.getMessage());
 					e.printStackTrace();

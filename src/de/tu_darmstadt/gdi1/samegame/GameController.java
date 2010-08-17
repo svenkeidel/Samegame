@@ -8,7 +8,6 @@ import java.awt.event.KeyEvent;
 import static java.awt.event.KeyEvent.*;
 
 import java.util.Locale;
-import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
@@ -17,16 +16,12 @@ import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 
 import de.tu_darmstadt.gdi1.samegame.exceptions.InternalFailureException;
-import de.tu_darmstadt.gdi1.samegame.exceptions.ParameterOutOfRangeException;
 import de.tu_darmstadt.gdi1.samegame.gameframes.MainPanel;
 
 public class GameController extends KeyAdapter implements ActionListener{
 
 	private Level level;
 	private SameGameViewer viewer;
-	
-	// the list of entities
-	private Vector<JButton> entities = null;
 
 	public GameController(Level level){
 		this.level = level;
@@ -129,34 +124,50 @@ public class GameController extends KeyAdapter implements ActionListener{
 				break;
 			case VK_SPACE:
 				if (viewer.duringAnimation() != true)
-					try {
-						level.removeStone(markedRow, markedCol);
-					} catch (ParameterOutOfRangeException e1) {
-						e1.printStackTrace();
-					}
+					viewer.getMainPanel().entityClicked(markedCol, markedRow);
 				break;
 			case VK_LEFT:
 				if (markedCol >0){
-				markedCol -=1;
-				viewer.markField(markedRow,markedCol);
+					markedCol -=1;
+					viewer.markField(markedRow,markedCol);
+					try{
+						viewer.getMainPanel().redraw();
+					}catch(InternalFailureException ex){
+						ex.printStackTrace();
+					}
 				}
 				break;
 			case VK_RIGHT:
 				if (markedCol < level.getFieldWidth()-1){
-				markedCol +=1;
-				viewer.markField(markedRow,markedCol);
+					markedCol +=1;
+					viewer.markField(markedRow,markedCol);
+					try{
+						viewer.getMainPanel().redraw();
+					}catch(InternalFailureException ex){
+						ex.printStackTrace();
+					}
 				}
 				break;
 			case VK_UP:
 				if (markedRow >0){
-				markedRow -=1;
-				viewer.markField(markedRow, markedCol);
+					markedRow -=1;
+					viewer.markField(markedRow, markedCol);
+					try{
+						viewer.getMainPanel().redraw();
+					}catch(InternalFailureException ex){
+						ex.printStackTrace();
+					}
 				}
 				break;
 			case VK_DOWN:
 				if (markedRow < level.getFieldHeight()-1){
-				markedRow +=1;
-				viewer.markField(markedRow, markedCol);
+					markedRow +=1;
+					viewer.markField(markedRow, markedCol);
+					try{
+						viewer.getMainPanel().redraw();
+					}catch(InternalFailureException ex){
+						ex.printStackTrace();
+					}
 				}
 				break;
 			default:;

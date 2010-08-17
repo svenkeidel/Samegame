@@ -3,6 +3,8 @@ package de.tu_darmstadt.gdi1.samegame.gameframes;
 import java.awt.Color;
 
 import java.util.Locale;
+import java.util.ResourceBundle;
+
 import javax.swing.JFrame;
 
 import java.awt.BorderLayout;
@@ -18,35 +20,37 @@ import java.io.File;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
-
+import de.tu_darmstadt.gdi1.samegame.GameController;
 
 
 @SuppressWarnings("serial")
 public class LoadGameFrame extends JFrame{
 
-	private Locale locale;
+	private static String pathstring;
+	private GameController controller;
+	
+	
+	public LoadGameFrame(){		
+		
 
-	public LoadGameFrame(Locale locale, Color BColor, Color FColor){
-		super("Load Game");
-
-				
-		 JFrame.setDefaultLookAndFeelDecorated(true);
-		    JDialog.setDefaultLookAndFeelDecorated(true);
-		    JFrame frame = new JFrame("JComboBox Test");
-		    frame.setLayout(new FlowLayout());
-		    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		   
-		    {
-		       {
+		      
 		        JFileChooser fileChooser = new JFileChooser();
+		        fileChooser.addActionListener(controller);
 		        int returnValue = fileChooser.showOpenDialog(null);
-		        if (returnValue == JFileChooser.APPROVE_OPTION) {
+		        if (returnValue == JFileChooser.APPROVE_OPTION)
+		        {
 		          File selectedFile = fileChooser.getSelectedFile();
-		          System.out.println(selectedFile.getName());
-		        }
+		          pathstring = selectedFile.getPath();
+		         }
 		      }
-		    };
-
-
+	
+	
+	public static String getLoadPath(){
+		return pathstring;
+		
+		
 	}
+
+
+	
 }

@@ -8,8 +8,10 @@ import java.awt.event.KeyEvent;
 import static java.awt.event.KeyEvent.*;
 
 import java.util.Locale;
+import java.util.Vector;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 
 import javax.swing.undo.CannotRedoException;
@@ -17,11 +19,16 @@ import javax.swing.undo.CannotUndoException;
 
 import de.tu_darmstadt.gdi1.samegame.exceptions.InternalFailureException;
 import de.tu_darmstadt.gdi1.samegame.gameframes.MainPanel;
+import de.tu_darmstadt.gdi1.samegame.gameframes.LoadGameFrame;
 
 public class GameController extends KeyAdapter implements ActionListener{
 
 	private Level level;
 	private SameGameViewer viewer;
+
+
+	// the list of entities
+	private Vector<JButton> entities = null;
 
 	public GameController(Level level){
 		this.level = level;
@@ -41,7 +48,14 @@ public class GameController extends KeyAdapter implements ActionListener{
 			menuClick((JMenuItem) e.getSource());
 		}else if(e.getSource() instanceof JButton){
 			fieldClick(e, (JButton) e.getSource());
-		}
+		}else if (e.getSource() instanceof JFileChooser){
+			String command = e.getActionCommand();
+	        if (command.equals(JFileChooser.APPROVE_OPTION)) {
+	        	//just for testing a system.out
+	        	System.out.println(LoadGameFrame.getLoadPath());
+	        }
+			
+	        }
 	}
 
 	public void menuClick(JMenuItem menuItem){
@@ -136,6 +150,7 @@ public class GameController extends KeyAdapter implements ActionListener{
 						ex.printStackTrace();
 					}
 				}
+				else System.out.println("else");
 				break;
 			case VK_RIGHT:
 				if (markedCol < level.getFieldWidth()-1){

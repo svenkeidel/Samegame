@@ -1,6 +1,7 @@
 package de.tu_darmstadt.gdi1.samegame;
 
 import java.awt.Color;
+import java.awt.event.KeyEvent;
 import java.util.Locale;
 import java.util.Vector;
 
@@ -58,7 +59,7 @@ public class SameGameViewer implements ChangeListener{
 				ex.printStackTrace();
 			}
 	}
-
+	
 	public void markField(int row, int col){
 		if(mainFrame != null)
 			mainPanel.markField(row, col);
@@ -126,7 +127,7 @@ public class SameGameViewer implements ChangeListener{
 	}
 
 	public void showLoadGameFrame(){
-		loadGameFrame = new LoadGameFrame(currentLocale, BColor, FColor);
+		loadGameFrame = new LoadGameFrame();
 	}
 
 	public void showAboutFrame(){
@@ -134,7 +135,7 @@ public class SameGameViewer implements ChangeListener{
 	}
 
 	
-	// TODO proof wether the close methods are needed
+	// TODO proof whether the close methods are needed
 	public void closeMainFrame(){
 		mainFrame = null;
 	}

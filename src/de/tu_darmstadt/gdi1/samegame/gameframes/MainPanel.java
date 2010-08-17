@@ -275,6 +275,8 @@ public class MainPanel extends JPanel{
 		   col >= 0 || col < level.getFieldWidth()){
 			markedRow = row;
 			markedCol = col;
+			
+			
 		}
 	}
 

@@ -134,29 +134,7 @@ public class MainFrame extends JFrame implements Runnable{
 		fileMenu.setForeground(FColor);
 		fileMenu.setBackground(BColor);
 		
-		JMenu new_lvl = new JMenu(messages.getString("FileMenu_NewLevel"));
-		new_lvl.setForeground(FColor);
-		new_lvl.setBackground(BColor);
-		fileMenu.add(new_lvl);
-		
-		JMenuItem gen_lvl = new JMenuItem(messages.getString("FileMenu_GenerateLevel"));
-		gen_lvl.addActionListener(controller);
-		gen_lvl.setName("FileMenu_GenerateLevel");
-		gen_lvl.setForeground(FColor);
-		gen_lvl.setBackground(BColor);
-		
-		
-		JMenuItem genc_lvl = new JMenuItem(messages.getString("FileMenu_GenerateCustomLevel"));
-		genc_lvl.addActionListener(controller);
-		genc_lvl.setName("FileMenu_GenerateCustomLevel");
-		genc_lvl.setForeground(FColor);
-		genc_lvl.setBackground(BColor);
-		
-		new_lvl.add(gen_lvl);
-		new_lvl.add(genc_lvl);
-		
-		
-		fileMenu.addSeparator();
+				
 		
 		JMenuItem save_lvl = new JMenuItem(messages.getString("FileMenu_SaveLevel"));
 		save_lvl.setName("FileMenu_SaveLevel");
@@ -229,14 +207,26 @@ public class MainFrame extends JFrame implements Runnable{
 		redo.setBackground(BColor);
 		GameMenu.add(redo);
 		
-
-		// Options-Menu
-		JMenu optionsMenu = new JMenu(messages.getString("OptionsMenu_Border"));
-		optionsMenu.setForeground(FColor);
-		optionsMenu.setBackground(BColor);
+		GameMenu.addSeparator();
+		
+		JMenuItem gen_lvl = new JMenuItem(messages.getString("GameMenu_GenerateLevel"));
+		gen_lvl.addActionListener(controller);
+		gen_lvl.setName("FileMenu_GenerateLevel");
+		gen_lvl.setForeground(FColor);
+		gen_lvl.setBackground(BColor);
+		GameMenu.add(gen_lvl);
+		
+		JMenuItem genc_lvl = new JMenuItem(messages.getString("GameMenu_GenerateCustomLevel"));
+		genc_lvl.addActionListener(controller);
+		genc_lvl.setName("FileMenu_GenerateCustomLevel");
+		genc_lvl.setForeground(FColor);
+		genc_lvl.setBackground(BColor);
+		GameMenu.add(genc_lvl);
+		
+	
 		
 		
-		//Sub-Options-Menu Language
+		//Options-Menu Language
 		JMenu setLanguage = new JMenu(messages.getString("SetLanguage"));
 		setLanguage.setForeground(FColor);
 		setLanguage.setBackground(BColor);
@@ -274,7 +264,7 @@ public class MainFrame extends JFrame implements Runnable{
 		eng_lang.setBackground(BColor);
 		setLanguage.add(eng_lang);		
 		
-		//Sub-Options-Menu Set Skin
+		//Options-Menu Set Skin
 		JMenu setSkin = new JMenu(messages.getString("SetSkin"));
 		setSkin.setForeground(FColor);
 		setSkin.setBackground(BColor);
@@ -291,13 +281,27 @@ public class MainFrame extends JFrame implements Runnable{
 		skin_tuskin.setForeground(FColor);
 		skin_tuskin.setBackground(BColor);
 		
+		JMenuItem skin_ball = new JMenuItem(messages.getString("Skin_Ballskin"));
+		skin_ball.setName("Skin_Ballskin");
+		skin_ball.addActionListener(controller);
+		skin_ball.setForeground(FColor);
+		skin_ball.setBackground(BColor);
+		
+		JMenuItem skin_squares = new JMenuItem(messages.getString("Skin_Squareskin"));
+		skin_squares.setName("Skin_Squareskin");
+		skin_squares.addActionListener(controller);
+		skin_squares.setForeground(FColor);
+		skin_squares.setBackground(BColor);
+		
+		
 		setSkin.add(skin_default);
 		setSkin.add(skin_tuskin);
+		setSkin.add(skin_ball);
+		setSkin.add(skin_squares);
 		//Place to for additional skins
 		
 		
-		optionsMenu.add(setLanguage);
-		optionsMenu.add(setSkin);
+		
 		
 		JMenu Qm = new JMenu("?");
 		Qm.setForeground(FColor);
@@ -311,9 +315,11 @@ public class MainFrame extends JFrame implements Runnable{
 		
 		Qm.add(about);
 		
+		
 		menuBar.add(fileMenu);
 		menuBar.add(GameMenu);
-		menuBar.add(optionsMenu);
+		menuBar.add(setLanguage);
+		menuBar.add(setSkin);
 		menuBar.add(Qm);
 		this.add(menuBar, BorderLayout.NORTH);
 

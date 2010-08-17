@@ -1,5 +1,6 @@
 package de.tu_darmstadt.gdi1.samegame;
 
+import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
@@ -15,6 +16,7 @@ import javax.swing.JMenuItem;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 
+import de.tu_darmstadt.gdi1.samegame.exceptions.InternalFailureException;
 import de.tu_darmstadt.gdi1.samegame.exceptions.ParameterOutOfRangeException;
 import de.tu_darmstadt.gdi1.samegame.gameframes.MainPanel;
 
@@ -51,6 +53,19 @@ public class GameController extends KeyAdapter implements ActionListener{
 		String menuName = menuItem.getName();
 		if (menuName.equals("GameMenu_RestartLvl") )
 			level.restartLevel();
+		if (menuName.equals("FileMenu_GenerateLevel")){
+			viewer.closeMainFrame();
+			viewer.setLevel(level);
+			level.generateLevel(10, 10, 5, 3);
+		}
+		if (menuName.equals("Skin_Default"))
+			viewer.setSkin("defaultskin", Color.white, Color.black);
+		if (menuName.equals("Skin_Tuskin"))
+			viewer.setSkin("tuskin", Color.black, Color.white);
+		if (menuName.equals("Skin_Sqareskin"))
+			viewer.setSkin("sqareskin", Color.black, Color.white);
+		if (menuName.equals("Skin_Ballskin"))
+			viewer.setSkin("ballskin", Color.black, Color.white);
 		if (menuName.equals("FileMenu_SaveLevel"))
 			viewer.showMainFrame();
 		if (menuName.equals("FileMenu_LoadLevel"))

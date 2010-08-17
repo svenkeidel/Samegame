@@ -43,6 +43,8 @@ public class MainFrame extends JFrame implements Runnable{
 	
 	private MainPanel panel;
 
+	private JMenuBar menuBar;
+
 	private JLabel MinStones;
 	private JLabel Points;
 	private JLabel ElapsedTime;
@@ -122,7 +124,10 @@ public class MainFrame extends JFrame implements Runnable{
 		}
 
 		// ========= menu =========
-		JMenuBar menuBar = new JMenuBar();
+		if(menuBar != null)
+			this.remove(menuBar);
+
+		menuBar = new JMenuBar();
 		menuBar.setBackground(BColor);
 		
 		JMenu fileMenu = new JMenu(messages.getString("FileMenu_Border"));
@@ -354,6 +359,7 @@ public class MainFrame extends JFrame implements Runnable{
 
 		this.add(statusLine, BorderLayout.SOUTH);
 	}
+
 
 	/**
 	 * Notifies the game window that a new level has been loaded

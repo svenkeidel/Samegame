@@ -18,12 +18,8 @@ public class SameGameViewer implements ChangeListener{
 	private Level level;
 	private GameController controller;
 	
-	private Color BColor;
-	private Color FColor;
-	
-	private int markedRow, markedCol;
-
 	private MainFrame mainFrame;
+	private MainPanel mainPanel;
 	private OptionsFrame optionsFrame;
 	private AskForSaveFrame askForSaveFrame;
 	private AddHighscoreFrame addHighscoreFrame;
@@ -44,57 +40,61 @@ public class SameGameViewer implements ChangeListener{
 		this.controller = controller;
 	}
 	
-	public void setBColor(Color BColor){
-		this.BColor = BColor;
+	public void setSkin(String skin, Color BColor, Color FColor){
+		mainFrame.setSkin(skin, BColor, FColor);
 	}
-	
-	public void setFColor(Color FColor){
-		this.FColor = FColor;
-	}
-	
 	// implements method from interface javax.swing.event.ChangeListener
 	public void stateChanged(ChangeEvent e){
 		if(mainFrame != null)
-			mainFrame.redraw();
+			try{
+				mainPanel.redraw();
+			}catch(InternalFailureException ex){
+				ex.printStackTrace();
+			}
 	}
 
 	public void markField(int row, int col){
 		if(mainFrame != null)
-			mainFrame.markField(row, col);
+			mainPanel.markField(row, col);
+	}
+	
+	public MainPanel getMainPanel(){
+		return this.mainPanel;
 	}
 
 	public int getMarkedFieldRow(){
 		if(mainFrame != null)
-			return mainFrame.getMarkedFieldRow();
+			return mainPanel.getMarkedFieldRow();
 		else
 			return -1;
 	}
 
 	public int getMarkedFieldCol(){
 		if(mainFrame != null)
-			return mainFrame.getMarkedFieldCol();
+			return mainPanel.getMarkedFieldCol();
 		else
 			return -1;
 	}
 
 	public boolean duringAnimation(){
 		if(mainFrame != null)
-			return mainFrame.duringAnimation();
+			return mainPanel.duringAnimation();
 		else return false;
 	}
 
 	public void startAnimation(int row, int col, long animationSpeed){
-		mainFrame.startAnimation(row, col, animationSpeed);
+		mainPanel.startAnimation(row, col, animationSpeed);
 	}
 	
-	void setLanguage(String language){
-		mainFrame.setLanguage(language);
+	void setLanguage(Locale locale){
+		mainFrame.setLanguage(locale);
 	}
 	
 
 	public void showMainFrame(){
-		this.mainFrame = new MainFrame(level, currentLocale, controller, BColor, FColor);
+		this.mainFrame = new MainFrame(level, controller, currentLocale, "defaultskin", Color.WHITE, Color.BLACK);
 		this.mainFrame.setVisible(true);
+		this.mainPanel = mainFrame.getMainPanel();
 		Thread timeUpdate = new Thread(mainFrame);
 		timeUpdate.start();
 	}

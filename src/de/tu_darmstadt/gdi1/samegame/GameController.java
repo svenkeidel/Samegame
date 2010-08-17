@@ -6,9 +6,10 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import static java.awt.event.KeyEvent.*;
 
+import java.util.Locale;
+
+import javax.swing.JButton;
 import javax.swing.JMenuItem;
-import javax.swing.event.MenuListener;
-import javax.swing.event.MenuEvent;
 
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
@@ -35,26 +36,61 @@ public class GameController extends KeyAdapter implements ActionListener{
 	
 	public void actionPerformed(ActionEvent e){
 		if(e.getSource() instanceof JMenuItem){
-			JMenuItem source = (JMenuItem) e.getSource();
-			if (source.getName().equals("FileMenu_GenerateLevel") )
-				level.restartLevel();
-			if (source.getName().equals("FileMenu_SaveLevel"))
-				viewer.showMainFrame();
-			if (source.getName().equals("FileMenu_LoadLevel"))
-				viewer.showLoadGameFrame();
-			if (source.getName().equals("FileMenu_Exit"))
-				viewer.closeMainFrame();
-			if (source.getName().equals("GameMenu_Undo"))
-				level.undo();
-			if (source.getName().equals("German"))
-				viewer.setLanguage("German");
-			if (source.getName().equals("English"))
-				viewer.setLanguage("English");
-			// TODO add some more
+			menuClick((JMenuItem) e.getSource());
+		}else if(e.getSource() instanceof JButton){
+			fieldClick(e, (JButton) e.getSource());
 		}
-		// TODO Write method stub
+	}
+
+	public void menuClick(JMenuItem menuItem){
+		String menuName = menuItem.getName();
+		if (menuName.equals("FileMenu_GenerateLevel") )
+			level.restartLevel();
+		if (menuName.equals("FileMenu_SaveLevel"))
+			viewer.showMainFrame();
+		if (menuName.equals("FileMenu_LoadLevel"))
+			viewer.showLoadGameFrame();
+		if (menuName.equals("FileMenu_Exit"))
+			viewer.closeMainFrame();
+		if (menuName.equals("GameMenu_Undo"))
+			level.undo();
+		if (menuName.equals("German"))
+			viewer.setLanguage(new Locale("de", "DE"));
+		if (menuName.equals("English"))
+			viewer.setLanguage(new Locale("en", "US"));
 	}
 	
+	public void fieldClick(ActionEvent e, JButton b){
+		/**
+		TODO refractor this function !!! at the end use mainPanel.entityClicked(...)
+
+		if (!hasEntities())
+			return;
+		// retrieve first button
+		JButton refBtn = entities.get(0);
+		
+		// iterate buttons until right one was found
+		for (int i = 0; i < entities.size(); i++) {
+			JButton btn = entities.get(i);
+			if (evt.getSource() == btn) {
+				// determine x and y position
+				int posX = evt.getXOnScreen();
+				posX = posX - (int) this.getLocationOnScreen().getX();
+
+				int posY = evt.getYOnScreen();
+				posY = posY - (int) this.getLocationOnScreen().getY();
+
+				// pass message along
+				entityClicked(posX / refBtn.getWidth(), posY
+						/ refBtn.getHeight());
+				
+				// done!
+				evt.consume();
+				break;
+			}
+		}
+		*/
+	}
 	
 	@Override
 	public void keyPressed(KeyEvent e){

@@ -4,8 +4,6 @@ import java.awt.Component;
 
 import java.awt.event.KeyEvent;
 
-import de.tu_darmstadt.gdi1.samegame.ui.GameWindow;
-
 /**
  * This is the test adapter for the third extended stage of completion.
  * Implement all method stubs in order for the tests to work.

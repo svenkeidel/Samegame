@@ -3,6 +3,7 @@ package de.tu_darmstadt.gdi1.samegame.gameframes;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
+
 import java.awt.event.KeyEvent;
 
 import static java.lang.Thread.sleep;
@@ -14,9 +15,8 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -24,18 +24,16 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
-
 import de.tu_darmstadt.gdi1.samegame.GameController;
 import de.tu_darmstadt.gdi1.samegame.Level;
 
 import de.tu_darmstadt.gdi1.samegame.exceptions.InternalFailureException;
-
-import de.tu_darmstadt.gdi1.samegame.ui.GamePanel;
-import de.tu_darmstadt.gdi1.samegame.ui.GameWindow;
+import de.tu_darmstadt.gdi1.samegame.exceptions.ParameterOutOfRangeException;
 
 @SuppressWarnings("serial")
-public class MainFrame extends GameWindow implements Runnable{
+public class MainFrame extends JFrame implements Runnable{
 
+	////////////////////////Class/Attributes//////////////////////////
 	private Level level;
 	private Locale locale;
 
@@ -54,25 +52,59 @@ public class MainFrame extends GameWindow implements Runnable{
 	private JLabel sl_ElapsedTime;
 	private JLabel sl_TargetTime;
 	
+	private String skin;
 	private Color FColor;
 	private Color BColor;
 	
 			
-	public MainFrame(Level level, Locale locale, GameController controller, Color FColor, Color BColor){
-		super("Same Game", level, locale);
+	////////////////////////Class/Constructors////////////////////////
+	public MainFrame(Level level, GameController controller, Locale locale, String skin, Color FColor, Color BColor){
+		super("Same Game");
 		this.level = level;
 		this.controller = controller;
 
 		this.locale = locale;
 
-		// Example for choosing a Colorset : FColor = Fontcolor,  BColor = Backgrouncolor:
+		this.skin = skin;
+		this.FColor = FColor;
+		this.BColor = BColor; 
 		
-		// FColor = Color.white;
-		// BColor = Color.black;
-		
+		this.panel = new MainPanel(this, level, controller, skin);
+		this.add(panel, BorderLayout.CENTER);
+
+		this.updateContents();
+
 		this.setFocusable(true);
 		this.addKeyListener(this.controller);
+
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setResizable(false);
+
+		this.requestFocus();
+	}
+
+
+	////////////////////////Getters//&//Setters///////////////////////
+	public MainPanel getMainPanel() {
+		return panel;
+	}
+
+	public void setLanguage(Locale locale){
+		this.locale = locale;
+		updateContents();
+	}
+
+	public void setSkin(String skin, Color FColor, Color BColor){
+		this.skin = skin;
+		this.FColor = FColor;
+		this.BColor = BColor;
+
+		panel.setSkin(skin);
 		
+		updateContents();
+	}
+	////////////////////////Class/Operations//////////////////////////
+	public void updateContents(){
 		try{
 			messages = 
 				ResourceBundle.getBundle(
@@ -88,7 +120,6 @@ public class MainFrame extends GameWindow implements Runnable{
 						this.locale,
 						this.getClass().getClassLoader()); 
 		}
-
 
 		// ========= menu =========
 		JMenuBar menuBar = new JMenuBar();
@@ -281,7 +312,6 @@ public class MainFrame extends GameWindow implements Runnable{
 		menuBar.add(Qm);
 		this.add(menuBar, BorderLayout.NORTH);
 
-
 		// ===== status line =====
 		JPanel statusLine = new JPanel(new BorderLayout());
 		JPanel statusLineLabels = new JPanel(new GridLayout(4, 1));
@@ -323,7 +353,31 @@ public class MainFrame extends GameWindow implements Runnable{
 		statusLine.add(statusLineValues, BorderLayout.EAST);
 
 		this.add(statusLine, BorderLayout.SOUTH);
-		this.requestFocus();
+	}
+
+	/**
+	 * Notifies the game window that a new level has been loaded
+	 * 
+	 * @param width
+	 *            The width of the level just loaded
+	 * @param height
+	 *            The height of the level just loaded
+	 * @throws ParameterOutOfRangeException
+	 *             Thrown if one of the parameters falls out of the range of
+	 *             acceptable values
+	 * @throws InternalFailureException
+	 * 			   Thrown if an uncorrectable internal error occurs
+	 */
+	public void notifyLevelLoaded(int width, int height)
+			throws ParameterOutOfRangeException, InternalFailureException {
+		// Check the parameters
+		if (width <= 0)
+			throw new ParameterOutOfRangeException("Game Window width invalid");
+		if (height <= 0)
+			throw new ParameterOutOfRangeException("Game Window height invalid");
+
+		// Notify the panel
+		panel.notifyLevelLoaded(width, height);
 	}
 
 	public void redraw(){
@@ -339,64 +393,12 @@ public class MainFrame extends GameWindow implements Runnable{
 		TargetTime.setText(""+level.getTargetTime());
 
 		try{
-			if(!duringAnimation())
+			if(!panel.duringAnimation())
 				panel.redraw();
 		}catch(InternalFailureException e){
 			e.printStackTrace();
 		}
 
-	}
-
-	public void markField(int row, int col){
-		panel.markField(row, col);
-	}
-
-	public int getMarkedFieldRow(){
-		return panel.getMarkedFieldRow();
-	}
-
-	public int getMarkedFieldCol(){
-		return panel.getMarkedFieldCol();
-	}
-
-	
-	public boolean duringAnimation(){
-		return this.panel.duringAnimation();
-	}
-
-
-	public void startAnimation(int row, int col, long animationSpeed){
-		this.panel.startAnimation(row, col, animationSpeed);
-	}
-	
-	
-	public void setLanguage(String language){
-		String l = "";
-		if (language.equals("German"))
-			l = "de.tu_darmstadt.gdi1.samegame.gameframes.MainBundle";
-		// if (language.equals("English")) TODO
-		try{
-			messages = 
-				ResourceBundle.getBundle(
-						l, 
-						this.locale, 
-						this.getClass().getClassLoader()); 
-		}catch(MissingResourceException e){
-			this.locale = new Locale("de", "DE");
-
-			messages = 
-				ResourceBundle.getBundle(
-						"de.tu_darmstadt.gdi1.samegame.gameframes.MainBundle", 
-						this.locale,
-						this.getClass().getClassLoader()); 
-		}
-	}
-
-	@Override
-	protected GamePanel createGamePanel(Level level) {
-		this.panel = new MainPanel(this, level, controller);
-		this.add(panel, BorderLayout.CENTER);
-		return panel;
 	}
 
 	@Override

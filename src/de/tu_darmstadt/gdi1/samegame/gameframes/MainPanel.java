@@ -49,6 +49,7 @@ public class MainPanel extends JPanel{
 
 	private Byte[][] field;
 
+	private Color markColor;
 	// the list of entities
 	private Vector<JButton> entities = null;
 	
@@ -444,6 +445,10 @@ public class MainPanel extends JPanel{
 		return( placeEntity( new ImageIcon( image), marked));
 	}
 
+	
+public void setMarkColor(Color mcolor){
+	markColor = mcolor;
+		}
 
 	/**
 	 * Places a graphical entity on the game panel.
@@ -466,7 +471,7 @@ public class MainPanel extends JPanel{
 		btn.setIcon(icon);
 
 		if(marked)
-			btn.setBorder(new LineBorder(Color.BLACK, 2));
+			btn.setBorder(new LineBorder(markColor, 2));
 
 		// add it
 		this.add(btn);
@@ -474,6 +479,7 @@ public class MainPanel extends JPanel{
 		return(btn);
 	}
 
+	
 
 	public boolean duringAnimation(){
 		return this.duringAnimation;

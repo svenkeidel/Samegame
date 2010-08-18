@@ -78,13 +78,13 @@ public class GameController extends KeyAdapter implements ActionListener{
 			level.generateLevel(10, 10, 5, 3);
 		}
 		if (menuName.equals("Skin_Default"))
-			viewer.setSkin("defaultskin", Color.white, Color.black);
+			viewer.setSkin("defaultskin", Color.white, Color.black, Color.black);
 		if (menuName.equals("Skin_Tuskin"))
-			viewer.setSkin("tuskin", Color.black, Color.white);
+			viewer.setSkin("tuskin", Color.black, Color.white, Color.white);
 		if (menuName.equals("Skin_Squareskin"))
-			viewer.setSkin("squareskin", Color.black, Color.white);
+			viewer.setSkin("squareskin", Color.black, Color.white, Color.white);
 		if (menuName.equals("Skin_Ballskin"))
-			viewer.setSkin("ballskin", Color.white, Color.black);
+			viewer.setSkin("ballskin", Color.white, Color.black, Color.white);
 		if (menuName.equals("FileMenu_SaveLevel"))
 			viewer.showMainFrame();
 		if (menuName.equals("FileMenu_LoadLevel"))

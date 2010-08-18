@@ -27,11 +27,11 @@ public class AboutFrame extends JFrame{
 		setBackground(Color.lightGray);
 		this.setSize(300,100);
 		this.setLocation(200,300);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 
 		this.getContentPane().add(new JLabel(
 					messages.getString("AboutText")
-					+ "Seb, Tim, Svenja and Sven"));
+					+ ": Seb, Tim, Svenja and Sven"));
 
 		this.setVisible(true);
 	}

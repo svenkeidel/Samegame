@@ -9,7 +9,7 @@ import de.tu_darmstadt.gdi1.samegame.exceptions.ParameterOutOfRangeException;
 import de.tu_darmstadt.gdi1.samegame.exceptions.WrongLevelFormatException;
 
 /**
- * class wich represents a highscore list.
+ * class which represents a highscore list.
  */
 public class Highscore{
 

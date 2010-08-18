@@ -115,7 +115,7 @@ public class SameGameViewer implements ChangeListener{
 	}
 
 	public void showHighscoreFrame(){
-		highscoreFrame = new HighscoreFrame(currentLocale);
+		highscoreFrame = new HighscoreFrame(currentLocale, level);
 	}
 
 	public void showSaveGameFrame(){

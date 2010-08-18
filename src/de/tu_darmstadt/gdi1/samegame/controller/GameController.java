@@ -193,6 +193,9 @@ public class GameController extends AbstractController{
 					}
 				}
 				break;
+			case VK_T:
+				viewer.showHighscoreFrame();
+				break;
 			default:;
 		}
 	}

@@ -171,6 +171,7 @@ public class MainFrame extends JFrame implements Runnable{
 		
 		JMenuItem exit = new JMenuItem(messages.getString("FileMenu_Exit"));
 		exit.setName("FileMenu_Exit");
+		exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, 0));
 		exit.addActionListener(controller);
 		exit.setForeground(FColor);
 		exit.setBackground(BColor);

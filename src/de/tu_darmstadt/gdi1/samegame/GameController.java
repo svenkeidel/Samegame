@@ -23,13 +23,16 @@ import javax.swing.undo.CannotUndoException;
 
 import de.tu_darmstadt.gdi1.samegame.exceptions.InternalFailureException;
 import de.tu_darmstadt.gdi1.samegame.exceptions.WrongLevelFormatException;
+import de.tu_darmstadt.gdi1.samegame.gameframes.MainFrame;
 import de.tu_darmstadt.gdi1.samegame.gameframes.MainPanel;
 import de.tu_darmstadt.gdi1.samegame.gameframes.LoadGameFrame;
+import de.tu_darmstadt.gdi1.samegame.gameframes.AboutFrame;
 
 public class GameController extends KeyAdapter implements ActionListener{
 
 	private Level level;
 	private SameGameViewer viewer;
+	private AboutFrame abframe;
 
 
 	// the list of entities
@@ -90,7 +93,7 @@ public class GameController extends KeyAdapter implements ActionListener{
 		if (menuName.equals("FileMenu_LoadLevel"))
 			viewer.showLoadGameFrame();
 		if (menuName.equals("FileMenu_Exit"))
-			viewer.closeMainFrame();
+			System.exit(0);
 		if (menuName.equals("GameMenu_Undo"))
 			level.undo();
 		if (menuName.equals("GameMenu_Redo"))
@@ -99,6 +102,8 @@ public class GameController extends KeyAdapter implements ActionListener{
 			viewer.setLanguage(new Locale("de", "DE"));
 		if (menuName.equals("English"))
 			viewer.setLanguage(new Locale("en", "US"));
+		if (menuName.equals("About"))
+			viewer.showAboutFrame();
 	}
 	
 	public void fieldClick(ActionEvent e, JButton b){
@@ -131,6 +136,8 @@ public class GameController extends KeyAdapter implements ActionListener{
 		}
 
 		switch(key){
+			case VK_Q:
+				System.exit(0);
 			case VK_N:
 				level.restartLevel();
 				break;

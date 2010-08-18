@@ -11,7 +11,6 @@ import javax.swing.JLabel;
 public class AboutFrame extends JFrame{
 
 	private Locale locale;
-
 	private ResourceBundle messages;
 
 	public AboutFrame(Locale locale){
@@ -25,14 +24,15 @@ public class AboutFrame extends JFrame{
 									 this.getClass().getClassLoader()); 
 
 		setBackground(Color.lightGray);
-		this.setSize(300,100);
-		this.setLocation(200,300);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setSize(300,100);
+		setLocation(200,300);
 
-		this.getContentPane().add(new JLabel(
+		getContentPane().add(new JLabel(
 					messages.getString("AboutText")
 					+ "Seb, Tim, Svenja and Sven"));
 
-		this.setVisible(true);
+		setVisible(true);
 	}
+
+
 }

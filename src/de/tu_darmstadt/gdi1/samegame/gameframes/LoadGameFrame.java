@@ -1,6 +1,6 @@
 package de.tu_darmstadt.gdi1.samegame.gameframes;
 
-import java.awt.Color;
+
 
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -28,9 +28,10 @@ public class LoadGameFrame extends JFrame{
 
 	private static String pathstring;
 	private GameController controller;
+
 	
 	
-	public LoadGameFrame(){		
+	public LoadGameFrame(GameController controller){		
 		
 
 		      

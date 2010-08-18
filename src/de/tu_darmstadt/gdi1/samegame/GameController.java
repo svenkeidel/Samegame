@@ -5,6 +5,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import static java.awt.event.KeyEvent.*;
 
 import java.util.Locale;
@@ -18,6 +22,7 @@ import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 
 import de.tu_darmstadt.gdi1.samegame.exceptions.InternalFailureException;
+import de.tu_darmstadt.gdi1.samegame.exceptions.WrongLevelFormatException;
 import de.tu_darmstadt.gdi1.samegame.gameframes.MainPanel;
 import de.tu_darmstadt.gdi1.samegame.gameframes.LoadGameFrame;
 
@@ -49,14 +54,19 @@ public class GameController extends KeyAdapter implements ActionListener{
 		}else if(e.getSource() instanceof JButton){
 			fieldClick(e, (JButton) e.getSource());
 		}else if (e.getSource() instanceof JFileChooser){
-			String command = e.getActionCommand();
-	        if (command.equals(JFileChooser.APPROVE_OPTION)) {
-	        	//just for testing a system.out
-	        	System.out.println(LoadGameFrame.getLoadPath());
-	        }
-			
-	        }
-	}
+			JFileChooser chooser = (JFileChooser) e.getSource();
+            File f = chooser.getSelectedFile();
+            try{
+                    System.out.println(f.getCanonicalPath());
+                    level.restoreLevel(f);
+            }catch(FileNotFoundException ex){
+                    // TODO meldung file nicht gefunden
+            }catch(WrongLevelFormatException ex){
+                    // TODO meldung level nicht im richtigen format
+            }catch(IOException ignored){}
+
+    }
+}
 
 	public void menuClick(JMenuItem menuItem){
 		String menuName = menuItem.getName();

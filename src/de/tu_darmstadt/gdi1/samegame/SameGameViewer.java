@@ -127,7 +127,7 @@ public class SameGameViewer implements ChangeListener{
 	}
 
 	public void showLoadGameFrame(){
-		loadGameFrame = new LoadGameFrame();
+		loadGameFrame = new LoadGameFrame(controller);
 	}
 
 	public void showAboutFrame(){

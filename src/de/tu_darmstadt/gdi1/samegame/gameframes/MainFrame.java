@@ -266,6 +266,22 @@ public class MainFrame extends JFrame implements Runnable{
 		eng_lang.setBackground(BColor);
 		setLanguage.add(eng_lang);		
 		
+		
+		//JMenuItem Polish
+		JMenuItem pol_lang;
+		try{
+			pol_lang = new JMenuItem(messages.getString("Polish"),
+									 new ImageIcon(new URL(iconsPath+"/pol.png")));
+		}catch(MalformedURLException e){
+			e.printStackTrace();
+			pol_lang = new JMenuItem(messages.getString("German"));
+		}
+		pol_lang.setName("Polish");
+		pol_lang.addActionListener(controller);
+		pol_lang.setForeground(FColor);
+		pol_lang.setBackground(BColor);
+		setLanguage.add(pol_lang);		
+		
 		//Options-Menu Set Skin
 		JMenu setSkin = new JMenu(messages.getString("SetSkin"));
 		setSkin.setForeground(FColor);

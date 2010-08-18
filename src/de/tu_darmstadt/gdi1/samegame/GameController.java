@@ -102,6 +102,8 @@ public class GameController extends KeyAdapter implements ActionListener{
 			viewer.setLanguage(new Locale("de", "DE"));
 		if (menuName.equals("English"))
 			viewer.setLanguage(new Locale("en", "US"));
+		if (menuName.equals("Polish"))
+			viewer.setLanguage(new Locale("pl", "PL"));
 		if (menuName.equals("About"))
 			viewer.showAboutFrame();
 	}

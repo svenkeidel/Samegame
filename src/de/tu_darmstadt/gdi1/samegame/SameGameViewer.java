@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent;
 import java.util.Locale;
 import java.util.Vector;
 
+import javax.swing.JOptionPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -22,6 +23,7 @@ public class SameGameViewer implements ChangeListener{
 	
 	private MainFrame mainFrame;
 	private MainPanel mainPanel;
+	private static AlertFrame alertframe;
 	private OptionsFrame optionsFrame;
 	private AskForSaveFrame askForSaveFrame;
 	private AddHighscoreFrame addHighscoreFrame;
@@ -134,6 +136,25 @@ public class SameGameViewer implements ChangeListener{
 	public void showAboutFrame(){
 		aboutFrame = new AboutFrame(currentLocale);
 	}
+
+	public static void showAlertFrame(String alertstring, String alerttitle){
+		
+		int response = JOptionPane.showConfirmDialog(alertframe, alerttitle, alertstring,
+		       JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+		
+				if (response == JOptionPane.OK_OPTION){
+					alertframe.setVisible(false);
+				}
+				
+				if (response == JOptionPane.CANCEL_OPTION){
+					alertframe.setVisible(false);
+				}
+				
+				if (response == JOptionPane.CLOSED_OPTION){
+					alertframe.setVisible(false);
+				}
+		}
+		
 
 	
 	// TODO proof whether the close methods are needed

@@ -6,6 +6,8 @@ import java.awt.event.KeyEvent;
 
 import static java.awt.event.KeyEvent.*;
 
+import java.io.File;
+
 import java.util.Locale;
 
 import javax.swing.JButton;
@@ -26,7 +28,6 @@ import de.tu_darmstadt.gdi1.samegame.view.gameframes.MainPanel;
 
 public class GameController extends AbstractController{
 
-	private Level level;
 	private SameGameViewer viewer;
 
 	public GameController(Level level){
@@ -99,6 +100,24 @@ public class GameController extends AbstractController{
 
 			entityClicked(posX / btn.getWidth(), 
 								posY / btn.getHeight());
+		}
+	}
+
+	@Override
+	public void fileChoosed(String source, File f){
+		try{
+
+			Level newLevel = new Level(viewer);
+			newLevel.restoreLevel(f);
+
+			viewer.setLevel(newLevel);
+			this.level = newLevel;
+
+			viewer.closeMainFrame();
+			viewer.showMainFrame();
+			viewer.notifyLevelLoaded();
+		}catch(Exception e){
+			e.printStackTrace();
 		}
 	}
 

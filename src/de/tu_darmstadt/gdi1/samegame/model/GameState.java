@@ -67,8 +67,12 @@ class GameState extends AbstractUndoableEdit implements Cloneable{
 	}
 	
 	@Override
-	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
+	public Object clone(){
+		try{
+			return super.clone();
+		}catch(CloneNotSupportedException e){
+			return null;
+		}
 	}	
 	
 	@Override

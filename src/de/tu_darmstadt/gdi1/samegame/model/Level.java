@@ -57,6 +57,8 @@ import de.tu_darmstadt.gdi1.samegame.exceptions.WrongLevelFormatException;
 import de.tu_darmstadt.gdi1.samegame.model.highscore.Highscore;
 import static de.tu_darmstadt.gdi1.samegame.model.highscore.Highscore.HIGHSCORE_ENTRY;
 
+import de.tu_darmstadt.gdi1.samegame.view.SameGameViewer;
+
 /**
  * The Model of the MVC Design pattern. <br><br>
  *
@@ -136,13 +138,7 @@ public class Level extends UndoManager{
 	 * finish a level. It's also used to pause if the user want's to
 	 * break
 	 */
-	private StopWatch watch;
-
-
-	/**
-	 * true if the game is paused
-	 */
-	private boolean paused;
+	private MyStopWatch watch;
 
 
 	/**
@@ -245,17 +241,11 @@ public class Level extends UndoManager{
 	 */
 	private void init(final ChangeListener changeListener){
 		
-		watch = new StopWatch();
+		watch = new MyStopWatch();
 
 		firstClick = true;
-		paused = true;
 
-		try{
-			ORIGINAL_LEVEL_STATE = (GameState) currentGameState.clone();
-		}catch(CloneNotSupportedException e){
-			e.printStackTrace();
-			ORIGINAL_LEVEL_STATE = new GameState(null, 0);
-		}
+		ORIGINAL_LEVEL_STATE = (GameState) currentGameState.clone();
 
 		this.changeListener = changeListener;
 		this.changeListener.stateChanged(new ChangeEvent(this));
@@ -494,25 +484,12 @@ public class Level extends UndoManager{
 	
 	
 	////////////////////////Class/Operations//////////////////////////
-/**
- * pauses the time
- */
-	public void pause(){
-		watch.suspend();
-		paused = true;
-	}
-
-
 	/**
 	 * Resets the current level state and delete the undo/redo history
 	 */
 	public void restartLevel(){
-		try{
-			currentGameState = (GameState) ORIGINAL_LEVEL_STATE.clone();
-		}catch(CloneNotSupportedException e){
-			e.printStackTrace();
-			currentGameState = new GameState(null, 0);
-		}
+
+		currentGameState = (GameState) ORIGINAL_LEVEL_STATE.clone();
 
 		this.discardAllEdits();
 		this.addEdit(currentGameState);
@@ -595,9 +572,7 @@ public class Level extends UndoManager{
 			this.minStones = minStones;
 
 			currentGameState = new GameState(level, 0);
-			try{
-				ORIGINAL_LEVEL_STATE = (GameState) currentGameState.clone();
-			}catch(CloneNotSupportedException ignored){}
+			ORIGINAL_LEVEL_STATE = (GameState) currentGameState.clone();
 			this.addEdit(currentGameState);
 		}
 	}
@@ -933,6 +908,7 @@ public class Level extends UndoManager{
 		moveUp(field);
 		
 		this.currentGameState = new GameState(field, 0);
+		this.ORIGINAL_LEVEL_STATE = (GameState) currentGameState.clone();
 
 		s.close();
 	}
@@ -1204,11 +1180,8 @@ public class Level extends UndoManager{
 			if(firstClick){
 				watch.start();
 				firstClick = false;
-				paused = false;
-			}else if(paused){
+			}else
 				watch.resume();
-				paused = false;
-			}
 
 			return true;
 		}
@@ -1305,10 +1278,8 @@ public class Level extends UndoManager{
 		else{
 			Byte[][] state = currentGameState.getFieldState();
 			boolean finished = isFinished(state, minStones);
-			if(finished && !paused){
+			if(finished)
 				watch.suspend();
-				paused = true;
-			}
 			return finished;
 		}
 	}
@@ -1560,8 +1531,7 @@ public class Level extends UndoManager{
 				levelState.setAttribute("name", "null");
 			levelState.setAttribute("pointsReached", ""+(long)this.currentGameState.getPoints());
 			levelState.setAttribute("elapsedTime", ""+watch.getTime());
-
-			Element fieldState = doc.createElement("fieldState");
+			
 			Element fieldLine;
 			Byte[][] field = this.ORIGINAL_LEVEL_STATE.getFieldState();
 			StringBuilder lineString;
@@ -1574,11 +1544,10 @@ public class Level extends UndoManager{
 					lineString.append(field[i][j]);
 				
 				fieldLine.setAttribute("value", lineString.toString());
-				fieldState.appendChild(fieldLine);
+				levelState.appendChild(fieldLine);
 			}
 
 			doc.appendChild(levelState);
-			levelState.appendChild(fieldState);
 
 			TransformerFactory tranFactory = TransformerFactory.newInstance(); 
 			Transformer aTransformer = tranFactory.newTransformer(); 
@@ -1631,7 +1600,6 @@ public class Level extends UndoManager{
 			this.getHighscorelist();
 
 		store(levelInf, f, force);
-
 	}
 
 
@@ -1650,41 +1618,44 @@ public class Level extends UndoManager{
 			   WrongLevelFormatException, 
 			   IOException{
 
-		BufferedReader r = new BufferedReader(new FileReader(f));
-		
-		String xmlString = r.readLine();
-
 		try{
 			DocumentBuilderFactory fact = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = fact.newDocumentBuilder();
-			Document doc = builder.parse(xmlString);
-
+			Document doc = builder.parse(f);
+			
+			doc.normalizeDocument();
+			
 			Node levelState = doc.getDocumentElement();
 			NamedNodeMap attr = levelState.getAttributes();
 
 			String loadedLevel = attr.getNamedItem("name").getNodeValue();
-			if(loadedLevel.equals("null"))
+			if(loadedLevel.equals("null")){
 				this.loadedLevel = null;
-			else
+				this.currentGameState = new GameState(null, 0);
+				init(changeListener);
+			}
+			else{
 				this.loadedLevel = new File(loadedLevel);
+				restoreLevel(this.loadedLevel);
+			}
 
 			double points = Double.parseDouble(attr.getNamedItem("pointsReached").getNodeValue());
 			long elapsedTime = Long.parseLong(attr.getNamedItem("elapsedTime").getNodeValue());
-			// TODO fix time update to elapsedTime!!!
-			// this.watch.setTime(elapsedTime);
+			this.watch = new MyStopWatch(elapsedTime);
 
-			NodeList lines = levelState.getFirstChild().getChildNodes();
+			NodeList lines = doc.getElementsByTagName("line");
 
 			int height = lines.getLength();
-			int width = lines.item(0).getNodeValue().length();
+			int width = lines.item(0).getAttributes().getNamedItem("value").getNodeValue().length();
 			Byte[][] field = new Byte[height][width];
 
 			for(int i=0; i<height; i++)
 				field[i] = 
 					parseByteDigits(
-							lines.item(i).getNodeValue());
+							lines.item(i).getAttributes().getNamedItem("value").getNodeValue());
 
 			this.currentGameState = new GameState(field, points);
+			this.addEdit(currentGameState);
 
 		}catch(ParserConfigurationException e){
 			e.printStackTrace();
@@ -1700,7 +1671,7 @@ public class Level extends UndoManager{
 		}
 	}
 
-
+	
 	/**
 	 * load a level information from a *.lvl file.
 	 * See {@link #loadLevelFromString(String)} for levelformat

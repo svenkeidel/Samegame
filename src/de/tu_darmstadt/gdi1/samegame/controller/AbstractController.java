@@ -6,8 +6,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -15,11 +13,10 @@ import javax.swing.JMenuItem;
 
 import de.tu_darmstadt.gdi1.samegame.model.Level;
 
-import de.tu_darmstadt.gdi1.samegame.exceptions.WrongLevelFormatException;
 
 public abstract class AbstractController extends KeyAdapter implements ActionListener{
 
-	private Level level;
+	protected Level level;
 
 	public void setLevel(Level level){
 		this.level = level;
@@ -34,21 +31,15 @@ public abstract class AbstractController extends KeyAdapter implements ActionLis
 		}else if (e.getSource() instanceof JFileChooser){
 			JFileChooser chooser = (JFileChooser) e.getSource();
             File f = chooser.getSelectedFile();
-            try{
-                    System.out.println(f.getCanonicalPath());
-                    level.restoreLevel(f);
-            }catch(FileNotFoundException ex){
-                    // TODO meldung file nicht gefunden
-            }catch(WrongLevelFormatException ex){
-                    // TODO meldung level nicht im richtigen format
-            }catch(IOException ignored){}
-
+			fileChoosed(chooser.getName(), f);
 		}
 	}
 
 	public abstract void menuClick(JMenuItem menuItem);
 	
 	public abstract void fieldClick(ActionEvent e, JButton b);
+
+	public abstract void fileChoosed(String source, File f);
 
 	@Override
 	public abstract void keyPressed(KeyEvent e);

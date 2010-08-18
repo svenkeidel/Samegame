@@ -102,6 +102,17 @@ public class SameGameViewer implements ChangeListener{
 		mainFrame.setLanguage(locale);
 	}
 	
+	public void notifyLevelLoaded(){
+		if(mainFrame != null){
+			try{
+				mainFrame.notifyLevelLoaded(level.getFieldWidth(), level.getFieldHeight());
+			}catch(ParameterOutOfRangeException e){
+				e.printStackTrace();
+			}catch(InternalFailureException e){
+				e.printStackTrace();
+			}
+		}
+	}
 
 	public void showMainFrame(){
 		this.mainFrame = new MainFrame(level, controller, currentLocale, "defaultskin", Color.WHITE, Color.BLACK);
@@ -154,6 +165,7 @@ public class SameGameViewer implements ChangeListener{
 	
 	// TODO proof whether the close methods are needed
 	public void closeMainFrame(){
+		mainFrame.dispose();
 		mainFrame = null;
 	}
 
@@ -185,12 +197,6 @@ public class SameGameViewer implements ChangeListener{
 		viewer.setLevel(level);
 		level.generateLevel(10, 10, 5, 3);
 		viewer.showMainFrame();
-		try{
-			viewer.mainFrame.notifyLevelLoaded(level.getFieldWidth(), level.getFieldHeight());
-		}catch(ParameterOutOfRangeException e){
-			e.printStackTrace();
-		}catch(InternalFailureException e){
-			e.printStackTrace();
-		}
+		viewer.notifyLevelLoaded();
 	}
 }

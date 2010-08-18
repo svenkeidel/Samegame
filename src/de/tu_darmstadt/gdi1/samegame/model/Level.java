@@ -50,6 +50,8 @@ import org.w3c.dom.NodeList;
 
 import org.xml.sax.SAXException;
 
+import sun.nio.cs.HistoricallyNamedCharset;
+
 import de.tu_darmstadt.gdi1.samegame.exceptions.LevelNotLoadedFromFileException;
 import de.tu_darmstadt.gdi1.samegame.exceptions.ParameterOutOfRangeException;
 import de.tu_darmstadt.gdi1.samegame.exceptions.WrongLevelFormatException;
@@ -315,7 +317,10 @@ public class Level extends UndoManager{
 	 * @return a String representation in the above described form
 	 */
 	public String[][] getHighscore(){
-		return highscore.getHighscoreEntrys();
+		if(highscore != null)
+			return highscore.getHighscoreEntrys();
+		else
+			return null;
 	}
 
 

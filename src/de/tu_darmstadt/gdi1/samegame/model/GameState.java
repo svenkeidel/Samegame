@@ -1,4 +1,4 @@
-package de.tu_darmstadt.gdi1.samegame;
+package de.tu_darmstadt.gdi1.samegame.model;
 
 import javax.swing.undo.AbstractUndoableEdit;
 

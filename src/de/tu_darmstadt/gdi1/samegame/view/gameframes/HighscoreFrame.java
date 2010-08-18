@@ -1,4 +1,4 @@
-package de.tu_darmstadt.gdi1.samegame.gameframes;
+package de.tu_darmstadt.gdi1.samegame.view.gameframes;
 
 import java.awt.Color;
 
@@ -8,7 +8,7 @@ import java.util.ResourceBundle;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-import de.tu_darmstadt.gdi1.samegame.highscore.Highscore;
+import de.tu_darmstadt.gdi1.samegame.model.highscore.Highscore;
 
 @SuppressWarnings("serial")
 public class HighscoreFrame extends JFrame{
@@ -27,7 +27,7 @@ public class HighscoreFrame extends JFrame{
 		this.locale = locale;
 		
 		messages = 
-			ResourceBundle.getBundle("de.tu_darmstadt.gdi1.samegame.gameframes.HighscoreBundle", 
+			ResourceBundle.getBundle("de.tu_darmstadt.gdi1.samegame.view.gameframes.HighscoreBundle", 
 									 locale, 
 									 this.getClass().getClassLoader()); 
 		this.scores = new Highscore();

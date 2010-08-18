@@ -9,8 +9,8 @@ import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.tu_darmstadt.gdi1.samegame.Level;
-import de.tu_darmstadt.gdi1.samegame.SameGameViewer;
+import de.tu_darmstadt.gdi1.samegame.model.Level;
+import de.tu_darmstadt.gdi1.samegame.view.SameGameViewer;
 
 import de.tu_darmstadt.gdi1.samegame.exceptions.WrongLevelFormatException;
 

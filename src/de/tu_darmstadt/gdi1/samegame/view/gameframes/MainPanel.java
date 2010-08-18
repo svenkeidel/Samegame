@@ -1,4 +1,4 @@
-package de.tu_darmstadt.gdi1.samegame.gameframes;
+package de.tu_darmstadt.gdi1.samegame.view.gameframes;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -25,23 +25,21 @@ import javax.swing.SwingUtilities;
 
 import javax.swing.border.LineBorder;
 
-import javax.swing.plaf.basic.BasicBorders;
-
-import de.tu_darmstadt.gdi1.samegame.GameController;
-import de.tu_darmstadt.gdi1.samegame.Level;
+import de.tu_darmstadt.gdi1.samegame.model.Level;
+import de.tu_darmstadt.gdi1.samegame.controller.AbstractController;
 
 import de.tu_darmstadt.gdi1.samegame.exceptions.InternalFailureException;
 import de.tu_darmstadt.gdi1.samegame.exceptions.InvalidOperationException;
 import de.tu_darmstadt.gdi1.samegame.exceptions.ParameterOutOfRangeException;
 
-import de.tu_darmstadt.gdi1.samegame.gameframes.MainPanel;
+import de.tu_darmstadt.gdi1.samegame.view.gameframes.MainPanel;
 
 @SuppressWarnings("serial")
 public class MainPanel extends JPanel{
 
 	////////////////////////Class/Attributes//////////////////////////
 	private Level level;
-	private GameController controller;
+	private AbstractController controller;
 
 	private int markedRow, markedCol;
 
@@ -69,7 +67,7 @@ public class MainPanel extends JPanel{
 	////////////////////////Class/Constructors////////////////////////
 	public MainPanel(MainFrame parentWindow, 
 					 Level level, 
-					 GameController controller,
+					 AbstractController controller,
 					 String skin){
 
 		super();
@@ -113,7 +111,7 @@ public class MainPanel extends JPanel{
 					unregisterImage(""+i);	
 
 			String path = this.getClass().
-				getResource("../../resources/images/"+skin).toString();
+				getResource("../../../resources/images/"+skin).toString();
 			
 			registerImage("1", new URL(path+"/colorone.png"));
 			registerImage("2", new URL(path+"/colortwo.png"));

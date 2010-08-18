@@ -1,6 +1,6 @@
 package de.tu_darmstadt.gdi1.samegame.tests.adapter;
 
-import de.tu_darmstadt.gdi1.samegame.Level;
+import de.tu_darmstadt.gdi1.samegame.model.Level;
 
 import java.awt.Component;
 import java.awt.event.KeyEvent;

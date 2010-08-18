@@ -1,8 +1,8 @@
 package de.tu_darmstadt.gdi1.samegame.tests.adapter;
 
-import de.tu_darmstadt.gdi1.samegame.GameController;
-import de.tu_darmstadt.gdi1.samegame.Level;
-import de.tu_darmstadt.gdi1.samegame.SameGameViewer;
+import de.tu_darmstadt.gdi1.samegame.controller.GameController;
+import de.tu_darmstadt.gdi1.samegame.model.Level;
+import de.tu_darmstadt.gdi1.samegame.view.SameGameViewer;
 import de.tu_darmstadt.gdi1.samegame.exceptions.WrongLevelFormatException;
 import de.tu_darmstadt.gdi1.samegame.exceptions.ParameterOutOfRangeException;
 

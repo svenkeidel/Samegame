@@ -1,5 +1,4 @@
-
-package de.tu_darmstadt.gdi1.samegame.gameframes;
+package de.tu_darmstadt.gdi1.samegame.view.gameframes;
 
 import java.io.File;
 
@@ -8,7 +7,7 @@ import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 
-import de.tu_darmstadt.gdi1.samegame.GameController;
+import de.tu_darmstadt.gdi1.samegame.controller.AbstractController;
 
 @SuppressWarnings("serial")
 public class SaveGameFrame extends JFrame{
@@ -17,7 +16,7 @@ public class SaveGameFrame extends JFrame{
 	private static String SavePath;
 	private static String SavePathXML;
 
-	public SaveGameFrame(GameController controller){
+	public SaveGameFrame(AbstractController controller){
 	
 		JFileChooser fc = new JFileChooser();
 		fc.setDialogType(JFileChooser.SAVE_DIALOG);

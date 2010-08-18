@@ -1,8 +1,6 @@
-package de.tu_darmstadt.gdi1.samegame.gameframes;
+package de.tu_darmstadt.gdi1.samegame.view.gameframes;
 
-import java.util.Vector;
-
-import de.tu_darmstadt.gdi1.samegame.Level;
+import de.tu_darmstadt.gdi1.samegame.model.Level;
 
 import de.tu_darmstadt.gdi1.samegame.exceptions.InternalFailureException;
 
@@ -10,9 +8,6 @@ class AnimationThread extends Thread{
 
 	private Byte[][] field;
 	private MainPanel mainPanel;
-
-	private int rows;
-	private int cols;
 
 	private long animationSpeed;
 
@@ -25,9 +20,6 @@ class AnimationThread extends Thread{
 	 * @param mainPanel the main panel in which the animation is performed
 	 */
 	AnimationThread(Byte[][] field, long animationSpeed, MainPanel mainPanel){
-
-		rows = field.length;
-		cols = field[0].length;
 
 		this.field = field;
 		this.mainPanel = mainPanel;

@@ -1,38 +1,33 @@
-package de.tu_darmstadt.gdi1.samegame;
+package de.tu_darmstadt.gdi1.samegame.controller;
 
 import java.awt.Color;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 import static java.awt.event.KeyEvent.*;
 
 import java.util.Locale;
 
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 
-import de.tu_darmstadt.gdi1.samegame.exceptions.InternalFailureException;
 import de.tu_darmstadt.gdi1.samegame.exceptions.ParameterOutOfRangeException;
-import de.tu_darmstadt.gdi1.samegame.exceptions.WrongLevelFormatException;
-import de.tu_darmstadt.gdi1.samegame.gameframes.MainFrame;
-import de.tu_darmstadt.gdi1.samegame.gameframes.MainPanel;
-import de.tu_darmstadt.gdi1.samegame.gameframes.LoadGameFrame;
-import de.tu_darmstadt.gdi1.samegame.gameframes.AboutFrame;
 
-public class GameController extends KeyAdapter implements ActionListener{
+import de.tu_darmstadt.gdi1.samegame.model.Level;
+import de.tu_darmstadt.gdi1.samegame.view.SameGameViewer;
+
+import de.tu_darmstadt.gdi1.samegame.controller.AbstractController;
+
+import de.tu_darmstadt.gdi1.samegame.exceptions.InternalFailureException;
+import de.tu_darmstadt.gdi1.samegame.view.gameframes.MainPanel;
+
+public class GameController extends AbstractController{
 
 	private Level level;
 	private SameGameViewer viewer;
-	private AboutFrame abframe;
 
 	public GameController(Level level){
 		this.level = level;
@@ -47,26 +42,7 @@ public class GameController extends KeyAdapter implements ActionListener{
 		this.level = level;
 	}
 	
-	public void actionPerformed(ActionEvent e){
-		if(e.getSource() instanceof JMenuItem){
-			menuClick((JMenuItem) e.getSource());
-		}else if(e.getSource() instanceof JButton){
-			fieldClick(e, (JButton) e.getSource());
-		}else if (e.getSource() instanceof JFileChooser){
-			JFileChooser chooser = (JFileChooser) e.getSource();
-            File f = chooser.getSelectedFile();
-            try{
-                    System.out.println(f.getCanonicalPath());
-                    level.restoreLevel(f);
-            }catch(FileNotFoundException ex){
-                    // TODO meldung file nicht gefunden
-            }catch(WrongLevelFormatException ex){
-                    // TODO meldung level nicht im richtigen format
-            }catch(IOException ignored){}
-
-    }
-}
-
+	@Override
 	public void menuClick(JMenuItem menuItem){
 		String menuName = menuItem.getName();
 		if (menuName.equals("GameMenu_RestartLvl") )
@@ -89,7 +65,7 @@ public class GameController extends KeyAdapter implements ActionListener{
 		if (menuName.equals("FileMenu_LoadLevel"))
 			viewer.showLoadGameFrame();
 		if (menuName.equals("FileMenu_Exit"))
-			System.exit(0);
+			viewer.closeMainFrame();
 		if (menuName.equals("GameMenu_Undo"))
 			level.undo();
 		if (menuName.equals("GameMenu_Redo"))
@@ -104,6 +80,7 @@ public class GameController extends KeyAdapter implements ActionListener{
 			viewer.showAboutFrame();
 	}
 	
+	@Override
 	public void fieldClick(ActionEvent e, JButton b){
 		JButton btn = b;
 		
@@ -148,8 +125,6 @@ public class GameController extends KeyAdapter implements ActionListener{
 		}
 
 		switch(key){
-			case VK_Q:
-				System.exit(0);
 			case VK_N:
 				level.restartLevel();
 				break;
@@ -167,7 +142,7 @@ public class GameController extends KeyAdapter implements ActionListener{
 				break;
 			case VK_SPACE:
 				if (viewer.duringAnimation() != true)
-					viewer.getMainPanel().entityClicked(markedCol, markedRow);
+					entityClicked(markedCol, markedRow);
 				break;
 			case VK_LEFT:
 				if (markedCol >0){

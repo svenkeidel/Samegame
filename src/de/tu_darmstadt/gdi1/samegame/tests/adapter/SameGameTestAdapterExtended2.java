@@ -1,6 +1,6 @@
 package de.tu_darmstadt.gdi1.samegame.tests.adapter;
 
-import de.tu_darmstadt.gdi1.samegame.highscore.*;
+import de.tu_darmstadt.gdi1.samegame.model.highscore.*;
 import de.tu_darmstadt.gdi1.samegame.exceptions.ParameterOutOfRangeException;
 
 import java.text.DateFormat;

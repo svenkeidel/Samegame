@@ -1,10 +1,9 @@
-package de.tu_darmstadt.gdi1.samegame;
+package de.tu_darmstadt.gdi1.samegame.view;
 
 import java.awt.Color;
-import java.awt.event.KeyEvent;
 import java.util.Locale;
-import java.util.Vector;
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -12,20 +11,22 @@ import javax.swing.event.ChangeListener;
 import de.tu_darmstadt.gdi1.samegame.exceptions.InternalFailureException;
 import de.tu_darmstadt.gdi1.samegame.exceptions.ParameterOutOfRangeException;
 
-import de.tu_darmstadt.gdi1.samegame.gameframes.*;
+import de.tu_darmstadt.gdi1.samegame.controller.AbstractController;
+import de.tu_darmstadt.gdi1.samegame.controller.GameController;
+
+import de.tu_darmstadt.gdi1.samegame.view.gameframes.*;
+
+import de.tu_darmstadt.gdi1.samegame.model.Level;
 
 public class SameGameViewer implements ChangeListener{
 	public static final Locale DEFAULT_LOCALE = new Locale("en", "US");
 	private Locale currentLocale;
 
 	private Level level;
-	private GameController controller;
+	private AbstractController controller;
 	
 	private MainFrame mainFrame;
 	private MainPanel mainPanel;
-	private static AlertFrame alertframe;
-	private OptionsFrame optionsFrame;
-	private AskForSaveFrame askForSaveFrame;
 	private AddHighscoreFrame addHighscoreFrame;
     private HighscoreFrame highscoreFrame;
     private SaveGameFrame saveGameFrame;
@@ -43,7 +44,7 @@ public class SameGameViewer implements ChangeListener{
 		this.level = level;
 	}
 
-	public void setController(GameController controller){
+	public void setController(AbstractController controller){
 		this.controller = controller;
 	}
 	
@@ -96,7 +97,7 @@ public class SameGameViewer implements ChangeListener{
 		mainPanel.startAnimation(row, col, animationSpeed);
 	}
 	
-	void setLanguage(Locale locale){
+	public void setLanguage(Locale locale){
 		mainFrame.setLanguage(locale);
 	}
 	
@@ -107,14 +108,6 @@ public class SameGameViewer implements ChangeListener{
 		this.mainPanel = mainFrame.getMainPanel();
 		Thread timeUpdate = new Thread(mainFrame);
 		timeUpdate.start();
-	}
-
-	public void showOptionsFrame(){
-		this.optionsFrame = new OptionsFrame(currentLocale);
-	}
-
-	public void showAskForSaveFrame(){
-		askForSaveFrame = new AskForSaveFrame(currentLocale);
 	}
 
 	public void showAddHighscoreFrame(){
@@ -138,6 +131,7 @@ public class SameGameViewer implements ChangeListener{
 	}
 
 	public static void showAlertFrame(String alertstring, String alerttitle){
+		JFrame alertframe = new JFrame();
 		
 		int response = JOptionPane.showConfirmDialog(alertframe, alerttitle, alertstring,
 		       JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
@@ -160,14 +154,6 @@ public class SameGameViewer implements ChangeListener{
 	// TODO proof whether the close methods are needed
 	public void closeMainFrame(){
 		mainFrame = null;
-	}
-
-	public void closeOptionsFrame(){
-		optionsFrame = null;
-	}
-
-	public void closeAskForSaveFrame(){
-		askForSaveFrame = null;
 	}
 
 	public void closeAddHighscoreFrame(){

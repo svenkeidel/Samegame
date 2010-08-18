@@ -1,4 +1,4 @@
-package de.tu_darmstadt.gdi1.samegame.gameframes;
+package de.tu_darmstadt.gdi1.samegame.view.gameframes;
 
 import java.awt.Color;
 
@@ -11,6 +11,7 @@ import javax.swing.JLabel;
 public class AboutFrame extends JFrame{
 
 	private Locale locale;
+
 	private ResourceBundle messages;
 
 	public AboutFrame(Locale locale){
@@ -19,20 +20,19 @@ public class AboutFrame extends JFrame{
         this.locale = locale;
 
 		messages = 
-			ResourceBundle.getBundle("de.tu_darmstadt.gdi1.samegame.gameframes.AboutBundle", 
+			ResourceBundle.getBundle("de.tu_darmstadt.gdi1.samegame.view.gameframes.AboutBundle", 
 									 locale, 
 									 this.getClass().getClassLoader()); 
 
 		setBackground(Color.lightGray);
-		setSize(300,100);
-		setLocation(200,300);
+		this.setSize(300,100);
+		this.setLocation(200,300);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		getContentPane().add(new JLabel(
+		this.getContentPane().add(new JLabel(
 					messages.getString("AboutText")
 					+ "Seb, Tim, Svenja and Sven"));
 
-		setVisible(true);
+		this.setVisible(true);
 	}
-
-
 }

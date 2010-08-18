@@ -176,7 +176,7 @@
 		name="run"
 		depends="compile">
 		<java 
-			classname="de.tu_darmstadt.gdi1.samegame.SameGameViewer" 
+			classname="de.tu_darmstadt.gdi1.samegame.view.SameGameViewer" 
 			classpath="${classpath}"
 			fork="true"/>
 	</target>

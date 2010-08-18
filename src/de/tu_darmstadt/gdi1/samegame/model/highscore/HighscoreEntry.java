@@ -1,4 +1,4 @@
-package de.tu_darmstadt.gdi1.samegame.highscore;
+package de.tu_darmstadt.gdi1.samegame.model.highscore;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

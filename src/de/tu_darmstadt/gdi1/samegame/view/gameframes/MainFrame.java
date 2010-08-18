@@ -1,4 +1,4 @@
-package de.tu_darmstadt.gdi1.samegame.gameframes;
+package de.tu_darmstadt.gdi1.samegame.view.gameframes;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -24,8 +24,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
-import de.tu_darmstadt.gdi1.samegame.GameController;
-import de.tu_darmstadt.gdi1.samegame.Level;
+import de.tu_darmstadt.gdi1.samegame.model.Level;
+import de.tu_darmstadt.gdi1.samegame.controller.AbstractController;
 
 import de.tu_darmstadt.gdi1.samegame.exceptions.InternalFailureException;
 import de.tu_darmstadt.gdi1.samegame.exceptions.ParameterOutOfRangeException;
@@ -39,7 +39,7 @@ public class MainFrame extends JFrame implements Runnable{
 
 	private ResourceBundle messages;
 
-	private GameController controller;
+	private AbstractController controller;
 	
 	private MainPanel panel;
 
@@ -61,7 +61,7 @@ public class MainFrame extends JFrame implements Runnable{
 	
 			
 	////////////////////////Class/Constructors////////////////////////
-	public MainFrame(Level level, GameController controller, Locale locale, String skin, Color FColor, Color BColor){
+	public MainFrame(Level level, AbstractController controller, Locale locale, String skin, Color FColor, Color BColor){
 		super("Same Game");
 		this.level = level;
 		this.controller = controller;
@@ -111,7 +111,7 @@ public class MainFrame extends JFrame implements Runnable{
 		try{
 			messages = 
 				ResourceBundle.getBundle(
-						"de.tu_darmstadt.gdi1.samegame.gameframes.MainBundle", 
+						"de.tu_darmstadt.gdi1.samegame.view.gameframes.MainBundle", 
 						this.locale, 
 						this.getClass().getClassLoader()); 
 		}catch(MissingResourceException e){
@@ -119,7 +119,7 @@ public class MainFrame extends JFrame implements Runnable{
 
 			messages = 
 				ResourceBundle.getBundle(
-						"de.tu_darmstadt.gdi1.samegame.gameframes.MainBundle", 
+						"de.tu_darmstadt.gdi1.samegame.view.gameframes.MainBundle", 
 						this.locale,
 						this.getClass().getClassLoader()); 
 		}
@@ -171,7 +171,6 @@ public class MainFrame extends JFrame implements Runnable{
 		
 		JMenuItem exit = new JMenuItem(messages.getString("FileMenu_Exit"));
 		exit.setName("FileMenu_Exit");
-		exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, 0));
 		exit.addActionListener(controller);
 		exit.setForeground(FColor);
 		exit.setBackground(BColor);
@@ -233,7 +232,7 @@ public class MainFrame extends JFrame implements Runnable{
 		setLanguage.setForeground(FColor);
 		setLanguage.setBackground(BColor);
 			
-		String iconsPath = this.getClass().getResource("../../resources/images/icons").toString();
+		String iconsPath = this.getClass().getResource("../../../resources/images/icons").toString();
 
 		// JMenuItem German 
 		JMenuItem ger_lang;

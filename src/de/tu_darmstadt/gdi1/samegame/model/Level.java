@@ -1,4 +1,4 @@
-package de.tu_darmstadt.gdi1.samegame;
+package de.tu_darmstadt.gdi1.samegame.model;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -31,8 +31,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -56,8 +54,8 @@ import de.tu_darmstadt.gdi1.samegame.exceptions.LevelNotLoadedFromFileException;
 import de.tu_darmstadt.gdi1.samegame.exceptions.ParameterOutOfRangeException;
 import de.tu_darmstadt.gdi1.samegame.exceptions.WrongLevelFormatException;
 
-import de.tu_darmstadt.gdi1.samegame.highscore.Highscore;
-import static de.tu_darmstadt.gdi1.samegame.highscore.Highscore.HIGHSCORE_ENTRY;
+import de.tu_darmstadt.gdi1.samegame.model.highscore.Highscore;
+import static de.tu_darmstadt.gdi1.samegame.model.highscore.Highscore.HIGHSCORE_ENTRY;
 
 /**
  * The Model of the MVC Design pattern. <br><br>

@@ -1,40 +1,20 @@
-package de.tu_darmstadt.gdi1.samegame.gameframes;
-
-
-
-import java.util.Locale;
-import java.util.ResourceBundle;
+package de.tu_darmstadt.gdi1.samegame.view.gameframes;
 
 import javax.swing.JFrame;
 
-import java.awt.BorderLayout;
-import java.awt.Font;
-
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileFilter;
 
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import de.tu_darmstadt.gdi1.samegame.GameController;
+import de.tu_darmstadt.gdi1.samegame.controller.AbstractController;
 
 
 @SuppressWarnings("serial")
 public class LoadGameFrame extends JFrame{
 
 	private static String pathstring;
-	private GameController controller;
-
 	
-	
-	public LoadGameFrame(GameController controller){		
-		
-
+	public LoadGameFrame(AbstractController controller){		
 		      
 		        JFileChooser fileChooser = new JFileChooser();
 		        fileChooser.setFileFilter( new javax.swing.filechooser.FileFilter() {
@@ -59,7 +39,4 @@ public class LoadGameFrame extends JFrame{
 		
 		
 	}
-
-
-	
 }

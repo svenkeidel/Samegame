@@ -1,4 +1,4 @@
-package de.tu_darmstadt.gdi1.samegame.highscore;
+package de.tu_darmstadt.gdi1.samegame.model.highscore;
 
 import static java.util.Collections.*;
 import java.util.Date;

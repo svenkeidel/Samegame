@@ -53,15 +53,13 @@ public class GameController extends AbstractController{
 			level.generateLevel(10, 10, 5, 3);
 		}
 		if (menuName.equals("Skin_Default"))
-			viewer.setSkin("defaultskin", Color.white, Color.black, Color.LIGHT_GRAY);
+			viewer.setSkin("defaultskin", Color.white, Color.black, Color.black);
 		if (menuName.equals("Skin_Tuskin"))
-			viewer.setSkin("tuskin", Color.black, Color.white, Color.black);
+			viewer.setSkin("tuskin", Color.black, Color.white, Color.white);
 		if (menuName.equals("Skin_Squareskin"))
-			viewer.setSkin("squareskin", Color.white, Color.black, Color.white);
+			viewer.setSkin("squareskin", Color.black, Color.white, Color.white);
 		if (menuName.equals("Skin_Ballskin"))
-			viewer.setSkin("ballskin", Color.black, Color.white, Color.black);
-		if (menuName.equals("Skin_Jewelskin"))
-			viewer.setSkin("jewelskin", Color.white, Color.black, Color.white);
+			viewer.setSkin("ballskin", Color.white, Color.black, Color.white);
 		if (menuName.equals("FileMenu_SaveLevel"))
 			viewer.showSaveGameFrame();
 		if (menuName.equals("FileMenu_LoadLevel"))
@@ -80,22 +78,27 @@ public class GameController extends AbstractController{
 			viewer.setLanguage(new Locale("pl", "PL"));
 		if (menuName.equals("About"))
 			viewer.showAboutFrame();
+		if (menuName.equals("FileMenu_GenerateCustomLevel"))
+			viewer.showCustomizeFrame();
+		if (menuName.equals("FileMenu_SaveGameState"))
+			viewer.showSaveGameStateFrame();
+		if (menuName.equals("FileMenu_LoadGameState"))
+			viewer.showLoadGameStateFrame();
 	}
 	
 	@Override
 	public void fieldClick(ActionEvent e, JButton b){
 		JButton btn = b;
 		
-			if (e.getSource() == btn) {
-				// determine x and y position
-				int posX =  (int)btn.getLocation().getX();
-				
-				int posY =  (int)btn.getLocation().getY();
+		if (e.getSource() == btn) {
+			// determine x and y position
+			int posX =  (int)btn.getLocation().getX();
+			int posY =  (int)btn.getLocation().getY();
 
-				entityClicked(posX / btn.getWidth(), 
-										posY / btn.getHeight());
-			}
+			entityClicked(posX / btn.getWidth(), 
+								posY / btn.getHeight());
 		}
+	}
 
 	public void entityClicked(int positionX, int positionY){
 		MainPanel panel = viewer.getMainPanel();
@@ -107,9 +110,9 @@ public class GameController extends AbstractController{
 				level.removeStone(positionY, positionX);
 				panel.redraw();
 			}catch(ParameterOutOfRangeException e){
-				e.printStackTrace();
+				viewer.showAlertFrame(e.getParameterName(), "Parameter out of Range");
 			}catch(InternalFailureException e){
-				e.printStackTrace();
+				viewer.showAlertFrame(e.getMessage(), "Internal Failure");
 			}
 		}
 	}
@@ -153,7 +156,7 @@ public class GameController extends AbstractController{
 					try{
 						viewer.getMainPanel().redraw();
 					}catch(InternalFailureException ex){
-						ex.printStackTrace();
+						viewer.showAlertFrame(ex.getMessage(), "Internal Failure");
 					}
 				}
 				break;
@@ -164,7 +167,7 @@ public class GameController extends AbstractController{
 					try{
 						viewer.getMainPanel().redraw();
 					}catch(InternalFailureException ex){
-						ex.printStackTrace();
+						viewer.showAlertFrame(ex.getMessage(), "Internal Failure");
 					}
 				}
 				break;
@@ -175,7 +178,7 @@ public class GameController extends AbstractController{
 					try{
 						viewer.getMainPanel().redraw();
 					}catch(InternalFailureException ex){
-						ex.printStackTrace();
+						viewer.showAlertFrame(ex.getMessage(), "Internal Failure");
 					}
 				}
 				break;
@@ -186,7 +189,7 @@ public class GameController extends AbstractController{
 					try{
 						viewer.getMainPanel().redraw();
 					}catch(InternalFailureException ex){
-						ex.printStackTrace();
+						viewer.showAlertFrame(ex.getMessage(), "Internal Failure");
 					}
 				}
 				break;

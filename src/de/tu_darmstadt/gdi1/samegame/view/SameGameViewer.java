@@ -51,7 +51,6 @@ public class SameGameViewer implements ChangeListener{
 	public void setSkin(String skin, Color BColor, Color FColor, Color MColor){
 		mainFrame.setSkin(skin, BColor, FColor);
 		mainPanel.setMarkColor(MColor);
-		mainPanel.setBGColor(FColor);
 		this.BColor = BColor;
 		this.FColor = FColor;
 	}

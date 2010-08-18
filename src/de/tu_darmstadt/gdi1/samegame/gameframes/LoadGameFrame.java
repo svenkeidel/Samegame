@@ -17,6 +17,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileFilter;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -36,12 +37,19 @@ public class LoadGameFrame extends JFrame{
 
 		      
 		        JFileChooser fileChooser = new JFileChooser();
+		        fileChooser.setFileFilter( new javax.swing.filechooser.FileFilter() {
+	                public boolean accept(File f) {
+	                    return f.getName().toLowerCase().endsWith(".xml") || f.isDirectory();
+	                }
+	                public String getDescription() {
+	                    return "Level(*.xml)";
+	                }
+	            });
 		        fileChooser.addActionListener(controller);
 		        int returnValue = fileChooser.showOpenDialog(null);
 		        if (returnValue == JFileChooser.APPROVE_OPTION)
 		        {
-		          File selectedFile = fileChooser.getSelectedFile();
-		          pathstring = selectedFile.getPath();
+		        	 pathstring = fileChooser.getSelectedFile().getPath();
 		         }
 		      }
 	

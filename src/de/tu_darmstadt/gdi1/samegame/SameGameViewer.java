@@ -124,7 +124,7 @@ public class SameGameViewer implements ChangeListener{
 	}
 
 	public void showSaveGameFrame(){
-		saveGameFrame = new SaveGameFrame(currentLocale);
+		saveGameFrame = new SaveGameFrame(controller);
 	}
 
 	public void showLoadGameFrame(){

@@ -1,28 +1,48 @@
 
 package de.tu_darmstadt.gdi1.samegame.gameframes;
 
-import java.awt.Color;
+import java.io.File;
 
-import java.util.Locale;
+
+
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+
+import de.tu_darmstadt.gdi1.samegame.GameController;
 
 @SuppressWarnings("serial")
 public class SaveGameFrame extends JFrame{
 
-	private Locale locale;
+	
+	private static String SavePath;
+	private static String SavePathXML;
 
-	public SaveGameFrame(Locale locale){
-		super();
-
-		// TODO I18n this file
-		this.locale = locale;
-
-		// TODO fill method stub
-		setBackground(Color.lightGray);
-		this.setSize(300,100);
-		this.setLocation(200,300);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-		this.setVisible(true);
+	public SaveGameFrame(GameController controller){
+	
+		JFileChooser fc = new JFileChooser();
+		fc.setDialogType(JFileChooser.SAVE_DIALOG);
+		fc.setFileFilter( new javax.swing.filechooser.FileFilter() {
+            public boolean accept(File f) {
+                return f.getName().toLowerCase().endsWith(".xml") || f.isDirectory();
+            }
+            public String getDescription() {
+                return "Level(*.xml)";
+            }
+        });
+		fc.addActionListener(controller);
+		int state = fc.showSaveDialog(null);
+		 
+		if (state == JFileChooser.APPROVE_OPTION)
+		    {
+			if (fc.getSelectedFile().getPath().contains(".xml"))
+				SavePath = fc.getSelectedFile().getPath();
+			else {
+				SavePathXML = fc.getSelectedFile().getPath().concat(".xml");
+			}
+		    }
+	}
+	
+	public static String getSavePath (){
+		return SavePath;
 	}
 }

@@ -86,7 +86,7 @@ public class GameController extends KeyAdapter implements ActionListener{
 		if (menuName.equals("Skin_Ballskin"))
 			viewer.setSkin("ballskin", Color.white, Color.black, Color.white);
 		if (menuName.equals("FileMenu_SaveLevel"))
-			viewer.showMainFrame();
+			viewer.showSaveGameFrame();
 		if (menuName.equals("FileMenu_LoadLevel"))
 			viewer.showLoadGameFrame();
 		if (menuName.equals("FileMenu_Exit"))

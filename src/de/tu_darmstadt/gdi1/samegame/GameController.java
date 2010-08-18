@@ -12,7 +12,6 @@ import java.io.IOException;
 import static java.awt.event.KeyEvent.*;
 
 import java.util.Locale;
-import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -22,6 +21,7 @@ import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 
 import de.tu_darmstadt.gdi1.samegame.exceptions.InternalFailureException;
+import de.tu_darmstadt.gdi1.samegame.exceptions.ParameterOutOfRangeException;
 import de.tu_darmstadt.gdi1.samegame.exceptions.WrongLevelFormatException;
 import de.tu_darmstadt.gdi1.samegame.gameframes.MainFrame;
 import de.tu_darmstadt.gdi1.samegame.gameframes.MainPanel;
@@ -33,10 +33,6 @@ public class GameController extends KeyAdapter implements ActionListener{
 	private Level level;
 	private SameGameViewer viewer;
 	private AboutFrame abframe;
-
-
-	// the list of entities
-	private Vector<JButton> entities = null;
 
 	public GameController(Level level){
 		this.level = level;
@@ -109,7 +105,6 @@ public class GameController extends KeyAdapter implements ActionListener{
 	}
 	
 	public void fieldClick(ActionEvent e, JButton b){
-		// retrieve first button
 		JButton btn = b;
 		
 			if (e.getSource() == btn) {
@@ -118,12 +113,27 @@ public class GameController extends KeyAdapter implements ActionListener{
 				
 				int posY =  (int)btn.getLocation().getY();
 
-				// pass message along
-				MainPanel mainPanel = viewer.getMainPanel();
-				mainPanel.entityClicked(posX / btn.getWidth(), 
+				entityClicked(posX / btn.getWidth(), 
 										posY / btn.getHeight());
 			}
 		}
+
+	public void entityClicked(int positionX, int positionY){
+		MainPanel panel = viewer.getMainPanel();
+		panel.getParentWindow().requestFocus();
+
+		if(!viewer.duringAnimation() && level.removeable(positionY, positionX)){
+			try{
+				viewer.startAnimation(positionY, positionX, 500);
+				level.removeStone(positionY, positionX);
+				panel.redraw();
+			}catch(ParameterOutOfRangeException e){
+				e.printStackTrace();
+			}catch(InternalFailureException e){
+				e.printStackTrace();
+			}
+		}
+	}
 
 	
 	@Override

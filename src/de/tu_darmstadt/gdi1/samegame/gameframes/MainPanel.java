@@ -101,6 +101,10 @@ public class MainPanel extends JPanel{
 	public int getMarkedFieldCol(){
 		return markedCol;
 	}
+	
+	public MainFrame getParentWindow(){
+		return this.parentWindow;
+	}
 
 	public void setSkin(String skin){
 		try{
@@ -525,21 +529,6 @@ public void setMarkColor(Color mcolor){
 					e.printStackTrace();
 				}
 	}
+	
 
-
-	public void entityClicked(int positionX, int positionY){
-		parentWindow.requestFocus();
-
-		if(!duringAnimation && level.removeable(positionY, positionX)){
-			try{
-				startAnimation(positionY, positionX, 500);
-				level.removeStone(positionY, positionX);
-				this.redraw();
-			}catch(ParameterOutOfRangeException e){
-				e.printStackTrace();
-			}catch(InternalFailureException e){
-				e.printStackTrace();
-			}
-		}
-	}
 }

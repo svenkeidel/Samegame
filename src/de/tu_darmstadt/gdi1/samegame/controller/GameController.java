@@ -53,13 +53,15 @@ public class GameController extends AbstractController{
 			level.generateLevel(10, 10, 5, 3);
 		}
 		if (menuName.equals("Skin_Default"))
-			viewer.setSkin("defaultskin", Color.white, Color.black, Color.black);
+			viewer.setSkin("defaultskin", Color.white, Color.black, Color.LIGHT_GRAY);
 		if (menuName.equals("Skin_Tuskin"))
-			viewer.setSkin("tuskin", Color.black, Color.white, Color.white);
+			viewer.setSkin("tuskin", Color.black, Color.white, Color.black);
 		if (menuName.equals("Skin_Squareskin"))
-			viewer.setSkin("squareskin", Color.black, Color.white, Color.white);
+			viewer.setSkin("squareskin", Color.white, Color.black, Color.white);
 		if (menuName.equals("Skin_Ballskin"))
-			viewer.setSkin("ballskin", Color.white, Color.black, Color.white);
+			viewer.setSkin("ballskin", Color.black, Color.white, Color.black);
+		if (menuName.equals("Skin_Jewelskin"))
+			viewer.setSkin("jewelskin", Color.white, Color.black, Color.white);
 		if (menuName.equals("FileMenu_SaveLevel"))
 			viewer.showSaveGameFrame();
 		if (menuName.equals("FileMenu_LoadLevel"))
@@ -154,7 +156,6 @@ public class GameController extends AbstractController{
 						ex.printStackTrace();
 					}
 				}
-				else System.out.println("else");
 				break;
 			case VK_RIGHT:
 				if (markedCol < level.getFieldWidth()-1){

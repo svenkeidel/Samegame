@@ -32,6 +32,7 @@ import de.tu_darmstadt.gdi1.samegame.exceptions.InternalFailureException;
 import de.tu_darmstadt.gdi1.samegame.exceptions.InvalidOperationException;
 import de.tu_darmstadt.gdi1.samegame.exceptions.ParameterOutOfRangeException;
 
+import de.tu_darmstadt.gdi1.samegame.view.SameGameViewer;
 import de.tu_darmstadt.gdi1.samegame.view.gameframes.MainPanel;
 
 @SuppressWarnings("serial")
@@ -45,9 +46,11 @@ public class MainPanel extends JPanel{
 
 	private boolean duringAnimation;
 
+	private Color bgColor = Color.black;
+	
 	private Byte[][] field;
 
-	private Color markColor;
+	private Color markColor = Color.white;
 	// the list of entities
 	private Vector<JButton> entities = null;
 	
@@ -96,6 +99,10 @@ public class MainPanel extends JPanel{
 		return markedRow;
 	}
 
+	public void setBGColor(Color color){
+		bgColor = color;
+	}
+	
 	public int getMarkedFieldCol(){
 		return markedCol;
 	}
@@ -223,6 +230,8 @@ public class MainPanel extends JPanel{
 	 * @throws InternalFailureException
 	 * 			   Thrown if an uncorrectable internal error occurs
 	 */
+	private GridLayout g_layout;
+	
 	void notifyLevelLoaded(int width, int height)
 			throws ParameterOutOfRangeException, InternalFailureException {
 		// Check the parameters
@@ -234,7 +243,10 @@ public class MainPanel extends JPanel{
 		// Initialize the layout
 		layoutWidth = width;
 		layoutHeight = height;
-		setLayout(new GridLayout(height, width));
+		setLayout(g_layout = new GridLayout(height, width));
+	
+		g_layout.setHgap(0);
+		g_layout.setVgap(0);
 		redraw();
 	}
 
@@ -248,13 +260,13 @@ public class MainPanel extends JPanel{
 		for (int i = 0; i < entities.size (); i++)
 		{
 			JButton btn = entities.get (i);
-			int icoWidth = btn.getIcon ().getIconWidth () + 2;
-			int icoHeight = btn.getIcon ().getIconHeight () + 2;
+			int icoWidth = btn.getIcon ().getIconWidth ();
+			int icoHeight = btn.getIcon ().getIconHeight ();
 			
 			width = Math.max (width, icoWidth);
 			height = Math.max (height, icoHeight);
 			
-			// +2px border size (one pixel per side)
+			
 			if (autosize)
 				btn.setPreferredSize (new Dimension (icoWidth, icoHeight));
 			else
@@ -468,7 +480,7 @@ public void setMarkColor(Color mcolor){
 		synchronized(entities){
 			entities.add(btn);
 		}
-
+		btn.setBorder(new LineBorder(bgColor));
 		btn.addActionListener(controller);
 		btn.setIcon(icon);
 

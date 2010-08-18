@@ -23,6 +23,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
+import javax.swing.border.LineBorder;
 
 import de.tu_darmstadt.gdi1.samegame.model.Level;
 import de.tu_darmstadt.gdi1.samegame.controller.AbstractController;
@@ -58,7 +59,7 @@ public class MainFrame extends JFrame implements Runnable{
 	private String skin;
 	private Color FColor;
 	private Color BColor;
-	
+
 			
 	////////////////////////Class/Constructors////////////////////////
 	public MainFrame(Level level, AbstractController controller, Locale locale, String skin, Color FColor, Color BColor){
@@ -71,6 +72,7 @@ public class MainFrame extends JFrame implements Runnable{
 		this.skin = skin;
 		this.FColor = FColor;
 		this.BColor = BColor; 
+	
 		
 		this.panel = new MainPanel(this, level, controller, skin);
 		this.add(panel, BorderLayout.CENTER);
@@ -130,6 +132,7 @@ public class MainFrame extends JFrame implements Runnable{
 
 		menuBar = new JMenuBar();
 		menuBar.setBackground(BColor);
+		menuBar.setBorder(new LineBorder(BColor));
 		
 		JMenu fileMenu = new JMenu(messages.getString("FileMenu_Border"));
 		fileMenu.setForeground(FColor);
@@ -310,11 +313,18 @@ public class MainFrame extends JFrame implements Runnable{
 		skin_squares.setForeground(FColor);
 		skin_squares.setBackground(BColor);
 		
+		JMenuItem skin_jewels= new JMenuItem(messages.getString("Skin_Jewelskin"));
+		skin_jewels.setName("Skin_Jewelskin");
+		skin_jewels.addActionListener(controller);
+		skin_jewels.setForeground(FColor);
+		skin_jewels.setBackground(BColor);
+		
 		
 		setSkin.add(skin_default);
 		setSkin.add(skin_tuskin);
 		setSkin.add(skin_ball);
 		setSkin.add(skin_squares);
+		setSkin.add(skin_jewels);
 		//Place to for additional skins
 		
 		

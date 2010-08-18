@@ -15,12 +15,12 @@ public class Highscore{
 
 	////////////////////////Class/Attributes//////////////////////////
 	/**
-	 * the list of highscore entrys
+	 * the list of highscore entries
 	 */
 	private Vector<HighscoreEntry> highscoreEntrys;
 
 	/**
-	 * a pattern wich matches a valide highscore entry
+	 * a pattern which matches a valid highscore entry
 	 */
 	public final static String HIGHSCORE_ENTRY = HighscoreEntry.HIGHSCORE_ENTRY;
 

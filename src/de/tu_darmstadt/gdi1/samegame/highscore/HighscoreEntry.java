@@ -154,7 +154,7 @@ class HighscoreEntry implements Comparable<HighscoreEntry>{
 	 * parses a highscore entry.
 	 *
 	 * @param line the current line in the parsing string
-	 * @param sc the scanner wich parses the string
+	 * @param sc the scanner which parses the string
 	 *
 	 * @throws WrongLevelFormatException if the highscore entry is not 
 	 * in the right format
@@ -207,11 +207,11 @@ class HighscoreEntry implements Comparable<HighscoreEntry>{
 		}
 	}
 	/**
-	 * compare two highscoreentrys with ident comparision
+	 * compare two highscore entries with identical comparison
 	 *
 	 * @param another another highscore entry
 	 *
-	 * @return 0 if the entrys are identical
+	 * @return 0 if the entries are identical
 	 */
 	public int compareTo(HighscoreEntry another){
 		if(this.points != another.points)
@@ -226,7 +226,7 @@ class HighscoreEntry implements Comparable<HighscoreEntry>{
 
 
 	/**
-	 * Get a String array representation of the enry
+	 * Get a String array representation of the entry
 	 * <ol>
 	 * 	<li>cell: points</li>
 	 * 	<li>cell: remaining time</li>
@@ -247,7 +247,7 @@ class HighscoreEntry implements Comparable<HighscoreEntry>{
 
 	/**
 	 * get a string representation of the entry.<br>
-	 * The highscore entry have the following format:<br>
+	 * The highscore entry has the following format:<br>
 	 * ###name:[string]|points:[number]|date:dd.mm.yy HH;MM;SS|
 	 * rem_time:[number]
 	 *

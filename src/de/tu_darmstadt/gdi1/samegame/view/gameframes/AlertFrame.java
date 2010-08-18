@@ -1,4 +1,4 @@
-package de.tu_darmstadt.gdi1.samegame.gameframes;
+package de.tu_darmstadt.gdi1.samegame.view.gameframes;
 
 import java.awt.Color;
 

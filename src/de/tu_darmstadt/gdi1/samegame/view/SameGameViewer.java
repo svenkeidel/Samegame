@@ -3,6 +3,7 @@ package de.tu_darmstadt.gdi1.samegame.view;
 import java.awt.Color;
 import java.util.Locale;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.event.ChangeEvent;
@@ -122,20 +123,21 @@ public class SameGameViewer implements ChangeListener{
 		timeUpdate.start();
 	}
 
+	public void showFileChooseDialog(String source){
+		JFileChooser chooser = 
+			new JFileChooser(){
+			// TODO das ist eine on the fly ableitung einer klasse
+			};
+
+		chooser.setName(source);
+	}
+
 	public void showAddHighscoreFrame(){
 		addHighscoreFrame = new AddHighscoreFrame(currentLocale);
 	}
 
 	public void showHighscoreFrame(){
 		highscoreFrame = new HighscoreFrame(currentLocale, level);
-	}
-
-	public void showSaveGameFrame(){
-		saveGameFrame = new SaveGameFrame(controller);
-	}
-
-	public void showLoadGameFrame(){
-		loadGameFrame = new LoadGameFrame(controller);
 	}
 
 	public void showAboutFrame(){
@@ -146,20 +148,20 @@ public class SameGameViewer implements ChangeListener{
 		JFrame alertframe = new JFrame();
 		
 		int response = JOptionPane.showConfirmDialog(alertframe, alerttitle, alertstring,
-		       JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
-		
-				if (response == JOptionPane.OK_OPTION){
-					alertframe.setVisible(false);
-				}
-				
-				if (response == JOptionPane.CANCEL_OPTION){
-					alertframe.setVisible(false);
-				}
-				
-				if (response == JOptionPane.CLOSED_OPTION){
-					alertframe.setVisible(false);
-				}
-		}
+		   JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+	
+			if (response == JOptionPane.OK_OPTION){
+				alertframe.setVisible(false);
+			}
+			
+			if (response == JOptionPane.CANCEL_OPTION){
+				alertframe.setVisible(false);
+			}
+			
+			if (response == JOptionPane.CLOSED_OPTION){
+				alertframe.setVisible(false);
+			}
+	}
 		
 
 	
@@ -175,14 +177,6 @@ public class SameGameViewer implements ChangeListener{
 
 	public void closeHighscoreFrame(){
 		highscoreFrame = null;
-	}
-
-	public void closeSaveGameFrame(){
-		saveGameFrame = null;
-	}
-
-	public void closeLoadGameFrame(){
-		loadGameFrame = null;
 	}
 
 	public void closeAboutFrame(){

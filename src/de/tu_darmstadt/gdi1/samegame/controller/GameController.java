@@ -64,9 +64,9 @@ public class GameController extends AbstractController{
 		if (menuName.equals("Skin_Jewelskin"))
 			viewer.setSkin("jewelskin", Color.white, Color.black, Color.white);
 		if (menuName.equals("FileMenu_SaveLevel"))
-			viewer.showSaveGameFrame();
+			viewer.showFileChooseDialog("SaveLevel");
 		if (menuName.equals("FileMenu_LoadLevel"))
-			viewer.showLoadGameFrame();
+			viewer.showFileChooseDialog("LoadLevel");
 		if (menuName.equals("FileMenu_Exit"))
 			viewer.closeMainFrame();
 		if (menuName.equals("GameMenu_Undo"))
@@ -81,12 +81,12 @@ public class GameController extends AbstractController{
 			viewer.setLanguage(new Locale("pl", "PL"));
 		if (menuName.equals("About"))
 			viewer.showAboutFrame();
-	//	if (menuName.equals("FileMenu_GenerateCustomLevel"))
-	//		viewer.showCustomizeFrame();
-	//	if (menuName.equals("FileMenu_SaveGameState"))
-	//		viewer.showSaveGameStateFrame();
-	//	if (menuName.equals("FileMenu_LoadGameState"))
-	//		viewer.showLoadGameStateFrame();
+		if (menuName.equals("FileMenu_GenerateCustomLevel"))
+			//viewer.showCustomizeFrame();
+		if (menuName.equals("FileMenu_SaveGameState"))
+			viewer.showFileChooseDialog("SaveGameState");
+		if (menuName.equals("FileMenu_LoadGameState"))
+			viewer.showFileChooseDialog("LoadGameState");
 	}
 	
 	@Override
@@ -106,16 +106,23 @@ public class GameController extends AbstractController{
 	@Override
 	public void fileChoosed(String source, File f){
 		try{
+			if(source.equals("LoadLevel")){
+				Level newLevel = new Level(viewer);
+				newLevel.restoreLevel(f);
 
-			Level newLevel = new Level(viewer);
-			newLevel.restoreLevel(f);
+				viewer.setLevel(newLevel);
+				this.level = newLevel;
 
-			viewer.setLevel(newLevel);
-			this.level = newLevel;
-
-			viewer.closeMainFrame();
-			viewer.showMainFrame();
-			viewer.notifyLevelLoaded();
+				viewer.closeMainFrame();
+				viewer.showMainFrame();
+				viewer.notifyLevelLoaded();
+			}else if(source.equals("SaveLevel")){
+				// TODO
+			}else if(source.equals("LoadGameState")){
+				// TODO
+			}else if(source.equals("SaveGameState")){
+				// TODO
+			}
 		}catch(Exception e){
 			e.printStackTrace();
 		}

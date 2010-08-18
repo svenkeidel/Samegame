@@ -52,6 +52,8 @@ public class GameController extends AbstractController{
 			viewer.closeMainFrame();
 			viewer.setLevel(level);
 			level.generateLevel(10, 10, 5, 3);
+			viewer.showMainFrame();
+			viewer.notifyLevelLoaded();
 		}
 		if (menuName.equals("Skin_Default"))
 			viewer.setSkin("defaultskin", Color.white, Color.black, Color.LIGHT_GRAY);

@@ -28,10 +28,12 @@ import de.tu_darmstadt.gdi1.samegame.view.gameframes.MainPanel;
 
 public class GameController extends AbstractController{
 
+	////////////////////////Class/Attributes//////////////////////////
 	private SameGameViewer viewer;
 	private int markedRow;
 	private int markedCol;
 
+	////////////////////////Class/Constructors////////////////////////
 	public GameController(Level level){
 		this.level = level;
 		this.markedRow = 0;
@@ -45,13 +47,26 @@ public class GameController extends AbstractController{
 		this.markedCol = 0;
 	}
 
+	////////////////////////Getters//&//Setters///////////////////////
 	public void setLevel(Level level){
 		this.level = level;
 	}
 	
+
+	////////////////////////Class/Operations//////////////////////////
+	
+
+	/**
+	 * Handle the clicks on a menu entry
+	 * 
+	 * 
+	 * @param menuItem
+	 * 				The menu entry this was clicked
+	 */
 	@Override
 	public void menuClick(JMenuItem menuItem){
 		String menuName = menuItem.getName();
+		// Which menu item has been clicked? Release the appropriate method
 		if (menuName.equals("GameMenu_RestartLvl") )
 			level.restartLevel();
 		if (menuName.equals("FileMenu_GenerateLevel")){
@@ -128,6 +143,14 @@ public class GameController extends AbstractController{
 			fileChoosed(source, f);
 	}
 
+	/**
+	 * Handle the clicks on the Gamepanel
+	 * 
+	 * @param ActionEvent
+	 * 				The Actionevent this was released
+	 * @param JButton
+	 * 				The button this was clicked
+	 */
 	@Override
 	public void fieldClick(ActionEvent e, JButton b){
 		JButton btn = b;
@@ -137,12 +160,21 @@ public class GameController extends AbstractController{
 			int posX =  (int)btn.getLocation().getX();
 			int posY =  (int)btn.getLocation().getY();
 
+			// entityClicked() on the bottun that was clicked
 			entityClicked(posX / btn.getWidth(), 
 								posY / btn.getHeight());
 			
 		}
 	}
 
+	/**
+	 * Handle which save/load menu entry was clicked
+	 * 
+	 * @param source
+	 * 				which save/load menu entry was choosed
+	 * @param f
+	 * 				which file should be saved
+	 */
 	public void fileChoosed(String source, File f){
 		try{
 			if(source.equals("LoadLevel")){
@@ -175,12 +207,25 @@ public class GameController extends AbstractController{
 		}
 	}
 
+
+	/**
+	 * Handle the click on a stone
+	 * 
+	 * @param positionX
+	 * 				position of a stone on the x axis
+	 * @param positionY
+	 * 				position of a stone on the y axis
+	 */
 	public void entityClicked(int positionX, int positionY){
 		MainPanel panel = viewer.getMainPanel();
 		panel.getParentWindow().requestFocus();
 
+		// removeStone() is only possible, if no animation in process 
+		// and if the stone removeable
 		if(!viewer.duringAnimation() && level.removeable(positionY, positionX)){
 			try{
+				// check if the game unfinished
+				// start the animation, remove the stone and redraw the gamefield
 				if(!level.isFinished()){
 					viewer.startAnimation(positionY, positionX, 500);
 					level.removeStone(positionY, positionX);
@@ -194,15 +239,22 @@ public class GameController extends AbstractController{
 		}
 	}
 
-	
+	/**
+	 * Handle the keyactions
+	 * 
+	 * @param e
+	 * 			the key this was pressed
+	 */
 	@Override
 	public void keyPressed(KeyEvent e){
 		MainPanel panel = viewer.getMainPanel();
 
 		int key = e.getKeyCode();
+		// marked the field on upper left corner as the "start stone"
 		if(viewer!=null)
 			viewer.markField(markedRow, markedCol);
 
+		// which key was pressed? Release the appropriate method
 		switch(key){
 			case VK_N:
 						level.restartLevel();

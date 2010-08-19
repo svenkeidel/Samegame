@@ -171,8 +171,10 @@ public class SameGameViewer implements ChangeListener{
 	
 	// TODO proof whether the close methods are needed
 	public void closeMainFrame(){
-		mainFrame.dispose();
-		mainFrame = null;
+		if(mainFrame != null){
+			mainFrame.dispose();
+			mainFrame = null;
+		}
 	}
 
 	public void closeAddHighscoreFrame(){

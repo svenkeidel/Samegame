@@ -29,14 +29,20 @@ import de.tu_darmstadt.gdi1.samegame.view.gameframes.MainPanel;
 public class GameController extends AbstractController{
 
 	private SameGameViewer viewer;
+	private int markedRow;
+	private int markedCol;
 
 	public GameController(Level level){
 		this.level = level;
+		this.markedRow = 0;
+		this.markedCol = 0;
 	}
 
 	public GameController(Level level, SameGameViewer viewer){
 		this.level = level;
 		this.viewer = viewer;
+		this.markedRow = 0;
+		this.markedCol = 0;
 	}
 
 	public void setLevel(Level level){
@@ -143,9 +149,13 @@ public class GameController extends AbstractController{
 
 		if(!viewer.duringAnimation() && level.removeable(positionY, positionX)){
 			try{
-				viewer.startAnimation(positionY, positionX, 500);
-				level.removeStone(positionY, positionX);
-				panel.redraw();
+				if (level.isFinished()){
+					// TODO I18N: Show finish message
+				}else{
+					viewer.startAnimation(positionY, positionX, 500);
+					level.removeStone(positionY, positionX);
+					panel.redraw();
+				}
 			}catch(ParameterOutOfRangeException e){
 				viewer.showAlertFrame(e.getParameterName(), "Parameter out of Range");
 			}catch(InternalFailureException e){
@@ -157,14 +167,11 @@ public class GameController extends AbstractController{
 	
 	@Override
 	public void keyPressed(KeyEvent e){
+		MainPanel panel = viewer.getMainPanel();
+
 		int key = e.getKeyCode();
-		int markedRow = 0;
-		int markedCol = 0;
-		if(viewer!=null){
-			markedRow = viewer.getMarkedFieldRow();
-			markedCol = viewer.getMarkedFieldCol();
+		if(viewer!=null)
 			viewer.markField(markedRow, markedCol);
-		}
 
 		switch(key){
 			case VK_N:
@@ -183,22 +190,23 @@ public class GameController extends AbstractController{
 					}catch(CannotRedoException ignored){}
 				break;
 			case VK_SPACE:
-				if (viewer.duringAnimation() != true)
-					entityClicked(markedCol, markedRow);
-				if (level.isFinished()){
-					if (viewer.getLanguage().getLanguage().equals(new Locale("de","DE").getLanguage()))
-						viewer.showAlertFrame("Keine Züge mehr Möglich", "Spielende");
-					if (viewer.getLanguage().getLanguage().equals(new Locale("en","US").getLanguage()))
-						viewer.showAlertFrame("No more moves possible", "Game over");
-				}
-					
+				if (panel != null){
+						if(viewer.duringAnimation() != true)
+							entityClicked(markedCol, markedRow);
+				}else
+					try{
+						level.removeStone(markedRow, markedCol);
+					}catch(ParameterOutOfRangeException ex){
+						viewer.showAlertFrame(ex.getMessage(), "Parameter out of range");
+					}
 				break;
 			case VK_LEFT:
 				if (markedCol >0){
 					markedCol -=1;
 					viewer.markField(markedRow,markedCol);
 					try{
-						viewer.getMainPanel().redraw();
+						if(panel != null)
+							panel.redraw();
 					}catch(InternalFailureException ex){
 						viewer.showAlertFrame(ex.getMessage(), "Internal Failure");
 					}
@@ -209,7 +217,8 @@ public class GameController extends AbstractController{
 					markedCol +=1;
 					viewer.markField(markedRow,markedCol);
 					try{
-						viewer.getMainPanel().redraw();
+						if(panel != null)
+							panel.redraw();
 					}catch(InternalFailureException ex){
 						viewer.showAlertFrame(ex.getMessage(), "Internal Failure");
 					}
@@ -220,7 +229,8 @@ public class GameController extends AbstractController{
 					markedRow -=1;
 					viewer.markField(markedRow, markedCol);
 					try{
-						viewer.getMainPanel().redraw();
+						if(panel != null)
+							panel.redraw();
 					}catch(InternalFailureException ex){
 						viewer.showAlertFrame(ex.getMessage(), "Internal Failure");
 					}
@@ -231,7 +241,8 @@ public class GameController extends AbstractController{
 					markedRow +=1;
 					viewer.markField(markedRow, markedCol);
 					try{
-						viewer.getMainPanel().redraw();
+						if(panel != null)
+							panel.redraw();
 					}catch(InternalFailureException ex){
 						viewer.showAlertFrame(ex.getMessage(), "Internal Failure");
 					}

@@ -24,7 +24,7 @@ public class SameGameTestAdapterExtended3 extends SameGameTestAdapterExtended2 {
 	 * Use this constructor to initialize everything you need.
 	 */
 	public SameGameTestAdapterExtended3() {
-		viewer.showMainFrame();
+		super();
 	}
 
 	/**

@@ -7,6 +7,9 @@ import java.util.ResourceBundle;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
+/**
+ * The AboutFrame shows the creator of this game
+ */
 @SuppressWarnings("serial")
 public class AboutFrame extends JFrame{
 

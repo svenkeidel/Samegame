@@ -4,6 +4,9 @@ import de.tu_darmstadt.gdi1.samegame.model.Level;
 
 import de.tu_darmstadt.gdi1.samegame.exceptions.InternalFailureException;
 
+/**
+ * A thread to instantiate and start an animation of falling stones
+ */
 class AnimationThread extends Thread{
 
 	private Byte[][] field;

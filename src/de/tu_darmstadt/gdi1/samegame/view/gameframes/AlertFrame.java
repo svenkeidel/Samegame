@@ -6,6 +6,9 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import javax.swing.JFrame;
 
+/**
+ * A frame to show the exceptions
+ */
 //BlankoFrame for the alert window
 @SuppressWarnings("serial")
 public class AlertFrame extends JFrame{

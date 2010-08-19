@@ -6,6 +6,9 @@ import java.io.File;
 
 import javax.swing.filechooser.FileFilter;
 
+/**
+ * A frame to choose between saveLevel, loadLevel, saveGame and loadGame
+ */
 @SuppressWarnings("serial")
 public class FileChooseFrame extends JFileChooser{
 

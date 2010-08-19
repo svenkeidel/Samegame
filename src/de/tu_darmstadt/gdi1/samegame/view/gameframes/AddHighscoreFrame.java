@@ -7,6 +7,9 @@ import java.util.ResourceBundle;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+/**
+ * A frame to write your name for the highscore
+ */
 @SuppressWarnings("serial")
 public class AddHighscoreFrame extends JFrame{
 	private String eingabe;

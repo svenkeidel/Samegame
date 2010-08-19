@@ -11,6 +11,9 @@ import javax.swing.JTable;
 
 import de.tu_darmstadt.gdi1.samegame.model.Level;
 
+/**
+ * A frame to show the highscore entrys
+ */
 @SuppressWarnings("serial")
 public class HighscoreFrame extends JFrame{
 

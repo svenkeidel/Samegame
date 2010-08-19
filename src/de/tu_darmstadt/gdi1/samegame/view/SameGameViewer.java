@@ -103,6 +103,10 @@ public class SameGameViewer implements ChangeListener{
 		mainFrame.setLanguage(locale);
 	}
 	
+	public Locale getLanguage(){
+		return mainFrame.getLanguage();
+	}
+	
 	public void notifyLevelLoaded(){
 		if(mainFrame != null){
 			try{

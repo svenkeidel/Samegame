@@ -102,6 +102,13 @@ public class GameController extends AbstractController{
 
 			entityClicked(posX / btn.getWidth(), 
 								posY / btn.getHeight());
+			
+		}
+		if (level.isFinished()){
+			if (viewer.getLanguage().getLanguage().equals(new Locale("de","DE").getLanguage()))
+				viewer.showAlertFrame("Keine Züge mehr Möglich", "Spielende");
+			if (viewer.getLanguage().getLanguage().equals(new Locale("en","US").getLanguage()))
+				viewer.showAlertFrame("No more moves possible", "Game over");
 		}
 	}
 
@@ -178,6 +185,13 @@ public class GameController extends AbstractController{
 			case VK_SPACE:
 				if (viewer.duringAnimation() != true)
 					entityClicked(markedCol, markedRow);
+				if (level.isFinished()){
+					if (viewer.getLanguage().getLanguage().equals(new Locale("de","DE").getLanguage()))
+						viewer.showAlertFrame("Keine Züge mehr Möglich", "Spielende");
+					if (viewer.getLanguage().getLanguage().equals(new Locale("en","US").getLanguage()))
+						viewer.showAlertFrame("No more moves possible", "Game over");
+				}
+					
 				break;
 			case VK_LEFT:
 				if (markedCol >0){

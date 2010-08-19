@@ -98,6 +98,10 @@ public class MainFrame extends JFrame implements Runnable{
 		this.locale = locale;
 		updateContents();
 	}
+	
+	public Locale getLanguage(){
+		return this.locale;
+	}
 
 	public void setSkin(String skin, Color FColor, Color BColor){
 		this.skin = skin;

@@ -3,26 +3,55 @@
  */
 class UMLOptions{}
 
+
+/*===================================================================*/
 /**
  * de.tu_darmstadt.gdi1.samegame
  * @opt shape package
  * @opt commentname
  * @opt !constructors
- * @assoc - - - GameController
- * @assoc - - - Level
- * @assoc - - - SameGameViewer
- * @assoc - - - GameState
- * @navassoc - - - package_highscore
- * @navassoc - - - package_ui
- * @navassoc - - - package_gameframes
+ * @navassoc - - - package_model
+ * @navassoc - - - package_view
+ * @navassoc - - - package_controller
  */
 class package_samegame{}
+/*===================================================================*/
+
+
+/*===================================================================*/
+/**
+ * de.tu_darmstadt.gdi1.samegame.controller
+ * @opt shape package
+ * @opt commentname
+ * @assoc - - - AbstractController
+ * @assoc - - - GameController
+ */
+class package_controller{}
+
+/** 
+ * + AbstractController
+ * @opt commentname
+ */
+class AbstractController{}
 
 /** 
  * + GameController
  * @opt commentname
  */
-class GameController{}
+class GameController extends AbstractController{}
+/*===================================================================*/
+
+
+/*===================================================================*/
+/**
+ * de.tu_darmstadt.gdi1.samegame.model
+ * @opt shape package
+ * @opt commentname
+ * @assoc - - - Level
+ * @assoc - - - GameState
+ * @navassoc - - - package_highscore
+ */
+class package_model{}
 
 /** 
  * + Level
@@ -31,19 +60,15 @@ class GameController{}
 class Level {}
 
 /** 
- * + SameGameViewer
- * @opt commentname
- */
-class SameGameViewer{}
-
-/** 
  * + GameState
  * @opt commentname
  */
 class GameState{}
+/*===================================================================*/
 
+/*===================================================================*/
 /**
- * de.tu_darmstadt.gdi1.samegame.highscore
+ * de.tu_darmstadt.gdi1.samegame.model.highscore
  * @opt shape package
  * @opt commentname
  * @assoc - - - Highscore
@@ -62,10 +87,30 @@ class Highscore{}
  * @opt commentname
  */
 class HighscoreEntry{}
+/*===================================================================*/
 
 
+/*===================================================================*/
 /**
- * de.tu_darmstadt.gdi1.samegame.gameframes
+ * de.tu_darmstadt.gdi1.samegame.view
+ * @opt shape package
+ * @opt commentname
+ * @assoc - - - SameGameViewer
+ * @navassoc - - - package_gameframes
+ */
+class package_view{}
+
+/** 
+ * + SameGameViewer
+ * @opt commentname
+ */
+class SameGameViewer{}
+/*===================================================================*/
+
+
+/*===================================================================*/
+/**
+ * de.tu_darmstadt.gdi1.samegame.view.gameframes
  * @opt shape package
  * @opt commentname
  * @assoc - - - MainFrame
@@ -80,39 +125,17 @@ class HighscoreEntry{}
  */
 class package_gameframes{}
 
-
-/**
- * de.tu_darmstadt.gdi1.samegame.ui
- * @opt shape package
- * @opt commentname
- * @assoc - - - GameWindow
- * @assoc - - - GamePanel
- */
-class package_ui{}
-
-/**
- * + GameWindow
- * @opt commentname
- */
-class GameWindow{}
-
-/**
- * + GamePanel
- * @opt commentname
- */
-class GamePanel{}
-
 /**
  * + MainFrame
  * @opt commentname
  */
-class MainFrame extends GameWindow{}
+class MainFrame{}
 
 /**
  * + MainFrame
  * @opt commentnam
  */
-class MainPanel extends GamePanel{}
+class MainPanel{}
 
 /**
  * + HighscoreFrame
@@ -155,3 +178,4 @@ class LoadGameFrame{}
  * @opt commentname
  */
 class AddHighscoreFrame{}
+/*===================================================================*/

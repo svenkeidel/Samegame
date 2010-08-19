@@ -8,33 +8,42 @@
  */
 class UMLOptions{}
 
-/**
- * @note 
- * Controller: procceses on events 
- * sended by the View and call the 
- * specific function in the Model
- *
- * @depend - "updates state" - Level
- */
-class GameController{
+
+class GameController extends AbstractController{
 	private Level level;
-	public GameController(Level level){}
-	public void setLevel(Level level){}
-	public void actionPerformed(ActionEvent e){}
-	public void keyPressed(KeyEvent e){}
-	public void menuCanceled(MenuEvent e){}
-	public void menuDeselected(MenuEvent e){}
-	public void menuSelected(MenuEvent e){}
+	public GameController(Level level);
+	public GameController(Level level, SameGameViewer viewer);
+
+	public void setLevel(Level level);
+	public void menuClick(JMenuItem menuItem);
+
+	public void fieldClick(ActionEvent e, JButton b);
+	public void fileChoosed(String source, File f);
+
+	public void entityClicked(int positionX, int positionY);
+	public void keyPressed(KeyEvent e);
 }
 
 /**
- * @note 
- * Model: The Level-data in the game. 
- * When the Model changes its state, 
- * it causes an ChangeEvent to the 
- * View-ChangeListener
+ * @note
+ * controller
+ * @depend - "updates state" - Level
+ */
+abstract class AbstractController extends KeyAdapter implements ActionListener{
+	protected Level level;
+	public void setLevel(Level level);
+	public final void actionPerformed(ActionEvent e);
+	public abstract void menuClick(JMenuItem menuItem);
+	public abstract void fieldClick(ActionEvent e, JButton b);
+	public abstract void fileChoosed(String source, File f);
+	public abstract void keyPressed(KeyEvent e);
+}
+
+/**
+ * @note
+ * model
  * @composed 1 - 1 Highscore
- * @composed 1 - 1 GameState
+ * @navassoc 1 administrate m GameState
  * @navassoc - "causes state change events" - SameGameViewer
  */
 class Level {
@@ -62,7 +71,6 @@ class Level {
 	void setMinStones( int minStones);
 	public int getMinStones();
 	public String getAdditionalLevelInf();
-	public String getLevelStateInf();
 	public String getOrigLevelState();
 	public String getCurrentLevelState();
 	public String getHighscorelist();
@@ -99,12 +107,10 @@ class Level {
 }
 
 /**
- * @note 
- * View: The Presentation Layer. Is
- * updated by changing events caused
- * by the Model
+ * @note
+ * view
  * @depend - "listen for state change" - Level
- * @navassoc 1 "sends events" 1 GameController
+ * @navassoc 1 "sends events" 1 AbstractController
  * @navassoc - "displays" - MainFrame
  * @navassoc - "displays" - OptionsFrame
  * @navassoc - "displays" - AskForSaveFrame
@@ -115,56 +121,119 @@ class Level {
  * @navassoc - "displays" - AboutFrame
  */
 class SameGameViewer implements ChangeListener{
+	public static final Locale DEFAULT_LOCALE;
+	private Locale currentLocale;
 	private Level level;
-
-	private int markedRow, markedCol;
-
+	private AbstractController controller;
 	private MainFrame mainFrame;
-	private OptionsFrame optionsFrame;
-	private AskForSaveFrame askForSaveFrame;
+	private MainPanel mainPanel;
 	private AddHighscoreFrame addHighscoreFrame;
     private HighscoreFrame highscoreFrame;
     private SaveGameFrame saveGameFrame;
     private LoadGameFrame loadGameFrame;
     private AboutFrame aboutFrame;
+	private Color BColor;
+	private Color FColor;
 
+	public SameGameViewer();
+
+	public void setLevel(Level level);
+	public void setController(AbstractController controller);
+	public void setSkin(String skin, Color BColor, Color FColor, Color MColor);
 	public void stateChanged(ChangeEvent e);
-	public void printContent();
-
-	public void timePoller();
 	public void markField(int row, int col);
-
+	public MainPanel getMainPanel();
+	public int getMarkedFieldRow();
+	public int getMarkedFieldCol();
+	public boolean duringAnimation();
+	public void startAnimation(int row, int col, long animationSpeed);
+	public void setLanguage(Locale locale);
+	public void notifyLevelLoaded();
 	public void showMainFrame();
-	public void showOptionsFrame();
-	public void showAskForSaveFrame();
+	public void showFileChooseDialog(String source);
 	public void showAddHighscoreFrame();
 	public void showHighscoreFrame();
-	public void showSaveGameFrame();
-	public void showLoadGameFrame();
 	public void showAboutFrame();
-
+	public static void showAlertFrame(String alertstring, String alerttitle);
 	public void closeMainFrame();
-	public void closeOptionsFrame();
-	public void closeAskForSaveFrame();
 	public void closeAddHighscoreFrame();
 	public void closeHighscoreFrame();
-	public void closeSaveGameFrame();
-	public void closeLoadGameFrame();
 	public void closeAboutFrame();
+	public static void main(String args[]);
 }
 
 /**
- * TimeUpdate extends Thread
- * @opt commentname
- * @navassoc - - - Level
+ * @composed 1 - 1 MainPanel
  */
-class TimeUpdate extends Thread{
-	private StopWatch watch;
+class MainFrame{
+	private Level level;
+	private Locale locale;
+	private ResourceBundle messages;
+	private AbstractController controller;
+	private MainPanel panel;
+	private JMenuBar menuBar;
+	private JPanel statusLine;
+	private JLabel MinStones;
+	private JLabel Points;
+	private JLabel ElapsedTime;
+	private JLabel TargetTime;
+	private JLabel sl_MinStones;
+	private JLabel sl_Points;
+	private JLabel sl_ElapsedTime;
+	private JLabel sl_TargetTime;
+	private String skin;
+	private Color FColor;
+	private Color BColor;
+	public MainFrame(Level level, AbstractController controller, Locale locale, String skin, Color FColor, Color BColor);
+	public MainPanel getMainPanel();
+	public void setLanguage(Locale locale);
+	public void setSkin(String skin, Color FColor, Color BColor);
+	public void updateContents();
+	public void notifyLevelLoaded(int width, int height);
+	public void redraw();
 	public void run();
 }
 
-/** @opt !constructors */
-class MainFrame{}
+class MainPanel{
+	private Level level;
+	private AbstractController controller;
+	private int markedRow, markedCol;
+	private boolean duringAnimation;
+	private Color bgColor = Color.black;
+	private Byte[][] field;
+	private Color markColor = Color.white;
+	private Vector<JButton> entities = null;
+	private HashMap<String, ImageIcon> images = null;
+	private MainFrame parentWindow = null;
+	private int layoutWidth = 0, layoutHeight = 0;
+	private boolean autosize = false;
+	public MainPanel(MainFrame parentWindow, Level level, AbstractController controller, String skin);
+	public int getMarkedFieldRow();
+	public void setBGColor(Color color);
+	public int getMarkedFieldCol();
+	public MainFrame getParentWindow();
+	public void setSkin(String skin);
+	public void setAutosize (boolean Autosize);
+	public boolean hasEntities();
+	public void redraw();
+	private void clearFrame();
+	void notifyLevelLoaded(int width, int height);
+	private void resizePanel();
+	public void markField(int row, int col);
+	public boolean isImageRegistered(String identifier);
+	public void registerImage(String identifier, String fileName);
+	public void registerImage(String identifier, URL fileName);
+	public void unregisterImage(String identifier);
+	private JButton placeEntity(String imageIdentifier, boolean marked);
+	private JButton placeEntity(Image image, boolean marked);
+	public void setMarkColor(Color mcolor);
+	private JButton placeEntity(Icon icon, boolean marked);
+	public boolean duringAnimation();
+	void endAnimation();
+	public void startAnimation(int row, int col, long animationSpeed);
+	public void setGamePanelContents();
+}
+
 /** @opt !constructors */
 class HighscoreFrame{}
 /** @opt !constructors */
@@ -173,8 +242,6 @@ class AskForSaveFrame{}
 class AboutFrame{} 
 /** @opt !constructors */
 class SaveGameFrame{}
-/** @opt !constructors */
-class OptionsFrame{} 
 /** @opt !constructors */
 class LoadGameFrame{}
 /** @opt !constructors */
@@ -223,11 +290,9 @@ class HighscoreEntry{
 	public String toString();
 }
 
-/**
- * GameState extends javax.swing.undo.AbstractUndoableEdit
- * @opt commentname
- */
 class GameState{
+	private Byte[][] fieldState;
+	private double points;
 	public GameState(Byte[][] fieldState, double points);
 	public Byte[][] getFieldState();
 	public void setFieldState(Byte[][] fieldState);
@@ -246,7 +311,77 @@ class File{}
 /**
  * @hidden
  */
+class JMenuItem{}
+
+/**
+ * @hidden
+ */
+class JMenuBar{}
+
+/**
+ * @hidden
+ */
+class JMenu{}
+
+/**
+ * @hidden
+ */
+class JPanel{}
+
+/**
+ * @hidden
+ */
+class JLabel{}
+
+/**
+ * @hidden
+ */
+class JButton{}
+
+/**
+ * @hidden
+ */
+class Locale{}
+
+/**
+ * @hidden
+ */
+class ResourceBundle{}
+
+/**
+ * @hidden
+ */
+class Color{}
+
+/**
+ * @hidden
+ */
+class URL{}
+
+/**
+ * @hidden
+ */
+class Icon{}
+
+/**
+ * @hidden
+ */
+class ImageIcon{}
+
+/**
+ * @hidden
+ */
+class Image{}
+
+/**
+ * @hidden
+ */
 class Vector<T>{}
+
+/**
+ * @hidden
+ */
+class HashMap<T,E>{}
 
 /**
  * @hidden

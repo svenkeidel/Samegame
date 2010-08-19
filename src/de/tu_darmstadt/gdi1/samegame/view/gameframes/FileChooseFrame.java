@@ -23,15 +23,25 @@ public class FileChooseFrame extends JFileChooser{
 		this.addActionListener(controller);
 
 		this.setFileFilter(getFileFilter(source));
-
+		JFrame parentframe = new JFrame();
+		JFrame.setDefaultLookAndFeelDecorated(false);
+		
 		if(source.equals("SaveLevel")){
-			// TODO show save dialog
+			JFileChooser chooser = new JFileChooser();
+			chooser.showSaveDialog(parentframe);
+			chooser.setVisible(true);
 		}else if(source.equals("SaveGameState")){
-			// TODO show save dialog
+			JFileChooser chooser = new JFileChooser();
+			chooser.showSaveDialog(parentframe);
+			chooser.setVisible(true);
 		}else if(source.equals("LoadLevel")){
-			// TODO show open dialog
+			JFileChooser chooser = new JFileChooser();
+			chooser.showOpenDialog(parentframe);
+			chooser.setVisible(true);
 		}else if(source.equals("LoadGameState")){
-			// TODO show open dialog
+			JFileChooser chooser = new JFileChooser();
+			chooser.showOpenDialog(parentframe);
+			chooser.setVisible(true);
 		}
 	}
 

@@ -134,20 +134,7 @@ public class SameGameViewer implements ChangeListener{
 
 	public void showFileChooseDialog(String source){
 	
-		JFrame parentframe = new JFrame();
-		JFrame.setDefaultLookAndFeelDecorated(false);
-		
-		if (source == "LoadLevel" || source == "LoadGameState")
-		{	JFileChooser chooser = new JFileChooser();
-			returnv = chooser.showOpenDialog(parentframe);
-			chooser.setVisible(true);
-		}
-		
-		if (source == "SaveLevel" || source == "SaveGameState")
-		{	JFileChooser chooser2 = new JFileChooser();
-			returnv = chooser2.showSaveDialog(parentframe);
-			chooser2.setVisible(true);
-		}
+	new FileChooseFrame(source, controller);
 	}
 
 	public void showAddHighscoreFrame(){

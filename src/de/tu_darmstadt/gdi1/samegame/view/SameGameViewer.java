@@ -349,6 +349,15 @@ public class SameGameViewer implements ChangeListener{
 	}
 	public void showCustomizeFrame(){
 		customFrame = new CustomizeFrame(currentLocale);
+		this.closeMainFrame();
+		level.generateLevel(
+					customFrame.getCustomWidth(),
+					customFrame.getCustomHeight(),
+					customFrame.getCustomStoneNumber(),
+					customFrame.getCustomMinStones());
+		this.setLevel(level);
+		this.showMainFrame();
+		this.notifyLevelLoaded();
 	}
 
 	/**

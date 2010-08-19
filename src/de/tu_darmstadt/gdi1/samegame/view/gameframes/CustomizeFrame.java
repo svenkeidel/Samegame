@@ -56,10 +56,6 @@ public class CustomizeFrame extends JFrame{
                cu_height = c_height.getText();
                cu_numb = c_numb.getText();
                cu_minStones = c_minStones.getText();
-
-		
-		
-		
 	}
 
 	public int getCustomWidth(){

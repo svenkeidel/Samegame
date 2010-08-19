@@ -120,18 +120,6 @@ public class GameController extends AbstractController{
 			viewer.showAboutFrame();
 		if (menuName.equals("FileMenu_GenerateCustomLevel")){
 			viewer.showCustomizeFrame();
-		if (menuName.equals("CustomizeFrame")){
-			viewer.closeMainFrame();
-			viewer.setLevel(level);
-			level.generateLevel(
-						cframe.getCustomWidth(),
-						cframe.getCustomHeight(),
-						cframe.getCustomStoneNumber(),
-						cframe.getCustomMinStones());
-			viewer.showMainFrame();
-			viewer.notifyLevelLoaded();
-			
-		}
 		}
 
 		File f;

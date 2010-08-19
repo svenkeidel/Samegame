@@ -9,8 +9,6 @@ import static java.awt.event.KeyEvent.*;
 import java.io.File;
 
 import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
@@ -34,28 +32,10 @@ public class GameController extends AbstractController{
 	private int markedRow;
 	private int markedCol;
 
-	private Locale locale = SameGameViewer.DEFAULT_LOCALE;
-	private ResourceBundle messages;
-
 	public GameController(Level level){
 		this.level = level;
 		this.markedRow = 0;
 		this.markedCol = 0;
-		try{
-			messages = 
-				ResourceBundle.getBundle(
-						"de.tu_darmstadt.gdi1.samegame.view.gameframes.MainBundle", 
-						this.locale, 
-						this.getClass().getClassLoader()); 
-		}catch(MissingResourceException e){
-			this.locale = new Locale("de", "DE");
-
-			messages = 
-				ResourceBundle.getBundle(
-						"de.tu_darmstadt.gdi1.samegame.view.gameframes.MainBundle", 
-						this.locale,
-						this.getClass().getClassLoader()); 
-		}
 	}
 
 	public GameController(Level level, SameGameViewer viewer){
@@ -113,21 +93,12 @@ public class GameController extends AbstractController{
 		}
 		
 
-		if (menuName.equals("German")){
-			this.locale = new Locale("de", "DE");
-			viewer.setLanguage(locale);
-			getBundle();
-		}
-		if (menuName.equals("English")){
-			this.locale = new Locale("en", "US");
-			viewer.setLanguage(locale);
-			getBundle();
-		}
-		if (menuName.equals("Polish")){
-			this.locale = new Locale("pl", "PL");
-			viewer.setLanguage(this.locale);
-			getBundle();
-		}
+		if (menuName.equals("German"))
+			viewer.setLanguage(new Locale("de", "DE"));
+		if (menuName.equals("English"))
+			viewer.setLanguage(new Locale("en", "US"));
+		if (menuName.equals("Polish"))
+			viewer.setLanguage(new Locale("pl", "PL"));
 		if (menuName.equals("About"))
 			viewer.showAboutFrame();
 		if (menuName.equals("FileMenu_GenerateCustomLevel")){
@@ -157,24 +128,6 @@ public class GameController extends AbstractController{
 			fileChoosed(source, f);
 	}
 
-	private void getBundle(){
-		try{
-			messages = 
-				ResourceBundle.getBundle(
-						"de.tu_darmstadt.gdi1.samegame.controller.GameControllerBundle", 
-						this.locale, 
-						this.getClass().getClassLoader()); 
-		}catch(MissingResourceException e){
-			this.locale = new Locale("de", "DE");
-
-			messages = 
-				ResourceBundle.getBundle(
-						"de.tu_darmstadt.gdi1.samegame.controller.GameControllerBundle", 
-						this.locale,
-						this.getClass().getClassLoader()); 
-		}
-	}
-	
 	@Override
 	public void fieldClick(ActionEvent e, JButton b){
 		JButton btn = b;
@@ -228,11 +181,7 @@ public class GameController extends AbstractController{
 
 		if(!viewer.duringAnimation() && level.removeable(positionY, positionX)){
 			try{
-				if (level.isFinished()){
-					SameGameViewer.showAlertFrame(messages.getString("Finish_title"), 
-							messages.getString("Finish_message"));
-					// TODO show add highscore frame
-				}else{
+				if(!level.isFinished()){
 					viewer.startAnimation(positionY, positionX, 500);
 					level.removeStone(positionY, positionX);
 					panel.redraw();

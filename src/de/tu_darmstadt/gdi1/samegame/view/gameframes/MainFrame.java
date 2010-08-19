@@ -31,6 +31,8 @@ import de.tu_darmstadt.gdi1.samegame.controller.AbstractController;
 import de.tu_darmstadt.gdi1.samegame.exceptions.InternalFailureException;
 import de.tu_darmstadt.gdi1.samegame.exceptions.ParameterOutOfRangeException;
 
+import de.tu_darmstadt.gdi1.samegame.view.SameGameViewer;
+
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame implements Runnable{
 
@@ -428,7 +430,6 @@ public class MainFrame extends JFrame implements Runnable{
 
 	public void redraw(){
 		if(level.isFinished()){
-			// TODO show finished message
 			ElapsedTime.setText(""+level.getElapsedTime()/1000.0);
 		}else
 			ElapsedTime.setText(""+(int)(level.getElapsedTime()/1000.0));

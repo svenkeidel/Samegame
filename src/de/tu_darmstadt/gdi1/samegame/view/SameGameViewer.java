@@ -2,6 +2,9 @@ package de.tu_darmstadt.gdi1.samegame.view;
 
 import java.awt.Color;
 import java.io.File;
+
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 import javax.swing.filechooser.FileFilter;
 import java.util.Locale;
 
@@ -37,9 +40,26 @@ public class SameGameViewer implements ChangeListener{
 
 	private Color current_BColor = Color.black;
 	private Color current_FColor = Color.white;
+	
+	private ResourceBundle messages;
 
 	public SameGameViewer(){
 		currentLocale = (Locale) DEFAULT_LOCALE.clone();
+		try{
+			messages = 
+				ResourceBundle.getBundle(
+						"de.tu_darmstadt.gdi1.samegame.view.ViewBundle", 
+						this.currentLocale, 
+						this.getClass().getClassLoader()); 
+		}catch(MissingResourceException e){
+			this.currentLocale = new Locale("de", "DE");
+
+			messages = 
+				ResourceBundle.getBundle(
+						"de.tu_darmstadt.gdi1.samegame.view.ViewBundle", 
+						this.currentLocale,
+						this.getClass().getClassLoader()); 
+		}
 	}
 
 	public void setLevel(Level level){
@@ -61,12 +81,17 @@ public class SameGameViewer implements ChangeListener{
 	}
 	// implements method from interface javax.swing.event.ChangeListener
 	public void stateChanged(ChangeEvent e){
-		if(mainFrame != null)
+		if(mainFrame != null){
 			try{
 				mainPanel.redraw();
 			}catch(InternalFailureException ex){
 				ex.printStackTrace();
 			}
+			if(level.isFinished()){
+				showAlertFrame(messages.getString("Finish_Title"), messages.getString("Finish_Message"));
+				//TODO add highscore frame
+			}
+		}
 	}
 	
 	public void markField(int row, int col){
@@ -105,6 +130,21 @@ public class SameGameViewer implements ChangeListener{
 	public void setLanguage(Locale locale){
 		mainFrame.setLanguage(locale);
 		currentLocale = locale;
+		try{
+			messages = 
+				ResourceBundle.getBundle(
+						"de.tu_darmstadt.gdi1.samegame.view.ViewBundle", 
+						this.currentLocale, 
+						this.getClass().getClassLoader()); 
+		}catch(MissingResourceException e){
+			this.currentLocale = new Locale("de", "DE");
+
+			messages = 
+				ResourceBundle.getBundle(
+						"de.tu_darmstadt.gdi1.samegame.view.ViewBundle", 
+						this.currentLocale,
+						this.getClass().getClassLoader()); 
+		}
 	}
 	
 	public Locale getLanguage(){

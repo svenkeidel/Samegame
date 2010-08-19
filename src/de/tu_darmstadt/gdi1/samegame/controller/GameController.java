@@ -62,15 +62,15 @@ public class GameController extends AbstractController{
 			viewer.notifyLevelLoaded();
 		}
 		if (menuName.equals("Skin_Default"))
-			viewer.setSkin("defaultskin", Color.white, Color.black, Color.LIGHT_GRAY);
+			viewer.setSkin("defaultskin", Color.black, Color.white, Color.LIGHT_GRAY);
 		if (menuName.equals("Skin_Tuskin"))
-			viewer.setSkin("tuskin", Color.black, Color.white, Color.black);
+			viewer.setSkin("tuskin", Color.white, Color.black, Color.black);
 		if (menuName.equals("Skin_Squareskin"))
-			viewer.setSkin("squareskin", Color.white, Color.black, Color.white);
+			viewer.setSkin("squareskin", Color.black, Color.white, Color.white);
 		if (menuName.equals("Skin_Ballskin"))
-			viewer.setSkin("ballskin", Color.black, Color.white, Color.black);
+			viewer.setSkin("ballskin", Color.white, Color.black, Color.black);
 		if (menuName.equals("Skin_Jewelskin"))
-			viewer.setSkin("jewelskin", Color.white, Color.black, Color.white);
+			viewer.setSkin("jewelskin", Color.black, Color.white, Color.white);
 		if (menuName.equals("FileMenu_Exit"))
 			viewer.closeMainFrame();
 		
@@ -189,7 +189,7 @@ public class GameController extends AbstractController{
 
 		switch(key){
 			case VK_N:
-				level.restartLevel();
+						level.restartLevel();
 				break;
 			case VK_BACK_SPACE:
 				if (viewer.duringAnimation() != true)

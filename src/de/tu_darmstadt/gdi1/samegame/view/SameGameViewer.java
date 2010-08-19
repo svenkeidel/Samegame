@@ -33,9 +33,10 @@ public class SameGameViewer implements ChangeListener{
 	private AddHighscoreFrame addHighscoreFrame;
     private HighscoreFrame highscoreFrame;
     private AboutFrame aboutFrame;
+    private String current_Skin = "defaultskin";
 
-	private Color BColor;
-	private Color FColor;
+	private Color current_BColor = Color.black;
+	private Color current_FColor = Color.white;
 	int returnv;
 
 	public SameGameViewer(){
@@ -53,9 +54,11 @@ public class SameGameViewer implements ChangeListener{
 	public void setSkin(String skin, Color BColor, Color FColor, Color MColor){
 		mainFrame.setSkin(skin, BColor, FColor);
 		mainPanel.setMarkColor(MColor);
-		mainPanel.setBGColor(FColor);
-		this.BColor = BColor;
-		this.FColor = FColor;
+		mainPanel.setBGColor(BColor);
+		current_BColor = BColor;
+		current_FColor = FColor;
+		current_Skin = skin;
+		
 	}
 	// implements method from interface javax.swing.event.ChangeListener
 	public void stateChanged(ChangeEvent e){
@@ -102,6 +105,7 @@ public class SameGameViewer implements ChangeListener{
 	
 	public void setLanguage(Locale locale){
 		mainFrame.setLanguage(locale);
+		currentLocale = locale;
 	}
 	
 	public Locale getLanguage(){
@@ -121,7 +125,7 @@ public class SameGameViewer implements ChangeListener{
 	}
 
 	public void showMainFrame(){
-		this.mainFrame = new MainFrame(level, controller, currentLocale, "defaultskin", Color.WHITE, Color.BLACK);
+		this.mainFrame = new MainFrame(level, controller, currentLocale, current_Skin, current_BColor, current_FColor);
 		this.mainFrame.setVisible(true);
 		this.mainPanel = mainFrame.getMainPanel();
 		Thread timeUpdate = new Thread(mainFrame);

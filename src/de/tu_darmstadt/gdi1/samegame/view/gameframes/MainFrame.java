@@ -62,7 +62,7 @@ public class MainFrame extends JFrame implements Runnable{
 
 			
 	////////////////////////Class/Constructors////////////////////////
-	public MainFrame(Level level, AbstractController controller, Locale locale, String skin, Color FColor, Color BColor){
+	public MainFrame(Level level, AbstractController controller, Locale locale, String skin, Color BColor, Color FColor){
 		super("Same Game");
 		this.level = level;
 		this.controller = controller;
@@ -73,8 +73,8 @@ public class MainFrame extends JFrame implements Runnable{
 		this.FColor = FColor;
 		this.BColor = BColor; 
 	
-		
-		this.panel = new MainPanel(this, level, controller, skin);
+
+		this.panel = new MainPanel(this, level, controller, skin, BColor);
 		this.add(panel, BorderLayout.CENTER);
 
 		this.updateContents();
@@ -103,7 +103,7 @@ public class MainFrame extends JFrame implements Runnable{
 		return this.locale;
 	}
 
-	public void setSkin(String skin, Color FColor, Color BColor){
+	public void setSkin(String skin, Color BColor, Color FColor){
 		this.skin = skin;
 		this.FColor = FColor;
 		this.BColor = BColor;

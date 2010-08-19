@@ -71,7 +71,8 @@ public class MainPanel extends JPanel{
 	public MainPanel(MainFrame parentWindow, 
 					 Level level, 
 					 AbstractController controller,
-					 String skin){
+					 String skin,
+					 Color BColor){
 
 		super();
 
@@ -79,7 +80,7 @@ public class MainPanel extends JPanel{
 
 		this.level = level;
 		this.controller = controller;
-
+		bgColor = BColor;
 		this.field = level.getFieldState();
 		this.entities = new Vector<JButton>();
 		this.images = new HashMap<String, ImageIcon>();

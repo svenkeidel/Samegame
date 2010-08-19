@@ -41,7 +41,7 @@ class MyStopWatch{
 	 * wich is added to the current time.
 	 */
 	public MyStopWatch(long initialTimeOffset){
-		super();
+		watch = new StopWatch();
 		this.paused = true;
 		this.timeOffset = initialTimeOffset;
 	}

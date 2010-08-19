@@ -719,7 +719,7 @@ public class Level extends UndoManager{
 				if(!rest.equals("null")){
 					if(Pattern.matches(HIGHSCORE_ENTRY, rest)){
 						while(s.hasNextLine())
-							rest += s.nextLine() + "\n";
+							rest += "\n" + s.nextLine();
 						Highscore.validate(rest);
 					}else
 						throw new WrongLevelFormatException(

@@ -1,6 +1,8 @@
 package de.tu_darmstadt.gdi1.samegame.view;
 
 import java.awt.Color;
+import java.io.File;
+import javax.swing.filechooser.FileFilter;
 import java.util.Locale;
 
 import javax.swing.JFileChooser;
@@ -34,6 +36,7 @@ public class SameGameViewer implements ChangeListener{
 
 	private Color BColor;
 	private Color FColor;
+	int returnv;
 
 	public SameGameViewer(){
 		currentLocale = (Locale) DEFAULT_LOCALE.clone();
@@ -126,14 +129,31 @@ public class SameGameViewer implements ChangeListener{
 	}
 
 	public void showFileChooseDialog(String source){
-		JFileChooser chooser = new FileChooseFrame(source, controller);
-		chooser.setVisible(true);
+	
+		JFrame parentframe = new JFrame();
+		JFrame.setDefaultLookAndFeelDecorated(false);
+		
+		if (source == "LoadLevel" || source == "LoadGameState")
+		{	JFileChooser chooser = new JFileChooser();
+			returnv = chooser.showOpenDialog(parentframe);
+			chooser.setVisible(true);
+		}
+		
+		if (source == "SaveLevel" || source == "SaveGameState")
+		{	JFileChooser chooser2 = new JFileChooser();
+			returnv = chooser2.showSaveDialog(parentframe);
+			chooser2.setVisible(true);
+		}
 	}
 
 	public void showAddHighscoreFrame(){
 		addHighscoreFrame = new AddHighscoreFrame(currentLocale);
 	}
 
+	public int getReturnValue(){
+		return returnv;
+	}
+	
 	public void showHighscoreFrame(){
 		highscoreFrame = new HighscoreFrame(currentLocale, level);
 	}

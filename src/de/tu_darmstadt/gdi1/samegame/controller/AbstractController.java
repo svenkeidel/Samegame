@@ -12,10 +12,12 @@ import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 
 import de.tu_darmstadt.gdi1.samegame.model.Level;
+import de.tu_darmstadt.gdi1.samegame.view.SameGameViewer;
+
 
 
 public abstract class AbstractController extends KeyAdapter implements ActionListener{
-
+	SameGameViewer viewer;
 	protected Level level;
 
 	public void setLevel(Level level){
@@ -29,12 +31,11 @@ public abstract class AbstractController extends KeyAdapter implements ActionLis
 		}else if(e.getSource() instanceof JButton){
 			fieldClick(e, (JButton) e.getSource());
 		}else if (e.getSource() instanceof JFileChooser){
-			JFileChooser chooser = (JFileChooser) e.getSource();
-			// TODO
-			// chooser.getReturnvalue ...
-			// if(returnvalu == JFileChooser.APPROVE_SELECTION)
-				File f = chooser.getSelectedFile();
-				fileChoosed(chooser.getName(), f);
+			
+			JFileChooser chooser = (JFileChooser) e.getSource();			
+		if(viewer.getReturnValue() == JFileChooser.APPROVE_OPTION);
+		 File selectedFile = chooser.getSelectedFile();
+			fileChoosed(chooser.getName(), selectedFile);
 		}
 	}
 

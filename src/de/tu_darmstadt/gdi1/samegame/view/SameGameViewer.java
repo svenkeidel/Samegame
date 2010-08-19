@@ -37,7 +37,6 @@ public class SameGameViewer implements ChangeListener{
 
 	private Color current_BColor = Color.black;
 	private Color current_FColor = Color.white;
-	int returnv;
 
 	public SameGameViewer(){
 		currentLocale = (Locale) DEFAULT_LOCALE.clone();
@@ -132,17 +131,23 @@ public class SameGameViewer implements ChangeListener{
 		timeUpdate.start();
 	}
 
-	public void showFileChooseDialog(String source){
-	
-	new FileChooseFrame(source, controller);
+	public File showFileChooseDialog(String source){
+		JFileChooser chooser = new JFileChooser(source);
+		int returnValue;
+		if(source.equals("SaveLevel") || source.equals("SaveGameState"))
+			returnValue = chooser.showSaveDialog(mainFrame);
+		else if(source.equals("LoadLevel") || source.equals("LoadGameState"))
+			returnValue = chooser.showOpenDialog(mainFrame);
+		else
+			returnValue = -1;
+
+		if(returnValue == JFileChooser.APPROVE_OPTION)
+			return chooser.getSelectedFile();
+		else return null;
 	}
 
 	public void showAddHighscoreFrame(){
 		addHighscoreFrame = new AddHighscoreFrame(currentLocale);
-	}
-
-	public int getReturnValue(){
-		return returnv;
 	}
 	
 	public void showHighscoreFrame(){

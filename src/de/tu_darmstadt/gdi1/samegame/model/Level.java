@@ -693,10 +693,18 @@ public class Level extends UndoManager{
 			validateAdditionalLevelInf(parsedLine);
 			
 			if(s.hasNextLine()){
-				String rest = "";
-				while(s.hasNextLine())
-					rest += s.nextLine() + "\n";
-				Highscore.validate(rest);
+				String rest = s.nextLine();
+				if(!rest.equals("null")){
+					if(Pattern.matches(HIGHSCORE_ENTRY, rest)){
+						while(s.hasNextLine())
+							rest += s.nextLine() + "\n";
+						Highscore.validate(rest);
+					}else
+						throw new WrongLevelFormatException(
+								"Wrong level format while parsing level from "
+								+"string: unexcepted characters in line "
+								+line.getLineNumber());
+				}
 			}
 			
 		}else if(Pattern.matches(HIGHSCORE_ENTRY, parsedLine)){
@@ -1593,10 +1601,10 @@ public class Level extends UndoManager{
 			   SecurityException,
 			   LevelNotLoadedFromFileException{
 
-		String levelInf = 
-			this.getOrigLevelState() + "\n" +
-			this.getAdditionalLevelInf() + "\n" + 
-			this.getHighscorelist();
+		String levelInf = this.getOrigLevelState() + "\n" +
+			this.getAdditionalLevelInf();
+		if(this.getHighscore() != null);
+			levelInf += "\n" + this.getHighscorelist();
 
 		store(levelInf, f, force);
 	}
@@ -1641,6 +1649,7 @@ public class Level extends UndoManager{
 			double points = Double.parseDouble(attr.getNamedItem("pointsReached").getNodeValue());
 			long elapsedTime = Long.parseLong(attr.getNamedItem("elapsedTime").getNodeValue());
 			this.watch = new MyStopWatch(elapsedTime);
+			this.firstClick = true;
 
 			NodeList lines = doc.getElementsByTagName("line");
 

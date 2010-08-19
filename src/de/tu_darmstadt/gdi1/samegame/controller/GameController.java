@@ -9,6 +9,8 @@ import static java.awt.event.KeyEvent.*;
 import java.io.File;
 
 import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
@@ -32,10 +34,28 @@ public class GameController extends AbstractController{
 	private int markedRow;
 	private int markedCol;
 
+	private Locale locale = SameGameViewer.DEFAULT_LOCALE;
+	private ResourceBundle messages;
+
 	public GameController(Level level){
 		this.level = level;
 		this.markedRow = 0;
 		this.markedCol = 0;
+		try{
+			messages = 
+				ResourceBundle.getBundle(
+						"de.tu_darmstadt.gdi1.samegame.view.gameframes.MainBundle", 
+						this.locale, 
+						this.getClass().getClassLoader()); 
+		}catch(MissingResourceException e){
+			this.locale = new Locale("de", "DE");
+
+			messages = 
+				ResourceBundle.getBundle(
+						"de.tu_darmstadt.gdi1.samegame.view.gameframes.MainBundle", 
+						this.locale,
+						this.getClass().getClassLoader()); 
+		}
 	}
 
 	public GameController(Level level, SameGameViewer viewer){
@@ -78,34 +98,81 @@ public class GameController extends AbstractController{
 			try	{
 				level.undo();
 				}
-			catch(CannotUndoException ex)
-			{SameGameViewer.showAlertFrame(ex.getMessage(), "There is no step to undo!");}}
+			catch(CannotUndoException ex){
+				SameGameViewer.showAlertFrame(ex.getMessage(), "There is no step to undo!");
+			}
+		}
 			
 		if (menuName.equals("GameMenu_Redo")){
 			try	{
 				level.redo();
 				}
-			catch(CannotRedoException ex)
-			{SameGameViewer.showAlertFrame(ex.getMessage(), "There is no step to redo!");}}
+			catch(CannotRedoException ex){
+				SameGameViewer.showAlertFrame(ex.getMessage(), "There is no step to redo!");
+			}
+		}
 		
-		if (menuName.equals("German"))
-			viewer.setLanguage(new Locale("de", "DE"));
-		if (menuName.equals("English"))
-			viewer.setLanguage(new Locale("en", "US"));
-		if (menuName.equals("Polish"))
-			viewer.setLanguage(new Locale("pl", "PL"));
+
+		if (menuName.equals("German")){
+			this.locale = new Locale("de", "DE");
+			viewer.setLanguage(locale);
+			getBundle();
+		}
+		if (menuName.equals("English")){
+			this.locale = new Locale("en", "US");
+			viewer.setLanguage(locale);
+			getBundle();
+		}
+		if (menuName.equals("Polish")){
+			this.locale = new Locale("pl", "PL");
+			viewer.setLanguage(this.locale);
+			getBundle();
+		}
 		if (menuName.equals("About"))
 			viewer.showAboutFrame();
-		if (menuName.equals("FileMenu_GenerateCustomLevel"))
+		if (menuName.equals("FileMenu_GenerateCustomLevel")){
 			//viewer.showCustomizeFrame();
-		if (menuName.equals("FileMenu_SaveLevel"))
-			viewer.showFileChooseDialog("SaveLevel");
-		if (menuName.equals("FileMenu_LoadLevel"))
-			viewer.showFileChooseDialog("LoadLevel");
-		if (menuName.equals("FileMenu_SaveGameState"))
-			viewer.showFileChooseDialog("SaveGameState");
-		if (menuName.equals("FileMenu_LoadGameState"))
-			viewer.showFileChooseDialog("LoadGameState");
+		}
+
+		File f;
+		String source;
+		if (menuName.equals("FileMenu_SaveLevel")){
+			source = "SaveLevel";
+			f = viewer.showFileChooseDialog(source);
+		}else if (menuName.equals("FileMenu_LoadLevel")){
+			source = "LoadLevel";
+			f = viewer.showFileChooseDialog(source);
+		} else if (menuName.equals("FileMenu_SaveGameState")){
+			source = "SaveGameState";
+			f = viewer.showFileChooseDialog(source);
+		} else if (menuName.equals("FileMenu_LoadGameState")){
+			source = "LoadGameState";
+			f = viewer.showFileChooseDialog(source);
+		}else{
+			f = null;
+			source = null;
+		}
+		
+		if(f != null)
+			fileChoosed(source, f);
+	}
+
+	private void getBundle(){
+		try{
+			messages = 
+				ResourceBundle.getBundle(
+						"de.tu_darmstadt.gdi1.samegame.controller.GameControllerBundle", 
+						this.locale, 
+						this.getClass().getClassLoader()); 
+		}catch(MissingResourceException e){
+			this.locale = new Locale("de", "DE");
+
+			messages = 
+				ResourceBundle.getBundle(
+						"de.tu_darmstadt.gdi1.samegame.controller.GameControllerBundle", 
+						this.locale,
+						this.getClass().getClassLoader()); 
+		}
 	}
 	
 	@Override
@@ -123,10 +190,8 @@ public class GameController extends AbstractController{
 		}
 	}
 
-	@Override
 	public void fileChoosed(String source, File f){
 		try{
-			System.out.println("the source:"+ source);
 			if(source.equals("LoadLevel")){
 				Level newLevel = new Level(viewer);
 				newLevel.restoreLevel(f);
@@ -164,7 +229,9 @@ public class GameController extends AbstractController{
 		if(!viewer.duringAnimation() && level.removeable(positionY, positionX)){
 			try{
 				if (level.isFinished()){
-					// TODO I18N: Show finish message
+					SameGameViewer.showAlertFrame(messages.getString("Finish_title"), 
+							messages.getString("Finish_message"));
+					// TODO show add highscore frame
 				}else{
 					viewer.startAnimation(positionY, positionX, 500);
 					level.removeStone(positionY, positionX);

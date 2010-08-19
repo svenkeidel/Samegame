@@ -25,24 +25,73 @@ import de.tu_darmstadt.gdi1.samegame.view.gameframes.*;
 import de.tu_darmstadt.gdi1.samegame.model.Level;
 
 public class SameGameViewer implements ChangeListener{
+	
+	/**
+	 * the default language
+	 */
 	public static final Locale DEFAULT_LOCALE = new Locale("en", "US");
+	
+	/**
+	 * the currently language
+	 */
 	private Locale currentLocale;
-
+	
+	/**
+	 * the level information
+	 */
 	private Level level;
+	
+	/**
+	 * the abstract controller
+	 */
 	private AbstractController controller;
 	
+	/**
+	 * the Main Frame
+	 */
 	private MainFrame mainFrame;
+	
+	/**
+	 * the Main Panel, where the stones are
+	 */
 	private MainPanel mainPanel;
+	
+	/**
+	 * Frame to add a highscore to the highscore list
+	 */
 	private AddHighscoreFrame addHighscoreFrame;
+	
+	/**
+	 * The frame, which shows the highscore-list
+	 */
     private HighscoreFrame highscoreFrame;
+    
+    /**
+     * the frame, which contains information about the authors
+     */
     private AboutFrame aboutFrame;
+    
+    /**
+     * the currently choosed skin
+     */
     private String current_Skin = "defaultskin";
 
+    /**
+     * the background color
+     */
 	private Color current_BColor = Color.black;
+	
+	/**
+	 * the font color
+	 */
 	private Color current_FColor = Color.white;
+	
 	
 	private ResourceBundle messages;
 
+	/**
+	 * class constructor which sets the default locale as current locale
+	 */
 	public SameGameViewer(){
 		currentLocale = (Locale) DEFAULT_LOCALE.clone();
 		try{
@@ -62,14 +111,35 @@ public class SameGameViewer implements ChangeListener{
 		}
 	}
 
+	/**
+	 * sets the level
+	 * @param level 
+	 * 			the level to be set
+	 */
 	public void setLevel(Level level){
 		this.level = level;
 	}
 
+	/**
+	 * sets the controller
+	 * @param controller 
+	 * 			the abstract controller to be setted
+	 */
 	public void setController(AbstractController controller){
 		this.controller = controller;
 	}
 	
+	/**
+	 * sets the skin
+	 * @param skin 
+	 * 			the name of the skin
+	 * @param BColor 
+	 * 			the background color
+	 * @param FColor 
+	 * 			the font color
+	 * @param MColor 
+	 * 			the mark color
+	 */
 	public void setSkin(String skin, Color BColor, Color FColor, Color MColor){
 		mainFrame.setSkin(skin, BColor, FColor);
 		mainPanel.setMarkColor(MColor);
@@ -79,6 +149,10 @@ public class SameGameViewer implements ChangeListener{
 		current_Skin = skin;
 		
 	}
+	
+	/**
+	 * redraws the mainPanel when the state has changed
+	 */
 	// implements method from interface javax.swing.event.ChangeListener
 	public void stateChanged(ChangeEvent e){
 		if(mainFrame != null){
@@ -94,15 +168,32 @@ public class SameGameViewer implements ChangeListener{
 		}
 	}
 	
+	/**
+	 * marks the field which is focused
+	 * @param row 
+	 * 			the row of the field
+	 * @param col 
+	 * 			the column of the field
+	 */
 	public void markField(int row, int col){
 		if(mainFrame != null)
 			mainPanel.markField(row, col);
 	}
 	
+	/**
+	 * getter for the mainPanel
+	 * @return 
+	 * 		the main Panel
+	 */
 	public MainPanel getMainPanel(){
 		return this.mainPanel;
 	}
 
+	/**
+	 * getter for the row of the marked field
+	 * @return 
+	 * 			the row of the marked field
+	 */
 	public int getMarkedFieldRow(){
 		if(mainFrame != null)
 			return mainPanel.getMarkedFieldRow();
@@ -110,6 +201,11 @@ public class SameGameViewer implements ChangeListener{
 			return -1;
 	}
 
+	/**
+	 * getter for the column of the marked field
+	 * @return 
+	 * 			the column of the marked field
+	 */
 	public int getMarkedFieldCol(){
 		if(mainFrame != null)
 			return mainPanel.getMarkedFieldCol();
@@ -117,16 +213,36 @@ public class SameGameViewer implements ChangeListener{
 			return -1;
 	}
 
+	/**
+	 * checks if the main Panel is in animation
+	 * @return 	true  if the Panel is in motion
+	 * 			false if the Panel is not in motion
+	 */
 	public boolean duringAnimation(){
 		if(mainFrame != null)
 			return mainPanel.duringAnimation();
 		else return false;
 	}
 
+	/**
+	 * starts the animation of the falling stones in the mainPanel
+	 * @param row 
+	 * 			the row where the animation starts
+	 * @param col 
+	 * 			the column where the animation starts
+	 * @param animationSpeed 
+	 * 			the speed of the animation
+	 */
 	public void startAnimation(int row, int col, long animationSpeed){
 		mainPanel.startAnimation(row, col, animationSpeed);
 	}
 	
+	/**
+	 * sets the language of the frame Labels
+	 * sets currentLocale to this language
+	 * @param locale 
+	 * 			the chosen language 
+	 */
 	public void setLanguage(Locale locale){
 		mainFrame.setLanguage(locale);
 		currentLocale = locale;
@@ -147,10 +263,18 @@ public class SameGameViewer implements ChangeListener{
 		}
 	}
 	
+	/**
+	 * gets the chosen language
+	 * @return 
+	 * 			the actual language Locale
+	 */
 	public Locale getLanguage(){
 		return mainFrame.getLanguage();
 	}
 	
+	/**
+	 * gets the dimensions of a new level which is loaded
+	 */
 	public void notifyLevelLoaded(){
 		if(mainFrame != null){
 			try{
@@ -163,6 +287,9 @@ public class SameGameViewer implements ChangeListener{
 		}
 	}
 
+	/**
+	 * initializes the mainFrame
+	 */
 	public void showMainFrame(){
 		this.mainFrame = new MainFrame(level, controller, currentLocale, current_Skin, current_BColor, current_FColor);
 		this.mainFrame.setVisible(true);
@@ -171,6 +298,12 @@ public class SameGameViewer implements ChangeListener{
 		timeUpdate.start();
 	}
 
+	/**
+	 * filechooser to save or load a level
+	 * @param source
+	 * 				chooses the chooser for load or save
+	 * 			
+	 */
 	public File showFileChooseDialog(String source){
 		JFileChooser chooser = new JFileChooser(source);
 		int returnValue;
@@ -184,20 +317,37 @@ public class SameGameViewer implements ChangeListener{
 		if(returnValue == JFileChooser.APPROVE_OPTION)
 			return chooser.getSelectedFile();
 		else return null;
+
 	}
 
+	/**
+	 * initializes the Frame to add a highscore to the highscorelist
+	 */
 	public void showAddHighscoreFrame(){
 		addHighscoreFrame = new AddHighscoreFrame(currentLocale);
 	}
 	
+	/**
+	 * initializes the Frame which shows the highscorelist
+	 */
 	public void showHighscoreFrame(){
 		highscoreFrame = new HighscoreFrame(currentLocale, level);
 	}
 
+	/**
+	 * shows the frame which contains the author information
+	 */
 	public void showAboutFrame(){
 		aboutFrame = new AboutFrame(currentLocale);
 	}
 
+	/**
+	 * opens an alert frame if somewhere an exception is thrown
+	 * @param alerttitle 
+	 * 			the title of the frame
+	 * @param alertstring 
+	 * 			the message in the frame
+	 */
 	public static void showAlertFrame(String alerttitle, String alertstring){
 		JFrame alertframe = new JFrame();
 		
@@ -218,8 +368,9 @@ public class SameGameViewer implements ChangeListener{
 	}
 		
 
-	
-	// TODO proof whether the close methods are needed
+	/**
+	 * closes the main frame
+	 */
 	public void closeMainFrame(){
 		if(mainFrame != null){
 			mainFrame.dispose();

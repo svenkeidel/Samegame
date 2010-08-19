@@ -3,7 +3,7 @@ package de.tu_darmstadt.gdi1.samegame.model;
 import javax.swing.undo.AbstractUndoableEdit;
 
 /**
- * Class wich represents an undoable GameState.
+ * Class which represents an undoable GameState.
  * It contains informations about the current state of the field and 
  * the points the player reached.
  */

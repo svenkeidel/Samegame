@@ -11,8 +11,8 @@ import de.tu_darmstadt.gdi1.samegame.exceptions.WrongLevelFormatException;
 /**
  * class which represents a highscore list.
  * The class provides functions for parsing and validating a whole 
- * highscore list. It contains a vector of highscore entrys. 
- * The list can't contain more then 10 entrys
+ * highscore list. It contains a vector of highscore entries. 
+ * The list can't contain more then 10 entries
  */
 public class Highscore{
 	////////////////////////Class/Attributes//////////////////////////
@@ -37,9 +37,9 @@ public class Highscore{
 	}
 
 	/**
-	 * constructor which sets a vector of highscore entrys.
+	 * constructor which sets a vector of highscore entries.
 	 *
-	 * @param highscoreEntrys the highscore entrys
+	 * @param highscoreEntrys the highscore entries
 	 */
 	public Highscore(Vector<HighscoreEntry> highscoreEntrys){
 		sort(highscoreEntrys);
@@ -65,7 +65,7 @@ public class Highscore{
 	
 	////////////////////////Getters//&//Setters///////////////////////
 	/**
-	 * returns the highscore entrys in form of a two dimensional array.
+	 * returns the highscore entries in form of a two dimensional array.
 	 * @return the 2d array. Each subarray has the form:
 	 * <ol>
 	 * 	<li>cell: points</li>
@@ -84,9 +84,9 @@ public class Highscore{
 	}
 
 	/**
-	 * get the number of highscore entrys the instance contains.
+	 * get the number of highscore entries the instance contains.
 	 * 
-	 * @return the number of highscore entrys
+	 * @return the number of highscore entries
 	 */
 	public int getHighscoreCount(){
 		return highscoreEntrys.size();
@@ -100,7 +100,7 @@ public class Highscore{
 	 * @return the name of the player.
 	 *
 	 * @throws ParameterOutOfRangeException if the position is not in
-	 * the range of numbers of highscore entrys the list contains
+	 * the range of numbers of highscore entries the list contains
 	 */
 	public String getPlayername(int position) 
 		throws ParameterOutOfRangeException{
@@ -116,7 +116,7 @@ public class Highscore{
 	 * @return the remaining time until the target time runs out
 	 *
 	 * @throws ParameterOutOfRangeException if the position is not in
-	 * the range of numbers of highscore entrys the list contains
+	 * the range of numbers of highscore entries the list contains
 	 */
 	public double getRemaining(int position)
 		throws ParameterOutOfRangeException{
@@ -132,7 +132,7 @@ public class Highscore{
 	 * @return the points a player made
 	 *
 	 * @throws ParameterOutOfRangeException if the position is not in
-	 * the range of numbers of highscore entrys the list contains
+	 * the range of numbers of highscore entries the list contains
 	 */
 	public double getPoints(int position)
 		throws ParameterOutOfRangeException{
@@ -148,7 +148,7 @@ public class Highscore{
 	 * @return the date when the player hit the highscore.
 	 *
 	 * @throws ParameterOutOfRangeException if the position is not in
-	 * the range of numbers of highscore entrys the list contains
+	 * the range of numbers of highscore entries the list contains
 	 */
 	public Date getDate(int position)
 		throws ParameterOutOfRangeException{
@@ -158,12 +158,12 @@ public class Highscore{
 
 	/**
 	 * tests if the given position is in the range of the number of
-	 * highscore entrys.
+	 * highscore entries.
 	 *
 	 * @param position the number of the highscore entry.
 	 *
 	 * @throws ParameterOutOfRangeException if the position is not in
-	 * the range of numbers of highscore entrys the list contains
+	 * the range of numbers of highscore entries the list contains
 	 */
 	private void inRange(int position)
 		throws ParameterOutOfRangeException{
@@ -205,7 +205,7 @@ public class Highscore{
 
 
 	/**
-	 * resets the highscore list and clear all entrys
+	 * resets the highscore list and clear all entries
 	 */
 	public void resetHighscore(){
 		highscoreEntrys.clear();
@@ -236,7 +236,7 @@ public class Highscore{
 
 	/**
 	 * parses a string representing a highscore list, sets the vector of
-	 * entrys and sorts it.
+	 * entries and sorts it.
 	 *
 	 * @param highscoreList the String representing the highscore list
 	 *

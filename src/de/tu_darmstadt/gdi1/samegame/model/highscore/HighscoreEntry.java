@@ -13,7 +13,7 @@ import de.tu_darmstadt.gdi1.samegame.exceptions.WrongLevelFormatException;
 
 /**
  * class which represents a single highscore entry. The class provides
- * funktions to validate and parse highscore lines in the format<br>
+ * functions to validate and parse highscore lines in the format<br>
  * <code>###name:max mustermann|remaining_time:[number]|points:[number]
  * |date:dd.MM.yyy HH;mm;ss</code><br>
  */

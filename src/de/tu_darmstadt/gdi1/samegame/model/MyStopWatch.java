@@ -3,8 +3,8 @@ package de.tu_darmstadt.gdi1.samegame.model;
 import org.apache.commons.lang.time.StopWatch;
 
 /**
- * a costumized version of commons.lang.tim.Stopwatch.
- * This version don't throw exeptions wich must be caught if the watch
+ * a customized version of commons.lang.tim.Stopwatch.
+ * This version don't throw exceptions which must be caught if the watch
  * is in a wrong state. So if the watch is paused and suspend() is 
  * called, the watch does nothing neither to throw an exception.
  */
@@ -37,8 +37,8 @@ class MyStopWatch{
 	/**
 	 * class constructor which sets a initial time offset given with the 
 	 * parameter.
-	 * @param initialTimeOffset sets the initial time offset of the wach
-	 * wich is added to the current time.
+	 * @param initialTimeOffset sets the initial time offset of the watch
+	 * which is added to the current time.
 	 */
 	public MyStopWatch(long initialTimeOffset){
 		watch = new StopWatch();
@@ -54,7 +54,7 @@ class MyStopWatch{
 	}
 	
 	/**
-	 * suspend the watch. Don't throw exceptions if the watch is allready
+	 * suspend the watch. Don't throw exceptions if the watch is already
 	 * suspended
 	 */
 	public void suspend(){
@@ -65,7 +65,7 @@ class MyStopWatch{
 	}
 
 	/**
-	 * resume the watch. Don't throw exceptions if the watch is allready
+	 * resume the watch. Don't throw exceptions if the watch is already
 	 * running
 	 */
 	public void resume(){
@@ -85,7 +85,7 @@ class MyStopWatch{
 	}
 	
 	/**
-	 * start the watch.
+	 * starts the watch.
 	 */
 	public void start(){
 		if(paused){
@@ -95,7 +95,7 @@ class MyStopWatch{
 	}
 
 	/**
-	 * stop the watch.
+	 * stops the watch.
 	 */
 	public void stop(){
 		if(!paused){

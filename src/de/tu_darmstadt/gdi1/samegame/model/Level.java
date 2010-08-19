@@ -338,7 +338,9 @@ public class Level extends UndoManager{
 									  points);
 	}
 
-
+	/**
+	  * resets the highscore
+	  */
 	public void resetHighscore(){
 		highscore.resetHighscore();
 	}

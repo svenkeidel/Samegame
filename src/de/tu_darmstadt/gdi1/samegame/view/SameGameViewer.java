@@ -30,8 +30,6 @@ public class SameGameViewer implements ChangeListener{
 	private MainPanel mainPanel;
 	private AddHighscoreFrame addHighscoreFrame;
     private HighscoreFrame highscoreFrame;
-    private SaveGameFrame saveGameFrame;
-    private LoadGameFrame loadGameFrame;
     private AboutFrame aboutFrame;
 
 	private Color BColor;
@@ -128,12 +126,8 @@ public class SameGameViewer implements ChangeListener{
 	}
 
 	public void showFileChooseDialog(String source){
-		JFileChooser chooser = 
-			new JFileChooser(){
-			// TODO das ist eine on the fly ableitung einer klasse
-			};
-
-		chooser.setName(source);
+		JFileChooser chooser = new FileChooseFrame(source, controller);
+		chooser.setVisible(true);
 	}
 
 	public void showAddHighscoreFrame(){

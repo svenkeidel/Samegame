@@ -71,10 +71,6 @@ public class GameController extends AbstractController{
 			viewer.setSkin("ballskin", Color.black, Color.white, Color.black);
 		if (menuName.equals("Skin_Jewelskin"))
 			viewer.setSkin("jewelskin", Color.white, Color.black, Color.white);
-		if (menuName.equals("FileMenu_SaveLevel"))
-			viewer.showFileChooseDialog("SaveLevel");
-		if (menuName.equals("FileMenu_LoadLevel"))
-			viewer.showFileChooseDialog("LoadLevel");
 		if (menuName.equals("FileMenu_Exit"))
 			viewer.closeMainFrame();
 		if (menuName.equals("GameMenu_Undo"))
@@ -91,6 +87,10 @@ public class GameController extends AbstractController{
 			viewer.showAboutFrame();
 		if (menuName.equals("FileMenu_GenerateCustomLevel"))
 			//viewer.showCustomizeFrame();
+		if (menuName.equals("FileMenu_SaveLevel"))
+			viewer.showFileChooseDialog("SaveLevel");
+		if (menuName.equals("FileMenu_LoadLevel"))
+			viewer.showFileChooseDialog("LoadLevel");
 		if (menuName.equals("FileMenu_SaveGameState"))
 			viewer.showFileChooseDialog("SaveGameState");
 		if (menuName.equals("FileMenu_LoadGameState"))
@@ -110,17 +110,12 @@ public class GameController extends AbstractController{
 								posY / btn.getHeight());
 			
 		}
-		if (level.isFinished()){
-			if (viewer.getLanguage().getLanguage().equals(new Locale("de","DE").getLanguage()))
-				viewer.showAlertFrame("Keine Züge mehr Möglich", "Spielende");
-			if (viewer.getLanguage().getLanguage().equals(new Locale("en","US").getLanguage()))
-				viewer.showAlertFrame("No more moves possible", "Game over");
-		}
 	}
 
 	@Override
 	public void fileChoosed(String source, File f){
 		try{
+			System.out.println("the source:"+ source);
 			if(source.equals("LoadLevel")){
 				Level newLevel = new Level(viewer);
 				newLevel.restoreLevel(f);
@@ -132,11 +127,19 @@ public class GameController extends AbstractController{
 				viewer.showMainFrame();
 				viewer.notifyLevelLoaded();
 			}else if(source.equals("SaveLevel")){
-				// TODO
+				level.storeLevel(f, true);
 			}else if(source.equals("LoadGameState")){
-				// TODO
+				Level newLevel = new Level(viewer);
+				newLevel.restoreLevelState(f);
+
+				viewer.setLevel(newLevel);
+				this.level = newLevel;
+
+				viewer.closeMainFrame();
+				viewer.showMainFrame();
+				viewer.notifyLevelLoaded();
 			}else if(source.equals("SaveGameState")){
-				// TODO
+				level.storeLevelState(f, true);
 			}
 		}catch(Exception e){
 			e.printStackTrace();
@@ -157,9 +160,9 @@ public class GameController extends AbstractController{
 					panel.redraw();
 				}
 			}catch(ParameterOutOfRangeException e){
-				viewer.showAlertFrame(e.getParameterName(), "Parameter out of Range");
+				SameGameViewer.showAlertFrame(e.getParameterName(), "Parameter out of Range");
 			}catch(InternalFailureException e){
-				viewer.showAlertFrame(e.getMessage(), "Internal Failure");
+				SameGameViewer.showAlertFrame(e.getMessage(), "Internal Failure");
 			}
 		}
 	}
@@ -197,7 +200,7 @@ public class GameController extends AbstractController{
 					try{
 						level.removeStone(markedRow, markedCol);
 					}catch(ParameterOutOfRangeException ex){
-						viewer.showAlertFrame(ex.getMessage(), "Parameter out of range");
+						SameGameViewer.showAlertFrame(ex.getMessage(), "Parameter out of range");
 					}
 				break;
 			case VK_LEFT:
@@ -208,7 +211,7 @@ public class GameController extends AbstractController{
 						if(panel != null)
 							panel.redraw();
 					}catch(InternalFailureException ex){
-						viewer.showAlertFrame(ex.getMessage(), "Internal Failure");
+						SameGameViewer.showAlertFrame(ex.getMessage(), "Internal Failure");
 					}
 				}
 				break;
@@ -220,7 +223,7 @@ public class GameController extends AbstractController{
 						if(panel != null)
 							panel.redraw();
 					}catch(InternalFailureException ex){
-						viewer.showAlertFrame(ex.getMessage(), "Internal Failure");
+						SameGameViewer.showAlertFrame(ex.getMessage(), "Internal Failure");
 					}
 				}
 				break;
@@ -232,7 +235,7 @@ public class GameController extends AbstractController{
 						if(panel != null)
 							panel.redraw();
 					}catch(InternalFailureException ex){
-						viewer.showAlertFrame(ex.getMessage(), "Internal Failure");
+						SameGameViewer.showAlertFrame(ex.getMessage(), "Internal Failure");
 					}
 				}
 				break;
@@ -244,7 +247,7 @@ public class GameController extends AbstractController{
 						if(panel != null)
 							panel.redraw();
 					}catch(InternalFailureException ex){
-						viewer.showAlertFrame(ex.getMessage(), "Internal Failure");
+						SameGameViewer.showAlertFrame(ex.getMessage(), "Internal Failure");
 					}
 				}
 				break;

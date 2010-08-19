@@ -40,8 +40,6 @@ import javax.xml.transform.dom.DOMSource;
 
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.commons.lang.time.StopWatch;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -50,16 +48,12 @@ import org.w3c.dom.NodeList;
 
 import org.xml.sax.SAXException;
 
-import sun.nio.cs.HistoricallyNamedCharset;
-
 import de.tu_darmstadt.gdi1.samegame.exceptions.LevelNotLoadedFromFileException;
 import de.tu_darmstadt.gdi1.samegame.exceptions.ParameterOutOfRangeException;
 import de.tu_darmstadt.gdi1.samegame.exceptions.WrongLevelFormatException;
 
 import de.tu_darmstadt.gdi1.samegame.model.highscore.Highscore;
 import static de.tu_darmstadt.gdi1.samegame.model.highscore.Highscore.HIGHSCORE_ENTRY;
-
-import de.tu_darmstadt.gdi1.samegame.view.SameGameViewer;
 
 /**
  * The Model of the MVC Design pattern. <br><br>

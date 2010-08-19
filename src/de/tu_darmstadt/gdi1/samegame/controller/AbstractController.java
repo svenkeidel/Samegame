@@ -30,8 +30,11 @@ public abstract class AbstractController extends KeyAdapter implements ActionLis
 			fieldClick(e, (JButton) e.getSource());
 		}else if (e.getSource() instanceof JFileChooser){
 			JFileChooser chooser = (JFileChooser) e.getSource();
-            File f = chooser.getSelectedFile();
-			fileChoosed(chooser.getName(), f);
+			// TODO
+			// chooser.getReturnvalue ...
+			// if(returnvalu == JFileChooser.APPROVE_SELECTION)
+				File f = chooser.getSelectedFile();
+				fileChoosed(chooser.getName(), f);
 		}
 	}
 

@@ -142,10 +142,10 @@ public class SameGameViewer implements ChangeListener{
 		aboutFrame = new AboutFrame(currentLocale);
 	}
 
-	public static void showAlertFrame(String alertstring, String alerttitle){
+	public static void showAlertFrame(String alerttitle, String alertstring){
 		JFrame alertframe = new JFrame();
 		
-		int response = JOptionPane.showConfirmDialog(alertframe, alerttitle, alertstring,
+		int response = JOptionPane.showConfirmDialog(alertframe, alertstring, alerttitle,
 		   JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 	
 			if (response == JOptionPane.OK_OPTION){

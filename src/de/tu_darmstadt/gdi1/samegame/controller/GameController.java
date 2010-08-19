@@ -73,10 +73,21 @@ public class GameController extends AbstractController{
 			viewer.setSkin("jewelskin", Color.white, Color.black, Color.white);
 		if (menuName.equals("FileMenu_Exit"))
 			viewer.closeMainFrame();
-		if (menuName.equals("GameMenu_Undo"))
-			level.undo();
-		if (menuName.equals("GameMenu_Redo"))
-			level.redo();
+		
+		if (menuName.equals("GameMenu_Undo")){
+			try	{
+				level.undo();
+				}
+			catch(CannotUndoException ex)
+			{SameGameViewer.showAlertFrame(ex.getMessage(), "There is no step to undo!");}}
+			
+		if (menuName.equals("GameMenu_Redo")){
+			try	{
+				level.redo();
+				}
+			catch(CannotRedoException ex)
+			{SameGameViewer.showAlertFrame(ex.getMessage(), "There is no step to redo!");}}
+		
 		if (menuName.equals("German"))
 			viewer.setLanguage(new Locale("de", "DE"));
 		if (menuName.equals("English"))

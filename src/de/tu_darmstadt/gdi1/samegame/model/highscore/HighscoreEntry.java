@@ -279,8 +279,8 @@ class HighscoreEntry implements Comparable<HighscoreEntry>{
 	 */
 	public String[] toStringArray(){
 		String[] entry = new String[4];
-		entry[0] = ""+points;
-		entry[1] = ""+remainingTime;
+		entry[0] = ""+(long)points;
+		entry[1] = ""+remainingTime/1000.0;
 		entry[2] = df.format(date);
 		entry[3] = name;
 		return entry;

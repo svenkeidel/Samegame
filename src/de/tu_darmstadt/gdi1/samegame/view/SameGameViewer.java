@@ -163,7 +163,10 @@ public class SameGameViewer implements ChangeListener{
 			}
 			if(level.isFinished()){
 				showAlertFrame(messages.getString("Finish_Title"), messages.getString("Finish_Message"));
-				//TODO add highscore frame
+				showAddHighscoreFrame();
+				String name = addHighscoreFrame.getPlayersName();
+				level.insertHighscore(name);
+				showHighscoreFrame();
 			}
 		}
 	}
@@ -360,6 +363,7 @@ public class SameGameViewer implements ChangeListener{
 			
 			if (response == JOptionPane.CANCEL_OPTION){
 				alertframe.setVisible(false);
+				System.exit(0);
 			}
 			
 			if (response == JOptionPane.CLOSED_OPTION){

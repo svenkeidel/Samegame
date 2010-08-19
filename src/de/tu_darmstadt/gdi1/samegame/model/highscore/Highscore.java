@@ -80,7 +80,7 @@ public class Highscore{
 		String[][] entrys = new String[highscoreEntrys.size()][4];
 		for(int i=0; i<entrys.length; i++)
 			entrys[i] = highscoreEntrys.get(i).toStringArray();
-		return highscoreEntrys.toArray(entrys);
+		return entrys;
 	}
 
 	/**

@@ -331,12 +331,32 @@ public class Level extends UndoManager{
 								final double remTime, 
 								final Date creationDate, 
 								final double points){
+			if(highscore == null)
+				highscore = new Highscore();
 
 			highscore.insertHighscore(playername,
 									  remTime,
 									  creationDate,
 									  points);
 	}
+
+	/**
+	 * insert a new highscore into the highscore-list of the level
+	 *
+	 * @param playername the name which shall appear in the highscore
+	 */
+	public void insertHighscore(final String playername){
+			if(highscore == null)
+				highscore = new Highscore();
+
+			highscore.insertHighscore(playername,
+									  watch.getTime() - targetTime,
+									  new Date(),
+									  currentGameState.getPoints());
+			System.out.println(highscore.toString());
+	}
+
+
 
 	/**
 	  * resets the highscore

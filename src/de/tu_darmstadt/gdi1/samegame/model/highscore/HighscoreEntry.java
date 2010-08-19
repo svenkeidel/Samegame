@@ -11,22 +11,59 @@ import java.util.regex.Pattern;
 import de.tu_darmstadt.gdi1.samegame.exceptions.WrongLevelFormatException;
 
 
+/**
+ * class which represents a single highscore entry. The class provides
+ * funktions to validate and parse highscore lines in the format<br>
+ * <code>###name:max mustermann|remaining_time:[number]|points:[number]
+ * |date:dd.MM.yyy HH;mm;ss</code><br>
+ */
 class HighscoreEntry implements Comparable<HighscoreEntry>{
 
+	/**
+	 * the name of the player
+	 */
 	private String name;
+
+	/**
+	 * the remaining time in relation to the target time
+	 */
 	private double remainingTime;
+
+	/**
+	 * the points a player made
+	 */
 	private double points;
+
+	/**
+	 * the date a player made a highscore
+	 */
 	private Date date;
+
+	/**
+	 * the specific date format in the highscore string
+	 */
 	private final static SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH;mm;ss");
 	
+	/**
+	 * a pattern matching a single highscore information
+	 */
 	private final static String HIGHSCORE_INFORMATION = 
 		// informations like (name|points|date|remaining time)
 		"(name:(\\w|\\s)*|points:\\d*|date:\\d\\d\\.\\d\\d\\.\\d{4} \\d\\d;\\d\\d;\\d\\d|rem_time:\\d*)";
 
-	// Pattern for highscore entrys
+	/**
+	 * a pattern matching a highscore entry line
+	 */
 	public static final String HIGHSCORE_ENTRY =
 		"###"+HIGHSCORE_INFORMATION+"(\\|"+HIGHSCORE_INFORMATION+"){3}";
 	
+	/**
+	 * class constructor which sets the attributes to the given parameter.
+	 * @param playername the name of the player
+	 * @param rem_time the remaining time until the target time runs out
+	 * @param creation_date the date when the player hit the highscore
+	 * @param points the points the player reached
+	 */
 	HighscoreEntry(final String playername, 
 				   final double rem_time,
 				   final Date creation_date, 
@@ -38,6 +75,10 @@ class HighscoreEntry implements Comparable<HighscoreEntry>{
 		this.points = points;
 	}
 
+	/**
+	 * class constructor which reads a highscore line string, parses it
+	 * and sets the attributes for it.
+	 */
 	HighscoreEntry(String highscoreEntry, int line)
 		throws WrongLevelFormatException{
 		this.points = 0;

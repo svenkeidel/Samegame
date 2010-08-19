@@ -2,10 +2,23 @@ package de.tu_darmstadt.gdi1.samegame.model;
 
 import javax.swing.undo.AbstractUndoableEdit;
 
+/**
+ * Class wich represents an undoable GameState.
+ * It contains informations about the current state of the field and 
+ * the points the player reached.
+ */
 @SuppressWarnings("serial")
 class GameState extends AbstractUndoableEdit implements Cloneable{
 
+	/**
+	 * a representation of the field state.
+	 * the 0 represents empty.
+	 */
 	private Byte[][] fieldState;
+
+	/**
+	 * the points a player reached at a specific state
+	 */
 	private double points; 
 
 	/**
@@ -66,6 +79,9 @@ class GameState extends AbstractUndoableEdit implements Cloneable{
 		this.points = points;
 	}
 	
+	/**
+	 * Make a deep copy of the object.
+	 */
 	@Override
 	public Object clone(){
 		try{
@@ -75,6 +91,9 @@ class GameState extends AbstractUndoableEdit implements Cloneable{
 		}
 	}	
 	
+	/**
+	 * return a string representation of the field.
+	 */
 	@Override
 	public String toString(){
 		if(fieldState == null)

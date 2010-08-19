@@ -70,7 +70,10 @@ public class SameGameViewer implements ChangeListener{
      * the frame, which contains information about the authors
      */
     private AboutFrame aboutFrame;
-    
+    /**
+     * the frame, which allows custom Levels
+     */
+    private CustomizeFrame customFrame;
     /**
      * the currently choosed skin
      */
@@ -85,6 +88,7 @@ public class SameGameViewer implements ChangeListener{
 	 * the font color
 	 */
 	private Color current_FColor = Color.white;
+	
 	
 	
 	private ResourceBundle messages;
@@ -342,6 +346,9 @@ public class SameGameViewer implements ChangeListener{
 	 */
 	public void showAboutFrame(){
 		aboutFrame = new AboutFrame(currentLocale);
+	}
+	public void showCustomizeFrame(){
+		customFrame = new CustomizeFrame(currentLocale);
 	}
 
 	/**

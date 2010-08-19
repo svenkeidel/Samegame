@@ -24,6 +24,7 @@ import de.tu_darmstadt.gdi1.samegame.view.SameGameViewer;
 import de.tu_darmstadt.gdi1.samegame.controller.AbstractController;
 
 import de.tu_darmstadt.gdi1.samegame.exceptions.InternalFailureException;
+import de.tu_darmstadt.gdi1.samegame.view.gameframes.CustomizeFrame;
 import de.tu_darmstadt.gdi1.samegame.view.gameframes.MainPanel;
 
 public class GameController extends AbstractController{
@@ -32,6 +33,7 @@ public class GameController extends AbstractController{
 	private SameGameViewer viewer;
 	private int markedRow;
 	private int markedCol;
+	private CustomizeFrame cframe;
 
 	////////////////////////Class/Constructors////////////////////////
 	public GameController(Level level){
@@ -117,7 +119,19 @@ public class GameController extends AbstractController{
 		if (menuName.equals("About"))
 			viewer.showAboutFrame();
 		if (menuName.equals("FileMenu_GenerateCustomLevel")){
-			//viewer.showCustomizeFrame();
+			viewer.showCustomizeFrame();
+		if (menuName.equals("CustomizeFrame")){
+			viewer.closeMainFrame();
+			viewer.setLevel(level);
+			level.generateLevel(
+						cframe.getCustomWidth(),
+						cframe.getCustomHeight(),
+						cframe.getCustomStoneNumber(),
+						cframe.getCustomMinStones());
+			viewer.showMainFrame();
+			viewer.notifyLevelLoaded();
+			
+		}
 		}
 
 		File f;
@@ -333,6 +347,15 @@ public class GameController extends AbstractController{
 			case VK_T:
 				viewer.showHighscoreFrame();
 				break;
+			case VK_G:
+				viewer.closeMainFrame();
+				viewer.setLevel(level);
+				level.generateLevel(10, 10, 5, 3);
+				viewer.showMainFrame();
+				viewer.notifyLevelLoaded();
+				break;
+			case VK_C:
+				viewer.showCustomizeFrame();
 			default:;
 		}
 	}

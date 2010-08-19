@@ -32,9 +32,12 @@ public class AboutFrame extends JFrame{
 		this.setLocation(200,300);
 		this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 
-		this.getContentPane().add(new JLabel(
-					messages.getString("AboutText")
-					+ ": Seb, Tim, Svenja and Sven"));
+		
+		JLabel aboutlabel = new JLabel(messages.getString("AboutText") + ": Sven, Seb, Tim, Svenja");
+	
+		aboutlabel.setHorizontalAlignment(JLabel.CENTER);
+		
+		this.getContentPane().add(aboutlabel);
 
 		this.setVisible(true);
 	}

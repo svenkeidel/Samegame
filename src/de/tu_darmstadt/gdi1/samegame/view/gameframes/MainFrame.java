@@ -220,6 +220,7 @@ public class MainFrame extends JFrame implements Runnable{
 		GameMenu.addSeparator();
 		
 		JMenuItem gen_lvl = new JMenuItem(messages.getString("GameMenu_GenerateLevel"));
+		gen_lvl.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, 0));
 		gen_lvl.addActionListener(controller);
 		gen_lvl.setName("FileMenu_GenerateLevel");
 		gen_lvl.setForeground(FColor);
@@ -227,6 +228,7 @@ public class MainFrame extends JFrame implements Runnable{
 		GameMenu.add(gen_lvl);
 		
 		JMenuItem genc_lvl = new JMenuItem(messages.getString("GameMenu_GenerateCustomLevel"));
+		genc_lvl.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, 0));
 		genc_lvl.addActionListener(controller);
 		genc_lvl.setName("FileMenu_GenerateCustomLevel");
 		genc_lvl.setForeground(FColor);
